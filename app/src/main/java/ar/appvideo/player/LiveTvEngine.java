@@ -209,16 +209,67 @@ public final class LiveTvEngine {
                     "https://i.imgur.com/xFgJawa.png",
                     "SD 540p", "Tradición y Música Argentina", "Folklore y Paisajes"));
         } else if ("deportes".equals(catId)) {
+            list.add(new LiveChannel("dep_espn", "ESPN HD Argentina", "deportes",
+                    "https://tvf90.com/1.php?stream=espn", "",
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/ESPN_wordmark.svg/500px-ESPN_wordmark.svg.png",
+                    "HD 1080p", "SportsCenter en Directo", "Fútbol Internacional & Polideportivo"));
+
+            list.add(new LiveChannel("dep_espn2", "ESPN 2 HD", "deportes",
+                    "https://tvf90.com/1.php?stream=espn2", "",
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/ESPN_wordmark.svg/500px-ESPN_wordmark.svg.png",
+                    "HD 1080p", "UEFA Champions League & Tenis ATP", "Fútbol Europeo en Vivo"));
+
+            list.add(new LiveChannel("dep_espn3", "ESPN 3 HD", "deportes",
+                    "https://tvf90.com/1.php?stream=espn3", "",
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/ESPN_wordmark.svg/500px-ESPN_wordmark.svg.png",
+                    "HD 1080p", "Rugby, Ciclismo & Deportes Alternativos", "Programación Polideportiva"));
+
+            list.add(new LiveChannel("dep_espn4", "ESPN 4 HD", "deportes",
+                    "https://tvf90.com/1.php?stream=espn4", "",
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/ESPN_wordmark.svg/500px-ESPN_wordmark.svg.png",
+                    "HD 1080p", "Ligas Internacionales & Motores", "Fútbol en Directo"));
+
+            list.add(new LiveChannel("dep_espnpremium", "ESPN Premium (Fútbol Argentino)", "deportes",
+                    "https://tvf90.com/1.php?stream=espnpremium", "",
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/ESPN_wordmark.svg/500px-ESPN_wordmark.svg.png",
+                    "HD 1080p", "Liga Profesional de Fútbol AFA", "Partidos en Directo & Pasión"));
+
+            list.add(new LiveChannel("dep_foxsports", "Fox Sports Argentina HD", "deportes",
+                    "https://tvf90.com/1.php?stream=foxsports", "",
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Fox_Sports_logo_2020.svg/500px-Fox_Sports_logo_2020.svg.png",
+                    "HD 1080p", "Fórmula 1 & Copa Libertadores", "La Tarde de Fox Sports"));
+
+            list.add(new LiveChannel("dep_foxsports2", "Fox Sports 2 HD", "deportes",
+                    "https://tvf90.com/1.php?stream=foxsports2", "",
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Fox_Sports_logo_2020.svg/500px-Fox_Sports_logo_2020.svg.png",
+                    "HD 1080p", "WWE, Béisbol MLB & Copa Libertadores", "Deportes en Directo"));
+
+            list.add(new LiveChannel("dep_foxsports3", "Fox Sports 3 HD", "deportes",
+                    "https://tvf90.com/1.php?stream=foxsports3", "",
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Fox_Sports_logo_2020.svg/500px-Fox_Sports_logo_2020.svg.png",
+                    "HD 1080p", "MotoGP, Automovilismo & Deportes Extremos", "Velocidad Total"));
+
             list.add(new LiveChannel("dep_tyc", "TyC Sports HD", "deportes",
+                    "https://tvf90.com/1.php?stream=tycsports",
                     "https://amg26268-amg26268c14-freelivesports-emea-10267.playouts.now.amagi.tv/ts-us-e2-n2/playlist/amg26268-sportsstudio-tycsports-freelivesportsemea/playlist.m3u8",
-                    "http://45.184.109.10/live/69393EAE6ADBC65A68F942022362A202/86.m3u8",
                     "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/TyC_Sports_logo.svg/500px-TyC_Sports_logo.svg.png",
-                    "HD 1080p", "Sportia Noticiero", "Fútbol de Primera y Polideportivo"));
+                    "HD 1080p", "Sportia Noticiero & Fútbol de Primera", "Copa Argentina y Polideportivo"));
 
             list.add(new LiveChannel("dep_tntsports", "TNT Sports Argentina", "deportes",
-                    "http://45.184.109.10/live/69393EAE6ADBC65A68F942022362A202/86.m3u8", "",
+                    "https://tvf90.com/1.php?stream=tntsports",
+                    "http://45.184.109.10/live/69393EAE6ADBC65A68F942022362A202/86.m3u8",
                     "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/TNT_Sports_2021_logo.svg/500px-TNT_Sports_2021_logo.svg.png",
-                    "HD 1080p", "Halcones y Palomas", "Fútbol en Directo"));
+                    "HD 1080p", "Liga Profesional & Todos Al Gol", "Fútbol en Directo"));
+
+            list.add(new LiveChannel("dep_dsports", "DSports HD (DirecTV)", "deportes",
+                    "https://tvf90.com/1.php?stream=dsports", "",
+                    "https://i.imgur.com/iyYLNRt.png",
+                    "HD 1080p", "Copa Sudamericana & Fútbol Exclusivo", "Debate Fútbol"));
+
+            list.add(new LiveChannel("dep_goltv", "GolTV Latino HD", "deportes",
+                    "https://tvf90.com/1.php?stream=goltv", "",
+                    "https://i.imgur.com/iyYLNRt.png",
+                    "HD 1080p", "Ligas de Sudamérica & GolTV Noticias", "Fútbol 24/7"));
 
             list.add(new LiveChannel("dep_rmtv", "Real Madrid TV HD (Español)", "deportes",
                     "https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/master.m3u8", "",
@@ -559,6 +610,226 @@ public final class LiveTvEngine {
                 else cb.onSuccess(channels);
             }
         }, "live-m3u-parse").start();
+    }
+
+    public static final class LiveSportEvent {
+        public final String id;
+        public final String title;
+        public final String tournament;
+        public final String timeStatus;
+        public final boolean isLiveNow;
+        public final String streamUrl;
+        public final String icon;
+        public final String logoUrl;
+
+        public LiveSportEvent(String id, String title, String tournament, String timeStatus, boolean isLiveNow, String streamUrl, String icon, String logoUrl) {
+            this.id = id;
+            this.title = title;
+            this.tournament = tournament;
+            this.timeStatus = timeStatus;
+            this.isLiveNow = isLiveNow;
+            this.streamUrl = streamUrl;
+            this.icon = icon != null ? icon : "⚽";
+            this.logoUrl = logoUrl != null ? logoUrl : "";
+        }
+
+        public JSONObject toJson() {
+            try {
+                JSONObject o = new JSONObject();
+                o.put("id", id);
+                o.put("title", title);
+                o.put("tournament", tournament);
+                o.put("timeStatus", timeStatus);
+                o.put("isLiveNow", isLiveNow);
+                o.put("streamUrl", streamUrl);
+                o.put("icon", icon);
+                o.put("logoUrl", logoUrl);
+                return o;
+            } catch (Exception e) {
+                return new JSONObject();
+            }
+        }
+
+        public static LiveSportEvent fromJson(JSONObject o) {
+            return new LiveSportEvent(
+                    o.optString("id"),
+                    o.optString("title"),
+                    o.optString("tournament"),
+                    o.optString("timeStatus"),
+                    o.optBoolean("isLiveNow", true),
+                    o.optString("streamUrl"),
+                    o.optString("icon", "⚽"),
+                    o.optString("logoUrl", "")
+            );
+        }
+    }
+
+    private static final String KEY_SPORTS_DIARY = "sports_diary_cache_json";
+
+    public static List<LiveSportEvent> fetchSportsDiarySync(Context ctx, boolean forceNetwork) {
+        List<LiveSportEvent> list = new ArrayList<>();
+        SharedPreferences sp = ctx != null ? ctx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE) : null;
+
+        if (forceNetwork || sp == null || !sp.contains(KEY_SPORTS_DIARY)) {
+            try {
+                URL u = new URL("https://api.wqxag.com/diaries.json");
+                HttpURLConnection conn = (HttpURLConnection) u.openConnection();
+                conn.setConnectTimeout(8000);
+                conn.setReadTimeout(10000);
+                conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
+                conn.setRequestProperty("Referer", "https://futbol-libre.app/");
+
+                if (conn.getResponseCode() == 200) {
+                    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        sb.append(line);
+                    }
+                    br.close();
+                    conn.disconnect();
+
+                    JSONObject root = new JSONObject(sb.toString());
+                    JSONArray data = root.optJSONArray("data");
+                    if (data != null && data.length() > 0) {
+                        for (int i = 0; i < data.length() && list.size() < 25; i++) {
+                            JSONObject item = data.optJSONObject(i);
+                            if (item == null) continue;
+                            JSONObject attr = item.optJSONObject("attributes");
+                            if (attr == null) continue;
+
+                            String desc = attr.optString("diary_description", "Partido en Vivo").replace("\n", " ").trim();
+                            String hour = attr.optString("diary_hour", "20:00");
+                            if (hour.length() >= 5) hour = hour.substring(0, 5);
+
+                            String countryName = "Fútbol";
+                            String icon = "⚽";
+                            JSONObject country = attr.optJSONObject("country");
+                            if (country != null) {
+                                JSONObject cData = country.optJSONObject("data");
+                                if (cData != null) {
+                                    JSONObject cAttr = cData.optJSONObject("attributes");
+                                    if (cAttr != null) {
+                                        countryName = cAttr.optString("name", "Deporte");
+                                    }
+                                }
+                            }
+                            String lowDesc = desc.toLowerCase();
+                            String lowCountry = countryName.toLowerCase();
+                            if (lowCountry.contains("nba") || lowDesc.contains("nba") || lowDesc.contains("basketball")) icon = "🏀";
+                            else if (lowCountry.contains("f1") || lowDesc.contains("f1") || lowDesc.contains("formula")) icon = "🏎️";
+                            else if (lowCountry.contains("nfl") || lowDesc.contains("nfl")) icon = "🏈";
+                            else if (lowCountry.contains("tenis") || lowDesc.contains("atp")) icon = "🎾";
+                            else if (lowCountry.contains("nhl") || lowDesc.contains("hockey")) icon = "🏒";
+
+                            String channelTitle = countryName;
+                            String streamTarget = "";
+
+                            JSONObject embeds = attr.optJSONObject("embeds");
+                            if (embeds != null) {
+                                JSONArray eData = embeds.optJSONArray("data");
+                                if (eData != null && eData.length() > 0) {
+                                    JSONObject firstEmb = eData.optJSONObject(0);
+                                    if (firstEmb != null) {
+                                        JSONObject embAttr = firstEmb.optJSONObject("attributes");
+                                        if (embAttr != null) {
+                                            channelTitle = embAttr.optString("embed_name", countryName);
+                                            streamTarget = embAttr.optString("embed_iframe", "");
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (!streamTarget.isEmpty()) {
+                                String id = "diary_" + item.optInt("id", i);
+                                list.add(new LiveSportEvent(id, desc, countryName + " · " + channelTitle, "⏰ " + hour + " · En Vivo", true, streamTarget, icon, ""));
+                            }
+                        }
+
+                        if (!list.isEmpty() && sp != null) {
+                            JSONArray cacheArr = new JSONArray();
+                            for (LiveSportEvent ev : list) {
+                                cacheArr.put(ev.toJson());
+                            }
+                            sp.edit().putString(KEY_SPORTS_DIARY, cacheArr.toString()).apply();
+                        }
+                    }
+                }
+            } catch (Exception ex) {
+                android.util.Log.w("LiveTvEngine", "Error actualizando agenda de deportes: " + ex.getMessage());
+            }
+        }
+
+        if (list.isEmpty() && sp != null && sp.contains(KEY_SPORTS_DIARY)) {
+            try {
+                JSONArray arr = new JSONArray(sp.getString(KEY_SPORTS_DIARY, "[]"));
+                for (int i = 0; i < arr.length(); i++) {
+                    list.add(LiveSportEvent.fromJson(arr.getJSONObject(i)));
+                }
+            } catch (Exception ignored) {}
+        }
+
+        return list;
+    }
+
+    public static String resolveDynamicStream(String rawUrl, Map<String, String> outHeaders) {
+        if (rawUrl == null || rawUrl.isEmpty()) return "";
+        if (rawUrl.endsWith(".m3u8") && !rawUrl.contains("tvf90.com")) {
+            return rawUrl;
+        }
+
+        String target = rawUrl;
+        if (target.contains("r=")) {
+            int rIdx = target.indexOf("r=");
+            String b64 = target.substring(rIdx + 2);
+            int amp = b64.indexOf('&');
+            if (amp > 0) b64 = b64.substring(0, amp);
+            try {
+                byte[] decoded = android.util.Base64.decode(b64, android.util.Base64.DEFAULT);
+                target = new String(decoded, "UTF-8").trim();
+            } catch (Exception ignored) {}
+        }
+
+        if (target.contains("tvf90.com")) {
+            try {
+                String streamName = "";
+                Matcher mStream = Pattern.compile("stream=([a-zA-Z0-9_-]+)").matcher(target);
+                if (mStream.find()) {
+                    streamName = mStream.group(1);
+                }
+                if (!streamName.isEmpty()) {
+                    String resolveUrl = "https://tvf90.com/5.php?stream=" + streamName;
+                    URL u = new URL(resolveUrl);
+                    HttpURLConnection conn = (HttpURLConnection) u.openConnection();
+                    conn.setConnectTimeout(8000);
+                    conn.setReadTimeout(8000);
+                    conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+                    conn.setRequestProperty("Referer", "https://tvf90.com/1.php?stream=" + streamName);
+                    BufferedReader r = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = r.readLine()) != null) {
+                        sb.append(line);
+                    }
+                    r.close();
+                    conn.disconnect();
+
+                    Matcher mM3u8 = Pattern.compile("(https?://[^\\s\"'<>]+\\.m3u8[^\\s\"'<>]*)").matcher(sb.toString());
+                    if (mM3u8.find()) {
+                        String realM3u8 = mM3u8.group(1);
+                        if (outHeaders != null) {
+                            outHeaders.put("Referer", "https://tvf90.com/");
+                            outHeaders.put("Origin", "https://tvf90.com");
+                            outHeaders.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
+                        }
+                        return realM3u8;
+                    }
+                }
+            } catch (Exception ex) {
+                android.util.Log.w("LiveTvEngine", "Error resolviendo stream dinámico: " + ex.getMessage());
+            }
+        }
+        return target;
     }
 }
 

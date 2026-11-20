@@ -1009,6 +1009,20 @@ public class MainActivity extends Activity {
                     runOnUiThread(() -> startLivePlayerInternal(ch, ch.backupUrl));
                 }
             }).start();
+        } else if (ch.streamUrl != null && (ch.streamUrl.contains("tvf90.com") || ch.streamUrl.contains("r=")) && !ch.streamUrl.contains(".m3u8")) {
+            new Thread(() -> {
+                try {
+                    java.util.Map<String, String> hdrs = new java.util.HashMap<>();
+                    String realUrl = LiveTvEngine.resolveDynamicStream(ch.streamUrl, hdrs);
+                    if (realUrl != null && !realUrl.isEmpty() && realUrl.startsWith("http")) {
+                        runOnUiThread(() -> startLivePlayerInternal(ch, realUrl));
+                    } else {
+                        runOnUiThread(() -> startLivePlayerInternal(ch, ch.backupUrl));
+                    }
+                } catch (Exception e) {
+                    runOnUiThread(() -> startLivePlayerInternal(ch, ch.backupUrl));
+                }
+            }).start();
         } else {
             startLivePlayerInternal(ch, ch.streamUrl);
         }
@@ -1051,7 +1065,10 @@ public class MainActivity extends Activity {
                     .setAllowCrossProtocolRedirects(true);
 
             java.util.Map<String, String> reqHeaders = new java.util.HashMap<>();
-            if (urlToPlay.contains("mdstrm.com")) {
+            if (urlToPlay.contains("tvf90.com") || urlToPlay.contains(".ftlly.com")) {
+                reqHeaders.put("Referer", "https://tvf90.com/");
+                reqHeaders.put("Origin", "https://tvf90.com");
+            } else if (urlToPlay.contains("mdstrm.com")) {
                 reqHeaders.put("Referer", "https://mitelefe.com/");
                 reqHeaders.put("Origin", "https://mitelefe.com");
             } else if (urlToPlay.contains("eltrecetv")) {
@@ -2894,7 +2911,8 @@ public class MainActivity extends Activity {
     }
 
     private static boolean isNonLatinMovie(String title) {
-        if (title == null) return false;
+        if (title == null)
+            return false;
         String t = title.toLowerCase();
         return t.contains("rambo") || t.contains("conan") || t.contains("terminator")
                 || t.contains("rocky") || t.contains("alien") || t.contains("predator")
@@ -2921,7 +2939,8 @@ public class MainActivity extends Activity {
                 for (int i = offset; i < res.entries.size() && live.size() < 14; i++) {
                     CatalogData.Entry e = res.entries.get(i);
                     if ("latin".equals(carouselId)) {
-                        if (e.isMovie() || isNonLatinMovie(e.title)) continue;
+                        if (e.isMovie() || isNonLatinMovie(e.title))
+                            continue;
                     }
                     live.add(new PosterItem(
                             e.title,
@@ -4138,16 +4157,32 @@ public class MainActivity extends Activity {
     }
 
     private java.util.List<LiveSportEvent> defaultSportsEvents() {
+        try {
+            java.util.List<LiveTvEngine.LiveSportEvent> diary = LiveTvEngine.fetchSportsDiarySync(this, false);
+            if (diary != null && !diary.isEmpty()) {
+                java.util.List<LiveSportEvent> res = new java.util.ArrayList<>();
+                for (LiveTvEngine.LiveSportEvent ev : diary) {
+                    res.add(new LiveSportEvent(ev.title, ev.tournament, ev.timeStatus, ev.isLiveNow, ev.streamUrl, ev.icon));
+                }
+                return res;
+            }
+        } catch (Exception ignored) {}
         return java.util.Arrays.asList(
                 new LiveSportEvent("TyC Sports HD", "Fútbol de Primera & Torneos · En Vivo",
                         "🔴 EN VIVO", true,
-                        "https://amg26268-amg26268c14-freelivesports-emea-10267.playouts.now.amagi.tv/ts-us-e2-n2/playlist/amg26268-sportsstudio-tycsports-freelivesportsemea/playlist.m3u8",
+                        "https://tvf90.com/1.php?stream=tycsports",
                         "⚽"),
+                new LiveSportEvent("ESPN HD Argentina", "SportsCenter & Torneos Internacionales",
+                        "🔴 EN VIVO", true, "https://tvf90.com/1.php?stream=espn", "⚽"),
+                new LiveSportEvent("ESPN 2 HD", "UEFA Champions League & Tenis ATP",
+                        "🔴 EN VIVO", true, "https://tvf90.com/1.php?stream=espn2", "🎾"),
+                new LiveSportEvent("Fox Sports HD", "Copa Libertadores & Fórmula 1",
+                        "🔴 EN VIVO", true, "https://tvf90.com/1.php?stream=foxsports", "🏎️"),
+                new LiveSportEvent("Real Madrid TV HD", "LaLiga · Noticias & Partidos en Directo",
+                        "🔴 EN VIVO", true, "https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/master.m3u8", "⚪"),
                 new LiveSportEvent("DeporTV Argentina HD", "Polideportivo Federal & Magazine",
                         "🔴 EN VIVO", true, "https://5fb24b460df87.streamlock.net/live-cont.ar/deportv/playlist.m3u8",
                         "🇦🇷"),
-                new LiveSportEvent("Real Madrid TV HD", "LaLiga · Noticias & Partidos en Directo",
-                        "🔴 EN VIVO", true, "https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/master.m3u8", "⚪"),
                 new LiveSportEvent("Teledeporte RTVE", "Estudio Estadio & Deportes Internacionales",
                         "🔴 EN VIVO", true, "https://rtvelivestream.akamaized.net/rtvesec/tdp/tdp_main.m3u8", "🇪🇸"),
                 new LiveSportEvent("Red Bull TV Deportes", "Cliff Diving, F1, Rally & Downhill Extremo",
@@ -4642,6 +4677,7 @@ public class MainActivity extends Activity {
         builder.setTitle("⚙️  Ajustes de Leo TV");
         boolean locked = ParentalControlEngine.isParentalLocked(this);
         String[] options = new String[] {
+                "🔄  Actualizar Catálogo y Agenda Deportiva (Fútbol Libre)",
                 "⚙️  Personalizar Carruseles de Inicio (Ordenar y Ocultar)",
                 "📡  Seleccionar Proveedor Activo ("
                         + ((activeProvider == null || activeProvider.isEmpty()) ? "CineHax" : activeProvider) + ")",
@@ -4651,10 +4687,12 @@ public class MainActivity extends Activity {
         };
         builder.setItems(options, (dialog, which) -> {
             if (which == 0) {
-                showCarouselCustomizer();
+                triggerCatalogUpdate();
             } else if (which == 1) {
-                showProviderSelector();
+                showCarouselCustomizer();
             } else if (which == 2) {
+                showProviderSelector();
+            } else if (which == 3) {
                 if (ParentalControlEngine.isParentalLocked(this)) {
                     showParentalPinDialog(() -> {
                         Toast.makeText(this, "Control parental desbloqueado para esta sesión", Toast.LENGTH_SHORT)
@@ -4668,7 +4706,7 @@ public class MainActivity extends Activity {
                         home();
                     }
                 }
-            } else if (which == 3) {
+            } else if (which == 4) {
                 showParentalChangePinDialog();
             }
         });
@@ -4851,9 +4889,30 @@ public class MainActivity extends Activity {
         android.widget.Space filler = new android.widget.Space(this);
         side.addView(filler, new LinearLayout.LayoutParams(1, 0, 1));
 
+        addSideIcon(side, "🔄", false, "Actualizar Catálogo y Deportes", this::triggerCatalogUpdate);
         addSideIcon(side, "📥", false, "Descargas", () -> LeoDownloadManager.openDownloadsFolder(this));
         addSideIcon(side, "⚙️", "sources".equals(currentSection), "Ajustes y Personalizar", this::showSettingsDialog);
         return side;
+    }
+
+    private void triggerCatalogUpdate() {
+        Toast.makeText(this, "🔄 Sincronizando catálogo y agenda deportiva...", Toast.LENGTH_SHORT).show();
+        CatalogUpdater.runUpdateAsync(this, new CatalogUpdater.UpdateListener() {
+            @Override
+            public void onProgress(String message) {
+                runOnUiThread(() -> Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show());
+            }
+
+            @Override
+            public void onFinished(boolean success, int matchesCount, String summary) {
+                runOnUiThread(() -> {
+                    Toast.makeText(MainActivity.this, summary, Toast.LENGTH_LONG).show();
+                    if ("home".equals(page)) {
+                        home();
+                    }
+                });
+            }
+        });
     }
 
     private void openEntryDetail(CatalogData.Entry entry) {
@@ -7405,6 +7464,23 @@ public class MainActivity extends Activity {
     }
 
     private void playMovie(String title, String url, String origin, java.util.Map<String, String> headers) {
+        if (url != null && (url.contains("tvf90.com") || url.contains("r=") || url.contains("stream=")) && !url.contains(".m3u8")) {
+            Toast.makeText(this, "Conectando con señal deportiva en vivo...", Toast.LENGTH_SHORT).show();
+            new Thread(() -> {
+                java.util.Map<String, String> resolvedHdrs = new java.util.HashMap<>();
+                if (headers != null) resolvedHdrs.putAll(headers);
+                String realM3u8 = LiveTvEngine.resolveDynamicStream(url, resolvedHdrs);
+                runOnUiThread(() -> {
+                    if (realM3u8 != null && !realM3u8.isEmpty() && realM3u8.startsWith("http")) {
+                        playMovie(title, realM3u8, origin, resolvedHdrs);
+                    } else {
+                        Toast.makeText(this, "La señal deportiva no está disponible en este momento", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }).start();
+            return;
+        }
+
         playingChannel = origin;
         page = "playing";
         currentPlayingTitle = title;
@@ -7856,6 +7932,9 @@ public class MainActivity extends Activity {
             splashContent.animate().alpha(0f).setDuration(200).withEndAction(() -> {
                 home();
                 handleLaunchIntent(getIntent());
+                if (CatalogUpdater.shouldAutoUpdate(MainActivity.this)) {
+                    CatalogUpdater.runUpdateAsync(MainActivity.this, null);
+                }
                 if (pendingUpdate != null) {
                     AppUpdater.showUpdateDialog(MainActivity.this, pendingUpdate);
                 }
@@ -7980,7 +8059,8 @@ public class MainActivity extends Activity {
                     if (playbackView != null && !playbackView.isControllerFullyVisible()) {
                         playbackView.showController();
                         return true;
-                    } else if (playerOsdBar != null && playerOsdBar.getVisibility() == android.view.View.VISIBLE && playerOsdBar.getChildCount() > 0) {
+                    } else if (playerOsdBar != null && playerOsdBar.getVisibility() == android.view.View.VISIBLE
+                            && playerOsdBar.getChildCount() > 0) {
                         playerOsdBar.getChildAt(0).requestFocus();
                         return true;
                     }

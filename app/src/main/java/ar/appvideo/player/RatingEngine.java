@@ -16,9 +16,12 @@ import java.util.regex.Pattern;
 
 /**
  * Motor central de calificaciones auténticas y verificadas para Leo TV.
- * Conecta con las bases de datos oficiales de TMDB (a través de CineHax REST API) y TVMaze,
- * con soporte para IMDb externals, caché persistente en disco y ordenamiento en Explorar.
- * PROHIBIDO inventar puntuaciones o números decorativos: cuando no existe dato confiable
+ * Conecta con las bases de datos oficiales de TMDB (a través de CineHax REST
+ * API) y TVMaze,
+ * con soporte para IMDb externals, caché persistente en disco y ordenamiento en
+ * Explorar.
+ * PROHIBIDO inventar puntuaciones o números decorativos: cuando no existe dato
+ * confiable
  * se indica expresamente "Sin calificación".
  */
 public final class RatingEngine {
@@ -26,10 +29,10 @@ public final class RatingEngine {
     private static final String KEY_CACHE = "ratings_json_v2";
 
     private static final String[] TMDB_KEYS = {
-        "4ef0d7355d9ffb5151e987764708ce96",
-        "15d2ea6d0dc1d476efbca3eba2b9bbfb",
-        "8476a7ab80ad76f0936744df0430e67c",
-        "f090bb54758cabf231fb605d3e3e0468"
+            "4ef0d7355d9ffb5151e987764708ce96",
+            "15d2ea6d0dc1d476efbca3eba2b9bbfb",
+            "8476a7ab80ad76f0936744df0430e67c",
+            "f090bb54758cabf231fb605d3e3e0468"
     };
 
     public static final class RatingInfo {
@@ -60,12 +63,14 @@ public final class RatingEngine {
         }
 
         public String formatted() {
-            if (!hasScore()) return "Sin calificación";
+            if (!hasScore())
+                return "Sin calificación";
             return String.format(Locale.US, "⭐ %.1f %s", score, source);
         }
 
         public String formattedDetail() {
-            if (!hasScore()) return "Sin calificación";
+            if (!hasScore())
+                return "Sin calificación";
             if (!imdbId.isEmpty() && !"IMDb".equals(source)) {
                 return String.format(Locale.US, "⭐ %.1f/10 %s · IMDb: %s", score, source, imdbId);
             }
@@ -73,7 +78,8 @@ public final class RatingEngine {
         }
 
         public String badgeText() {
-            if (!hasScore()) return "Sin calificación";
+            if (!hasScore())
+                return "Sin calificación";
             return String.format(Locale.US, "★ %.1f", score);
         }
     }
@@ -148,7 +154,8 @@ public final class RatingEngine {
         registerMemory("El misterio de los agujeros negros", 2021, false, 7.8, "TMDB", 320, "");
     }
 
-    private static void registerMemory(String title, int year, boolean isSeries, double score, String source, int votes, String imdbId) {
+    private static void registerMemory(String title, int year, boolean isSeries, double score, String source, int votes,
+            String imdbId) {
         RatingInfo info = new RatingInfo(score, source, votes, imdbId);
         String key = makeKey(title, year, isSeries);
         MEMORY_CACHE.put(key, info);
@@ -156,7 +163,8 @@ public final class RatingEngine {
     }
 
     public static String cleanTitle(String t) {
-        if (t == null) return "";
+        if (t == null)
+            return "";
         return t.toLowerCase(Locale.ROOT)
                 .replaceAll("\\s*\\([^)]*\\)", "")
                 .replaceAll("[^a-z0-9áéíóúñ]", "")
@@ -168,7 +176,8 @@ public final class RatingEngine {
     }
 
     public static synchronized void init(Context ctx) {
-        if (initialized || ctx == null) return;
+        if (initialized || ctx == null)
+            return;
         try {
             SharedPreferences sp = ctx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
             String jsonStr = sp.getString(KEY_CACHE, "{}");
@@ -183,16 +192,17 @@ public final class RatingEngine {
                             item.optString("source", "TMDB"),
                             item.optInt("votes", 0),
                             item.optString("imdb", ""),
-                            item.optString("overview", "")
-                    ));
+                            item.optString("overview", "")));
                 }
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         initialized = true;
     }
 
     public static RatingInfo getRating(CatalogData.Entry entry, Context ctx) {
-        if (entry == null) return new RatingInfo(0.0, "", 0);
+        if (entry == null)
+            return new RatingInfo(0.0, "", 0);
         if (entry.rating > 0.0) {
             String src = entry.tvmazeId > 0 ? "TVMaze" : "TMDB";
             String ov = (entry.overview != null) ? entry.overview : "";
@@ -208,25 +218,28 @@ public final class RatingEngine {
     }
 
     public static RatingInfo getRating(String title, int year, boolean isSeries, Context ctx) {
-        if (title == null || title.isEmpty()) return new RatingInfo(0.0, "", 0);
+        if (title == null || title.isEmpty())
+            return new RatingInfo(0.0, "", 0);
         init(ctx);
         String key = makeKey(title, year, isSeries);
         RatingInfo info = MEMORY_CACHE.get(key);
         if (info == null) {
             info = MEMORY_CACHE.get(cleanTitle(title));
         }
-        if (info != null) return info;
+        if (info != null)
+            return info;
         return new RatingInfo(0.0, "", 0);
     }
 
     public static synchronized void recordRating(Context ctx, String title, int year, boolean isSeries,
-                                                 double score, String source, int votes, String imdbId) {
+            double score, String source, int votes, String imdbId) {
         recordRating(ctx, title, year, isSeries, score, source, votes, imdbId, "");
     }
 
     public static synchronized void recordRating(Context ctx, String title, int year, boolean isSeries,
-                                                 double score, String source, int votes, String imdbId, String overview) {
-        if (title == null) return;
+            double score, String source, int votes, String imdbId, String overview) {
+        if (title == null)
+            return;
         init(ctx);
         String key = makeKey(title, year, isSeries);
         RatingInfo info = new RatingInfo(score, source != null ? source : "TMDB", votes, imdbId, overview);
@@ -249,26 +262,33 @@ public final class RatingEngine {
                 obj.put(key, it);
                 obj.put(cleanTitle(title), it);
                 sp.edit().putString(KEY_CACHE, obj.toString()).apply();
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
     }
 
     /**
-     * Resuelve de forma asíncrona la calificación auténtica de cualquier título del catálogo.
-     * Si ya se encuentra en caché (memoria o SharedPreferences), responde instantáneamente en el hilo UI.
-     * Si no, consulta en segundo plano CineHax TMDB y TVMaze de forma segura y sin bloquear la navegación.
+     * Resuelve de forma asíncrona la calificación auténtica de cualquier título del
+     * catálogo.
+     * Si ya se encuentra en caché (memoria o SharedPreferences), responde
+     * instantáneamente en el hilo UI.
+     * Si no, consulta en segundo plano CineHax TMDB y TVMaze de forma segura y sin
+     * bloquear la navegación.
      */
     public static void resolveRatingAsync(final String title, final int year, final boolean isSeries,
-                                          final CatalogData.Entry rawEntry, final Context ctx,
-                                          final RatingCallback callback) {
-        if (callback == null) return;
+            final CatalogData.Entry rawEntry, final Context ctx,
+            final RatingCallback callback) {
+        if (callback == null)
+            return;
         if (title == null || title.trim().isEmpty()) {
             callback.onRatingReady(new RatingInfo(0.0, "", 0));
             return;
         }
 
-        // 1. Si la propia ficha ya trajo la puntuación verificada oficial y tiene reseña válida
-        if (rawEntry != null && rawEntry.rating > 0.0 && rawEntry.overview != null && rawEntry.overview.trim().length() >= 25) {
+        // 1. Si la propia ficha ya trajo la puntuación verificada oficial y tiene
+        // reseña válida
+        if (rawEntry != null && rawEntry.rating > 0.0 && rawEntry.overview != null
+                && rawEntry.overview.trim().length() >= 25) {
             String src = rawEntry.tvmazeId > 0 ? "TVMaze" : "TMDB";
             RatingInfo fastInfo = new RatingInfo(rawEntry.rating, src, 0, "", rawEntry.overview);
             recordRating(ctx, title, year, isSeries, rawEntry.rating, src, 0, "", rawEntry.overview);
@@ -288,7 +308,8 @@ public final class RatingEngine {
             return;
         }
 
-        // 2. Comprobar si ya hay una petición en curso para evitar repeticiones en scroll
+        // 2. Comprobar si ya hay una petición en curso para evitar repeticiones en
+        // scroll
         if (IN_FLIGHT.contains(key)) {
             // Entregar calificación provisional hasta que el worker termine
             callback.onRatingReady(cached != null ? cached : new RatingInfo(0.0, "", 0));
@@ -304,7 +325,8 @@ public final class RatingEngine {
                     resolved = fetchTvMazeById(rawEntry.tvmazeId);
                 }
 
-                // Paso B: Búsqueda oficial en TMDB API (Sinopsis en español y puntuación auténtica)
+                // Paso B: Búsqueda oficial en TMDB API (Sinopsis en español y puntuación
+                // auténtica)
                 if (resolved == null || !resolved.hasScore() || resolved.overview.isEmpty()) {
                     long tmdbId = (rawEntry != null && rawEntry.tmdb > 0) ? rawEntry.tmdb : 0;
                     RatingInfo tmdbRes = queryOfficialTmdb(title, year, isSeries, tmdbId);
@@ -320,19 +342,23 @@ public final class RatingEngine {
                         if (resolved == null) {
                             resolved = chRes;
                         } else if (resolved.overview.isEmpty() && !chRes.overview.isEmpty()) {
-                            resolved = new RatingInfo(resolved.score, resolved.source, resolved.votes, resolved.imdbId, chRes.overview);
+                            resolved = new RatingInfo(resolved.score, resolved.source, resolved.votes, resolved.imdbId,
+                                    chRes.overview);
                         }
                     }
                 }
 
-                // Paso D: Si es serie, anime, documental o dorama y no tuvo TMDB o falta sinopsis, consultar TVMaze
-                if ((resolved == null || !resolved.hasScore() || resolved.overview.isEmpty()) && (isSeries || mightBeSeriesOrDoc(title))) {
+                // Paso D: Si es serie, anime, documental o dorama y no tuvo TMDB o falta
+                // sinopsis, consultar TVMaze
+                if ((resolved == null || !resolved.hasScore() || resolved.overview.isEmpty())
+                        && (isSeries || mightBeSeriesOrDoc(title))) {
                     RatingInfo tvmRes = queryTvMaze(title, year);
                     if (tvmRes != null) {
                         if (resolved == null || !resolved.hasScore()) {
                             resolved = tvmRes;
                         } else if (resolved.overview.isEmpty() && !tvmRes.overview.isEmpty()) {
-                            resolved = new RatingInfo(resolved.score, resolved.source, resolved.votes, resolved.imdbId, tvmRes.overview);
+                            resolved = new RatingInfo(resolved.score, resolved.source, resolved.votes, resolved.imdbId,
+                                    tvmRes.overview);
                         }
                     }
                 }
@@ -344,11 +370,13 @@ public final class RatingEngine {
                 if (resolved.overview.isEmpty() || !isSpanishText(resolved.overview)) {
                     String wikiOv = queryWikipediaSpanish(title);
                     if (!wikiOv.isEmpty()) {
-                        resolved = new RatingInfo(resolved.score, resolved.source, resolved.votes, resolved.imdbId, wikiOv);
+                        resolved = new RatingInfo(resolved.score, resolved.source, resolved.votes, resolved.imdbId,
+                                wikiOv);
                     }
                 }
 
-                // Si rawEntry ya traía puntuación previa pero le faltaba reseña, preservamos la puntuación
+                // Si rawEntry ya traía puntuación previa pero le faltaba reseña, preservamos la
+                // puntuación
                 if (rawEntry != null && rawEntry.rating > 0.0 && (!resolved.hasScore() || resolved.score == 0.0)) {
                     String src = rawEntry.tvmazeId > 0 ? "TVMaze" : "TMDB";
                     resolved = new RatingInfo(rawEntry.rating, src, resolved.votes, resolved.imdbId, resolved.overview);
@@ -359,7 +387,8 @@ public final class RatingEngine {
                 }
 
                 // Guardar en caché persistente para no volver a consultar
-                recordRating(ctx, title, year, isSeries, resolved.score, resolved.source, resolved.votes, resolved.imdbId, resolved.overview);
+                recordRating(ctx, title, year, isSeries, resolved.score, resolved.source, resolved.votes,
+                        resolved.imdbId, resolved.overview);
             } catch (Exception e) {
                 resolved = new RatingInfo(0.0, "", 0);
             } finally {
@@ -372,7 +401,8 @@ public final class RatingEngine {
     }
 
     private static boolean mightBeSeriesOrDoc(String title) {
-        if (title == null) return false;
+        if (title == null)
+            return false;
         String low = title.toLowerCase(Locale.ROOT);
         return low.contains("planeta") || low.contains("cosmos") || low.contains("tierra")
                 || low.contains("earth") || low.contains("serie") || low.contains("anime")
@@ -391,7 +421,8 @@ public final class RatingEngine {
             if (avg > 0.0) {
                 return new RatingInfo(avg, "TVMaze", 0, imdb, "");
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         return null;
     }
 
@@ -403,14 +434,19 @@ public final class RatingEngine {
             JSONArray arr = new JSONArray(body);
             for (int i = 0; i < arr.length() && i < 5; i++) {
                 JSONObject obj = arr.optJSONObject(i);
-                if (obj == null) continue;
+                if (obj == null)
+                    continue;
                 JSONObject s = obj.optJSONObject("show");
-                if (s == null) continue;
+                if (s == null)
+                    continue;
                 String name = s.optString("name", "");
                 String prem = s.optString("premiered", "");
                 int sYear = 0;
                 if (prem.length() >= 4) {
-                    try { sYear = Integer.parseInt(prem.substring(0, 4)); } catch (Exception ignored) {}
+                    try {
+                        sYear = Integer.parseInt(prem.substring(0, 4));
+                    } catch (Exception ignored) {
+                    }
                 }
                 int match = scoreMatch(targetTitle, targetYear, true, name, sYear, "serie");
                 if (match >= 120) {
@@ -423,7 +459,8 @@ public final class RatingEngine {
                     }
                 }
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         return null;
     }
 
@@ -433,7 +470,8 @@ public final class RatingEngine {
                 JSONObject bestObj = null;
                 if (tmdbId > 0) {
                     String type = isSeries ? "tv" : "movie";
-                    String url = "https://api.themoviedb.org/3/" + type + "/" + tmdbId + "?api_key=" + apiKey + "&language=es-MX";
+                    String url = "https://api.themoviedb.org/3/" + type + "/" + tmdbId + "?api_key=" + apiKey
+                            + "&language=es-MX";
                     String jsonStr = HttpSupport.text(url, "https://www.themoviedb.org/");
                     JSONObject obj = new JSONObject(jsonStr);
                     if (obj.has("id")) {
@@ -446,7 +484,10 @@ public final class RatingEngine {
                     String url = "https://api.themoviedb.org/3/search/" + type + "?api_key=" + apiKey
                             + "&query=" + URLEncoder.encode(cleanT, "UTF-8")
                             + "&language=es-MX"
-                            + (targetYear > 1900 ? (isSeries ? "&first_air_date_year=" + targetYear : "&primary_release_year=" + targetYear) : "");
+                            + (targetYear > 1900
+                                    ? (isSeries ? "&first_air_date_year=" + targetYear
+                                            : "&primary_release_year=" + targetYear)
+                                    : "");
                     String jsonStr = HttpSupport.text(url, "https://www.themoviedb.org/");
                     JSONObject resp = new JSONObject(jsonStr);
                     JSONArray results = resp.optJSONArray("results");
@@ -470,16 +511,21 @@ public final class RatingEngine {
                     String overview = bestObj.optString("overview", "").trim();
                     long id = bestObj.optLong("id", tmdbId);
 
-                    // Si la sinopsis en espanol mexicano vino vacia, intentar con espanol internacional
+                    // Si la sinopsis en espanol mexicano vino vacia, intentar con espanol
+                    // internacional
                     if (overview.isEmpty() && id > 0) {
                         try {
                             String type = isSeries ? "tv" : "movie";
-                            String esUrl = "https://api.themoviedb.org/3/" + type + "/" + id + "?api_key=" + apiKey + "&language=es-ES";
+                            String esUrl = "https://api.themoviedb.org/3/" + type + "/" + id + "?api_key=" + apiKey
+                                    + "&language=es-ES";
                             JSONObject esObj = new JSONObject(HttpSupport.text(esUrl, "https://www.themoviedb.org/"));
                             overview = esObj.optString("overview", "").trim();
-                            if (vote <= 0.0) vote = esObj.optDouble("vote_average", 0.0);
-                            if (count <= 0) count = esObj.optInt("vote_count", 0);
-                        } catch (Exception ignored) {}
+                            if (vote <= 0.0)
+                                vote = esObj.optDouble("vote_average", 0.0);
+                            if (count <= 0)
+                                count = esObj.optInt("vote_count", 0);
+                        } catch (Exception ignored) {
+                        }
                     }
 
                     if (!isSpanishText(overview)) {
@@ -495,35 +541,43 @@ public final class RatingEngine {
                         return new RatingInfo(vote, "TMDB", count, String.valueOf(id), overview);
                     }
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
         return null;
     }
 
     public static boolean isSpanishText(String text) {
-        if (text == null || text.trim().length() < 12) return false;
+        if (text == null || text.trim().length() < 12)
+            return false;
         String t = " " + text.toLowerCase(Locale.ROOT) + " ";
         int engMarkers = 0;
-        String[] engWords = { " the ", " and ", " with ", " from ", " this ", " that ", " when ", " after ", " season ", " series ", " about ", " life ", " their ", " into ", " have ", " who " };
+        String[] engWords = { " the ", " and ", " with ", " from ", " this ", " that ", " when ", " after ", " season ",
+                " series ", " about ", " life ", " their ", " into ", " have ", " who " };
         for (String w : engWords) {
-            if (t.contains(w)) engMarkers++;
+            if (t.contains(w))
+                engMarkers++;
         }
-        if (engMarkers >= 2) return false;
+        if (engMarkers >= 2)
+            return false;
         return true;
     }
 
     public static String queryWikipediaSpanish(String targetTitle) {
-        if (targetTitle == null || targetTitle.trim().isEmpty()) return "";
+        if (targetTitle == null || targetTitle.trim().isEmpty())
+            return "";
         try {
             String cleanT = targetTitle.replaceAll("\\s*\\(.*?\\)\\s*", "").trim();
-            String url = "https://es.wikipedia.org/api/rest_v1/page/summary/" + URLEncoder.encode(cleanT.replace(' ', '_'), "UTF-8");
+            String url = "https://es.wikipedia.org/api/rest_v1/page/summary/"
+                    + URLEncoder.encode(cleanT.replace(' ', '_'), "UTF-8");
             String json = HttpSupport.text(url, "https://es.wikipedia.org/");
             JSONObject obj = new JSONObject(json);
             String extract = obj.optString("extract", "").trim();
             if (isSpanishText(extract)) {
                 return extract;
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         return "";
     }
 
@@ -533,14 +587,16 @@ public final class RatingEngine {
             String route = "/search?q=" + URLEncoder.encode(cleanT, "UTF-8");
             JSONObject resp = CineHaxProvider.api(route);
             JSONArray items = resp.optJSONArray("items");
-            if (items == null || items.length() == 0) return null;
+            if (items == null || items.length() == 0)
+                return null;
 
             JSONObject bestCand = null;
             int bestScore = 120; // Umbral de coincidencia estricta para evitar remakes o confusiones
 
             for (int i = 0; i < items.length(); i++) {
                 JSONObject it = items.optJSONObject(i);
-                if (it == null) continue;
+                if (it == null)
+                    continue;
                 String candTitle = it.optString("title", "");
                 int candYear = it.optInt("year", 0);
                 String candKind = it.optString("kind", "");
@@ -559,24 +615,29 @@ public final class RatingEngine {
                     return new RatingInfo(vote, "TMDB", bestCand.optInt("ratings_count", 0), imdb, ov);
                 }
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         return null;
     }
 
     /**
-     * Compara el título, año y tipo de contenido para asegurar que no se confundan obras
+     * Compara el título, año y tipo de contenido para asegurar que no se confundan
+     * obras
      * con remakes, documentales con películas de ficción o series con películas.
      */
     public static int scoreMatch(String targetTitle, int targetYear, boolean isSeries,
-                                 String candTitle, int candYear, String candKind) {
+            String candTitle, int candYear, String candKind) {
         String ct = cleanTitle(targetTitle);
         String cc = cleanTitle(candTitle);
-        if (ct.isEmpty() || cc.isEmpty()) return -999;
+        if (ct.isEmpty() || cc.isEmpty())
+            return -999;
 
         // Verificación estricta de tipo
         boolean candIsMovie = "movie".equalsIgnoreCase(candKind);
-        if (isSeries && candIsMovie) return -999;
-        if (!isSeries && !candIsMovie && !candKind.isEmpty()) return -999;
+        if (isSeries && candIsMovie)
+            return -999;
+        if (!isSeries && !candIsMovie && !candKind.isEmpty())
+            return -999;
 
         int score = 50;
 
@@ -614,18 +675,21 @@ public final class RatingEngine {
 
     private static Set<String> splitWords(String text) {
         Set<String> words = new HashSet<>();
-        if (text == null) return words;
+        if (text == null)
+            return words;
         Matcher m = Pattern.compile("[a-zA-Z0-9áéíóúñ]+").matcher(text.toLowerCase(Locale.ROOT));
         while (m.find()) {
             String w = m.group();
-            if (w.length() > 2) words.add(w);
+            if (w.length() > 2)
+                words.add(w);
         }
         return words;
     }
 
     // Funciones de ordenamiento para la sección Explorar
     public static void sortByRating(List<CatalogData.Entry> list, final Context ctx) {
-        if (list == null || list.size() <= 1) return;
+        if (list == null || list.size() <= 1)
+            return;
         Collections.sort(list, (a, b) -> {
             RatingInfo rA = getRating(a, ctx);
             RatingInfo rB = getRating(b, ctx);
@@ -633,28 +697,35 @@ public final class RatingEngine {
             if (rA.hasScore() && rB.hasScore()) {
                 return Double.compare(rB.score, rA.score);
             }
-            if (rB.hasScore()) return 1;
-            if (rA.hasScore()) return -1;
+            if (rB.hasScore())
+                return 1;
+            if (rA.hasScore())
+                return -1;
             return Integer.compare(b.year, a.year);
         });
     }
 
     public static void sortByPopularity(List<CatalogData.Entry> list) {
-        if (list == null || list.size() <= 1) return;
+        if (list == null || list.size() <= 1)
+            return;
         Collections.sort(list, (a, b) -> {
-            int scoreA = (a.tmdb > 0 ? 100 : 0) + (a.backdrop != null && !a.backdrop.isEmpty() ? 50 : 0) + (a.rating > 0 ? (int)(a.rating * 10) : 0);
-            int scoreB = (b.tmdb > 0 ? 100 : 0) + (b.backdrop != null && !b.backdrop.isEmpty() ? 50 : 0) + (b.rating > 0 ? (int)(b.rating * 10) : 0);
+            int scoreA = (a.tmdb > 0 ? 100 : 0) + (a.backdrop != null && !a.backdrop.isEmpty() ? 50 : 0)
+                    + (a.rating > 0 ? (int) (a.rating * 10) : 0);
+            int scoreB = (b.tmdb > 0 ? 100 : 0) + (b.backdrop != null && !b.backdrop.isEmpty() ? 50 : 0)
+                    + (b.rating > 0 ? (int) (b.rating * 10) : 0);
             return Integer.compare(scoreB, scoreA);
         });
     }
 
     public static void sortByYear(List<CatalogData.Entry> list) {
-        if (list == null || list.size() <= 1) return;
+        if (list == null || list.size() <= 1)
+            return;
         Collections.sort(list, (a, b) -> Integer.compare(b.year, a.year));
     }
 
     public static void sortByRecent(List<CatalogData.Entry> list) {
-        if (list == null || list.size() <= 1) return;
+        if (list == null || list.size() <= 1)
+            return;
         Collections.sort(list, (a, b) -> Long.compare(b.id, a.id));
     }
 }
