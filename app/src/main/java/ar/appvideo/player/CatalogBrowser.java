@@ -126,7 +126,6 @@ public final class CatalogBrowser {
             button(filterBarContainer, "❤️ Romance", () -> category("genre:romance"), -2);
             button(filterBarContainer, "🕵️ Crimen / Suspenso", () -> category("genre:crimen"), -2);
             button(filterBarContainer, "👶 Animación", () -> category("genre:animacion"), -2);
-            button(filterBarContainer, "🔞 Zona Adultos (+18)", () -> category("adults"), -2);
             button(filterBarContainer, "📜 Documentales", () -> category("genre:documental"), -2);
         } else if ("DoramasFlix".equals(pName)) {
             button(filterBarContainer, "🌸 Doramas y K-Dramas", () -> category("serie"), -2);

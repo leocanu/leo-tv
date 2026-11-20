@@ -1,7 +1,7 @@
 {
-  "versionCode": 37,
-  "versionName": "0.37.0",
-  "apkUrl": "https://github.com/leocanu/leo-tv/releases/download/v0.37.0/LeoTV-v0.37.0.apk",
-  "changelog": "• Integración de agenda y transmisiones de Fútbol en Vivo (Fútbol Libre / Xuper)\n• Resolución dinámica de señales deportivas tokenizadas en tiempo real (ESPN 1-4, ESPN Premium, Fox Sports 1-3, TyC Sports, TNT Sports, DSports y GolTV)\n• Actualizador dinámico de catálogo (CatalogUpdater): sincronización automática y manual desde la barra lateral y ajustes\n• Caché local inteligente de agenda deportiva y estrenos para funcionamiento inmediato y offline",
+  "versionCode": 38,
+  "versionName": "0.38.0",
+  "apkUrl": "https://github.com/leocanu/leo-tv/releases/download/v0.38.0/LeoTV-v0.38.0.apk",
+  "changelog": "• Limpieza del filtro de catálogo de adultos: el cine comercial, romance y drama ya no se bloquea indebidamente y se navega libremente en sus categorías\n• Control Parental con PIN restringido estrictamente para resguardo de contenidos correspondientes\n• Corrección de señales de televisión en vivo y canales de cine (RTVE Cine, Canela TV, Cartoon Network, Alterna TV)\n• Identificación y descripción del botón de descargas locales (offline) en la barra lateral",
   "mandatory": false
 }

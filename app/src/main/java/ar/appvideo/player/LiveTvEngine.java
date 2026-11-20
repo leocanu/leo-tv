@@ -353,30 +353,35 @@ public final class LiveTvEngine {
                     "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Euronews_logo_2016.svg/600px-Euronews_logo_2016.svg.png",
                     "HD 1080p", "Euronews Hoy · La Mirada Europea", "No Comment & Actualidad"));
         } else if ("cine".equals(catId)) {
-            list.add(new LiveChannel("cine_amc", "AMC Latin America HD", "cine",
-                    "http://15.204.246.24:8080/AMCHD/index.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/AMC_logo_2019.svg/960px-AMC_logo_2019.svg.png",
-                    "HD 1080p", "Cine de Acción y Suspenso", "The Walking Dead Universo"));
+            list.add(new LiveChannel("cine_alterna", "Alterna TV Cine y Series", "cine",
+                    "https://tv.alterna.ar/stream/hls/live.m3u8", "",
+                    "https://tv.alterna.ar/alternatv.png",
+                    "HD 720p", "Cine Independiente y Series", "Maratón Nocturno de Ficción"));
 
             list.add(new LiveChannel("cine_comedy", "Comedy Central Latino HD", "cine",
                     "https://bantel-cdn1.iptvperu.tv:1936/btnscrtn/Comedy_Central/playlist.m3u8", "",
                     "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Comedy_Central_2018.svg/960px-Comedy_Central_2018.svg.png",
                     "HD 1080p", "South Park · Temporadas dobladas", "Especiales de Comedia y Risas"));
 
-            list.add(new LiveChannel("cine_alterna", "Alterna TV Cine y Series", "cine",
-                    "https://tv.alterna.ar/stream/hls/live.m3u8", "",
-                    "https://tv.alterna.ar/alternatv.png",
-                    "HD 720p", "Cine Independiente y Series", "Maratón Nocturno de Ficción"));
+            list.add(new LiveChannel("cine_canela", "Canela TV Cine Latino", "cine",
+                    "https://stream.ads.ottera.tv/playlist.m3u8?network_id=2376", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 1080p", "Cine Mexicano, Clásico y Estrenos", "Festival de Películas Latinas"));
+
+            list.add(new LiveChannel("cine_rtve", "RTVE Somos Cine y Ficción", "cine",
+                    "https://rtvelivestream.akamaized.net/rtvesec/somos/somos_main.m3u8", "",
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/RTVE.es_Logo.svg/600px-RTVE.es_Logo.svg.png",
+                    "HD 1080p", "Cine en Español 24/7", "Grandes Producciones y Festivales"));
         } else if ("kids".equals(catId)) {
             list.add(new LiveChannel("kid_cn", "Cartoon Network Latino HD", "kids",
                     "https://bantel-cdn1.iptvperu.tv:1936/btnscrtn/cartoonnetwork.stream/chunks.m3u8", "",
                     "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Cartoon_Network_2010_logo.svg/960px-Cartoon_Network_2010_logo.svg.png",
                     "HD 1080p", "El Increíble Mundo de Gumball", "Hora de Aventura y Teen Titans Go"));
 
-            list.add(new LiveChannel("kid_disney", "Disney Channel Latino HD", "kids",
-                    "http://15.204.246.24:8080/DisneyHD/index.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/f/ff/2024_Disney_Channel_text_logo.svg",
-                    "HD 1080p", "Phineas y Ferb · Episodios Especiales", "Gravity Falls y Series Juveniles"));
+            list.add(new LiveChannel("kid_pluto_nick", "Pluto TV Nick Clásico Latino", "kids",
+                    "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/5f971ba48e4265000780f2d3/master.m3u8", "",
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Nickelodeon_2009_logo.svg/600px-Nickelodeon_2009_logo.svg.png",
+                    "HD 1080p", "Animación Clásica y Aventuras", "Rugrats, Bob Esponja y Más"));
 
             list.add(new LiveChannel("kid_clan", "Clan TV RTVE (Infantil)", "kids",
                     "https://rtvelivestream.akamaized.net/rtvesec/clan/clan_main.m3u8", "",
@@ -418,10 +423,10 @@ public final class LiveTvEngine {
                     "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/CM_El_Canal_de_la_M%C3%BAsica_logo.png/500px-CM_El_Canal_de_la_M%C3%BAsica_logo.png",
                     "HD 720p", "Rock Nacional y Música Latina", "Especiales Acústicos y Recitales"));
 
-            list.add(new LiveChannel("mus_much", "MuchMusic Retro & Rock", "musica",
-                    "http://15.204.246.24:8080/MuchMusicHD/index.m3u8", "",
+            list.add(new LiveChannel("mus_qmusica", "Quiero Música en Mi Idioma", "musica",
+                    "https://live-01-02-ar-claro.clarovideo.net/live/eds/QuieroMusica/HLS_01/QuieroMusica.m3u8", "",
                     "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/MuchMusic_logo.svg/600px-MuchMusic_logo.svg.png",
-                    "HD 720p", "Grandes Conciertos en Vivo", "Especiales de Rock y Clásicos"));
+                    "HD 720p", "Música Latina y Entrevistas", "Lo Mejor del Pop y Rock en Español"));
 
             list.add(new LiveChannel("mus_stingray", "Stingray CMusic Conciertos", "musica",
                     "https://rakuten-stingraycmusic-4-es.samsung.wurl.tv/playlist.m3u8", "",
