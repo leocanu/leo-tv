@@ -91,6 +91,8 @@ public final class LiveTvEngine {
         cats.add(new TvCategory("recents", "🕒 Canales Recientes", "🕒"));
         cats.add(new TvCategory("iptv_org_explorer", "🌍 IPTV-org (Filtros por País y Género)", "🌍"));
         cats.add(new TvCategory("iptv_org_ar", "🇦🇷 IPTV-org Argentina (186 Canales)", "🇦🇷"));
+        cats.add(new TvCategory("tdtchannels", "🇪🇸 TDTChannels TV (574 Canales)", "🇪🇸"));
+        cats.add(new TvCategory("freetv", "🌐 Free-TV Global IPTV (2.200 Canales)", "🌐"));
         cats.add(new TvCategory("argentina", "🇦🇷 Argentina (Aire y Noticias)", "🇦🇷"));
         cats.add(new TvCategory("deportes", "⚽ Deportes en Directo", "⚽"));
         cats.add(new TvCategory("noticias", "📰 Noticias 24/7", "📰"));

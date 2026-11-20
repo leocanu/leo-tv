@@ -1,7 +1,7 @@
 {
-  "versionCode": 42,
-  "versionName": "0.42.0",
-  "apkUrl": "https://github.com/leocanu/leo-tv/releases/download/v0.42.0/LeoTV-v0.42.0.apk",
-  "changelog": "• Filtros combinables de País y Categoría para IPTV-org Mundial (2.369 canales)\n• Selección dinámica de categorías: solo se muestran las categorías con canales disponibles para el país elegido\n• Mapeo oficial de categorías normalizadas (General, Noticias, Deportes, Películas y cine, Series, Documentales, Infantil, Animación, Música, Entretenimiento, Comedia, Cocina, Cultura, Ciencia y tecnología, Viajes, Clásicos, Familiar, Educación y Sin categoría)\n• Soporte multicanal y canales en múltiples categorías (aparecen en cada una pero una sola vez en la vista general)\n• Contenido para adultos totalmente oculto\n• Cruce automático de tvg-id con base de datos oficial de IPTV-org",
+  "versionCode": 43,
+  "versionName": "0.43.0",
+  "apkUrl": "https://github.com/leocanu/leo-tv/releases/download/v0.43.0/LeoTV-v0.43.0.apk",
+  "changelog": "• Integración de TDTChannels TV (574 canales abiertos de España y autonómicos)\n• Integración de Free-TV Global IPTV (2.200 canales de televisión mundial)\n• Acceso directo desde 'Seleccionar Proveedor' y menú lateral de TV en Vivo\n• Incorporación de fuentes en el Gestor de Listas M3U Personalizadas de Ajustes\n• Filtro automático de contenido para adultos en listas M3U estándar\n• Límite ampliado a 3.000 señales por lista para soporte fluido de listas masivas",
   "mandatory": false
 }

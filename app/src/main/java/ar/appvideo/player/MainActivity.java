@@ -811,6 +811,16 @@ public class MainActivity extends Activity {
             catBtn.setBackground(b);
 
             catBtn.setOnClickListener(v -> {
+                if ("iptv_org_explorer".equals(cat.id)) {
+                    showIptvOrgExplorer();
+                    return;
+                } else if ("tdtchannels".equals(cat.id)) {
+                    showM3uList("TDTChannels TV", "https://www.tdtchannels.com/lists/tv.m3u8", true);
+                    return;
+                } else if ("freetv".equals(cat.id)) {
+                    showM3uList("Free-TV Global IPTV", "https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8", true);
+                    return;
+                }
                 activeTvCat = cat.id;
                 chanHeading.setText(cat.label);
                 renderTvChannels(chanCol, cat.id);
@@ -1318,7 +1328,8 @@ public class MainActivity extends Activity {
             GradientDrawable g = new GradientDrawable();
             g.setColor(f ? Color.rgb(60, 75, 110) : Color.rgb(40, 48, 68));
             g.setCornerRadius(dp(8));
-            if (f) g.setStroke(dp(2), Color.rgb(245, 197, 66));
+            if (f)
+                g.setStroke(dp(2), Color.rgb(245, 197, 66));
             m3uToggleModeBtn.setBackground(g);
         });
         m3uToggleModeBtn.setOnClickListener(v -> {
@@ -1350,12 +1361,16 @@ public class MainActivity extends Activity {
             searchBox.setBackground(g);
         });
         searchBox.addTextChangedListener(new android.text.TextWatcher() {
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 m3uSearchFilter = s != null ? s.toString().trim() : "";
                 renderM3uFilteredChannels();
             }
-            public void afterTextChanged(android.text.Editable s) {}
+
+            public void afterTextChanged(android.text.Editable s) {
+            }
         });
         LinearLayout.LayoutParams sbLp = new LinearLayout.LayoutParams(dp(320), dp(40));
         sbLp.setMargins(dp(14), 0, 0, 0);
@@ -1400,7 +1415,8 @@ public class MainActivity extends Activity {
                 GradientDrawable g = new GradientDrawable();
                 g.setColor(f ? Color.rgb(110, 80, 210) : (isSel ? Color.rgb(90, 60, 180) : Color.rgb(30, 35, 50)));
                 g.setCornerRadius(dp(16));
-                if (f) g.setStroke(dp(2), Color.WHITE);
+                if (f)
+                    g.setStroke(dp(2), Color.WHITE);
                 chip.setBackground(g);
                 chip.setTextColor(Color.WHITE);
             });
@@ -1440,7 +1456,8 @@ public class MainActivity extends Activity {
     }
 
     private void renderM3uFilteredChannels() {
-        if (m3uChannelsContainer == null) return;
+        if (m3uChannelsContainer == null)
+            return;
         m3uChannelsContainer.removeAllViews();
 
         java.util.List<String[]> filtered = new java.util.ArrayList<>();
@@ -1494,7 +1511,8 @@ public class MainActivity extends Activity {
                 row.setFocusable(true);
                 row.setClickable(true);
 
-                // Enlace secuencial de foco para que el D-Pad baje y suba sin retroceder ni saltar
+                // Enlace secuencial de foco para que el D-Pad baje y suba sin retroceder ni
+                // saltar
                 if (i > 0) {
                     row.setNextFocusUpId(viewIds[i - 1]);
                 }
@@ -1668,7 +1686,7 @@ public class MainActivity extends Activity {
                         new java.io.InputStreamReader(c.getInputStream(), "UTF-8"))) {
                     String line, title = null, group = "";
                     int scanned = 0;
-                    while ((line = r.readLine()) != null && scanned++ < 100000 && entries.size() < 1200) {
+                    while ((line = r.readLine()) != null && scanned++ < 100000 && entries.size() < 3000) {
                         line = line.trim();
                         if (line.startsWith("#EXTINF")) {
                             int comma = line.lastIndexOf(',');
@@ -1677,7 +1695,16 @@ public class MainActivity extends Activity {
                                     .matcher(line);
                             group = m.find() ? m.group(1) : "Otros";
                         } else if (title != null && (line.startsWith("https://") || line.startsWith("http://"))) {
-                            entries.add(new String[] { title, group, line });
+                            // Ocultar canales explícitos para adultos en listas M3U estándar
+                            String lowerTitle = title.toLowerCase();
+                            String lowerGrp = group.toLowerCase();
+                            boolean isAdult = lowerGrp.contains("adult") || lowerGrp.contains("xxx")
+                                    || lowerGrp.contains("porno") || lowerTitle.contains("adult")
+                                    || lowerTitle.contains("xxx") || lowerTitle.contains("playboy")
+                                    || lowerTitle.contains("brazzers") || lowerTitle.contains("hustler");
+                            if (!isAdult) {
+                                entries.add(new String[] { title, group, line });
+                            }
                             title = null;
                         } else if (!line.isEmpty() && !line.startsWith("#"))
                             title = null;
@@ -1748,7 +1775,8 @@ public class MainActivity extends Activity {
             GradientDrawable g = new GradientDrawable();
             g.setColor(f ? Color.rgb(60, 75, 110) : Color.rgb(40, 48, 68));
             g.setCornerRadius(dp(8));
-            if (f) g.setStroke(dp(2), Color.rgb(245, 197, 66));
+            if (f)
+                g.setStroke(dp(2), Color.rgb(245, 197, 66));
             iptvToggleViewBtn.setBackground(g);
         });
         iptvToggleViewBtn.setOnClickListener(v -> {
@@ -1779,12 +1807,16 @@ public class MainActivity extends Activity {
             searchBox.setBackground(g);
         });
         searchBox.addTextChangedListener(new android.text.TextWatcher() {
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 iptvSearchQuery = s != null ? s.toString().trim() : "";
                 renderIptvFilteredChannels();
             }
-            public void afterTextChanged(android.text.Editable s) {}
+
+            public void afterTextChanged(android.text.Editable s) {
+            }
         });
         LinearLayout.LayoutParams sbLp = new LinearLayout.LayoutParams(dp(320), dp(40));
         sbLp.setMargins(dp(14), 0, 0, 0);
@@ -1811,7 +1843,8 @@ public class MainActivity extends Activity {
 
         for (LiveTvEngine.IptvOrgChannel ch : iptvCatalogList) {
             String cCode = ch.country.toUpperCase();
-            if (cCode.isEmpty()) continue;
+            if (cCode.isEmpty())
+                continue;
             countryCounts.put(cCode, countryCounts.containsKey(cCode) ? countryCounts.get(cCode) + 1 : 1);
             if (!countryNames.containsKey(cCode)) {
                 countryNames.put(cCode, ch.countryName);
@@ -1824,7 +1857,15 @@ public class MainActivity extends Activity {
             final int cCnt = cEntry.getValue();
             final String cName = countryNames.get(cCode);
 
-            String flag = "AR".equals(cCode) ? "🇦🇷 " : "US".equals(cCode) ? "🇺🇸 " : "ES".equals(cCode) ? "🇪🇸 " : "MX".equals(cCode) ? "🇲🇽 " : "CL".equals(cCode) ? "🇨🇱 " : "CO".equals(cCode) ? "🇨🇴 " : "PE".equals(cCode) ? "🇵🇪 " : "UY".equals(cCode) ? "🇺🇾 " : "ALL".equals(cCode) ? "🌍 " : "🌐 ";
+            String flag = "AR".equals(cCode) ? "🇦🇷 "
+                    : "US".equals(cCode) ? "🇺🇸 "
+                            : "ES".equals(cCode) ? "🇪🇸 "
+                                    : "MX".equals(cCode) ? "🇲🇽 "
+                                            : "CL".equals(cCode) ? "🇨🇱 "
+                                                    : "CO".equals(cCode) ? "🇨🇴 "
+                                                            : "PE".equals(cCode) ? "🇵🇪 "
+                                                                    : "UY".equals(cCode) ? "🇺🇾 "
+                                                                            : "ALL".equals(cCode) ? "🌍 " : "🌐 ";
             String label = flag + cName + " (" + cCnt + ")";
 
             Button cBtn = new Button(this);
@@ -1845,7 +1886,8 @@ public class MainActivity extends Activity {
                 GradientDrawable g = new GradientDrawable();
                 g.setColor(f ? Color.rgb(45, 145, 240) : (isSel ? Color.rgb(30, 120, 210) : Color.rgb(26, 32, 46)));
                 g.setCornerRadius(dp(16));
-                if (f) g.setStroke(dp(2), Color.WHITE);
+                if (f)
+                    g.setStroke(dp(2), Color.WHITE);
                 cBtn.setBackground(g);
                 cBtn.setTextColor(Color.WHITE);
             });
@@ -1873,7 +1915,8 @@ public class MainActivity extends Activity {
         body.addView(countryScroll);
 
         // 3. Fila 2 de Categorías dinámicas (HorizontalScrollView)
-        TextView catLabel = text("🏷️ CATEGORÍA / GÉNERO (SOLO LAS DISPONIBLES PARA EL PAÍS SELECCIONADO):", 12, Color.rgb(180, 190, 220));
+        TextView catLabel = text("🏷️ CATEGORÍA / GÉNERO (SOLO LAS DISPONIBLES PARA EL PAÍS SELECCIONADO):", 12,
+                Color.rgb(180, 190, 220));
         catLabel.setTypeface(null, Typeface.BOLD);
         catLabel.setPadding(0, dp(4), 0, dp(4));
         body.addView(catLabel);
@@ -1901,7 +1944,8 @@ public class MainActivity extends Activity {
     }
 
     private void rebuildIptvCategoryRow() {
-        if (iptvCategoriesRow == null || iptvCatalogList == null) return;
+        if (iptvCategoriesRow == null || iptvCatalogList == null)
+            return;
         iptvCategoriesRow.removeAllViews();
         iptvCategoryButtons.clear();
 
@@ -1959,7 +2003,8 @@ public class MainActivity extends Activity {
             GradientDrawable g = new GradientDrawable();
             g.setColor(f ? Color.rgb(130, 80, 225) : (isSel ? Color.rgb(110, 60, 200) : Color.rgb(28, 34, 48)));
             g.setCornerRadius(dp(16));
-            if (f) g.setStroke(dp(2), Color.WHITE);
+            if (f)
+                g.setStroke(dp(2), Color.WHITE);
             chip.setBackground(g);
             chip.setTextColor(Color.WHITE);
         });
@@ -1984,7 +2029,8 @@ public class MainActivity extends Activity {
     }
 
     private void renderIptvFilteredChannels() {
-        if (iptvChannelsContainer == null || iptvCatalogList == null) return;
+        if (iptvChannelsContainer == null || iptvCatalogList == null)
+            return;
         iptvChannelsContainer.removeAllViews();
 
         java.util.List<LiveTvEngine.IptvOrgChannel> filtered = new java.util.ArrayList<>();
@@ -2007,8 +2053,10 @@ public class MainActivity extends Activity {
             filtered.add(ch);
         }
 
-        String catDisplay = "all".equals(iptvSelCategory) ? "Todas las categorías" : LiveTvEngine.CATEGORY_LABELS.get(iptvSelCategory);
-        if (catDisplay == null) catDisplay = iptvSelCategory;
+        String catDisplay = "all".equals(iptvSelCategory) ? "Todas las categorías"
+                : LiveTvEngine.CATEGORY_LABELS.get(iptvSelCategory);
+        if (catDisplay == null)
+            catDisplay = iptvSelCategory;
         String countryDisplay = "ALL".equals(iptvSelCountry) ? "Todos los países" : iptvSelCountry;
 
         if (iptvSummaryCountLabel != null) {
@@ -2044,8 +2092,10 @@ public class MainActivity extends Activity {
                 row.setFocusable(true);
                 row.setClickable(true);
 
-                if (i > 0) row.setNextFocusUpId(viewIds[i - 1]);
-                if (i < count - 1) row.setNextFocusDownId(viewIds[i + 1]);
+                if (i > 0)
+                    row.setNextFocusUpId(viewIds[i - 1]);
+                if (i < count - 1)
+                    row.setNextFocusDownId(viewIds[i + 1]);
 
                 GradientDrawable rowBg = new GradientDrawable();
                 rowBg.setColor(Color.rgb(20, 24, 34));
@@ -2092,7 +2142,8 @@ public class MainActivity extends Activity {
                 // Badge de Categoría
                 String primaryCat = !ch.categories.isEmpty() ? ch.categories.get(0) : "uncategorized";
                 String primaryCatLabel = LiveTvEngine.CATEGORY_LABELS.get(primaryCat);
-                if (primaryCatLabel == null) primaryCatLabel = primaryCat;
+                if (primaryCatLabel == null)
+                    primaryCatLabel = primaryCat;
                 TextView catBadge = text(primaryCatLabel, 11, Color.rgb(245, 197, 66));
                 catBadge.setSingleLine(true);
                 catBadge.setPadding(dp(6), dp(2), dp(8), dp(2));
@@ -2180,8 +2231,12 @@ public class MainActivity extends Activity {
 
                 String primaryCat = !ch.categories.isEmpty() ? ch.categories.get(0) : "uncategorized";
                 String primaryCatLabel = LiveTvEngine.CATEGORY_LABELS.get(primaryCat);
-                if (primaryCatLabel == null) primaryCatLabel = primaryCat;
-                TextView g = text(ch.country + " · " + primaryCatLabel + (ch.streamUrls.size() > 1 ? " (" + ch.streamUrls.size() + " señ.)" : ""), 11, Color.rgb(245, 197, 66));
+                if (primaryCatLabel == null)
+                    primaryCatLabel = primaryCat;
+                TextView g = text(
+                        ch.country + " · " + primaryCatLabel
+                                + (ch.streamUrls.size() > 1 ? " (" + ch.streamUrls.size() + " señ.)" : ""),
+                        11, Color.rgb(245, 197, 66));
                 g.setSingleLine(true);
                 col.addView(g);
 
@@ -2210,7 +2265,8 @@ public class MainActivity extends Activity {
     }
 
     private void playIptvOrgChannel(LiveTvEngine.IptvOrgChannel ch) {
-        if (ch == null || ch.streamUrls.isEmpty()) return;
+        if (ch == null || ch.streamUrls.isEmpty())
+            return;
 
         if (ch.streamUrls.size() == 1) {
             playMovie(ch.name, ch.getPrimaryStream(), "IPTV-org " + ch.country);
@@ -2219,7 +2275,8 @@ public class MainActivity extends Activity {
 
         String[] options = new String[ch.streamUrls.size()];
         for (int i = 0; i < ch.streamUrls.size(); i++) {
-            options[i] = (i == 0 ? "⭐ Señal Principal (" : "📡 Señal Alternativa " + (i + 1) + " (") + (i + 1) + " de " + ch.streamUrls.size() + ")";
+            options[i] = (i == 0 ? "⭐ Señal Principal (" : "📡 Señal Alternativa " + (i + 1) + " (") + (i + 1) + " de "
+                    + ch.streamUrls.size() + ")";
         }
 
         android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(this);
@@ -2501,8 +2558,11 @@ public class MainActivity extends Activity {
         addProviderTile(grid, "CANALES DE\nTV Y CINE\nRECOMENDADO", "tv", "TV", Color.WHITE,
                 this::showLiveTvStudio);
 
-        addProviderTile(grid, "TDTCHANNELS\nTV EN ESPAÑOL", "tv", "TV", Color.WHITE,
+        addProviderTile(grid, "TDTCHANNELS\nTV (574 CANALES)", "tv", "🇪🇸", Color.rgb(235, 180, 50),
                 () -> showM3uList("TDTChannels TV", "https://www.tdtchannels.com/lists/tv.m3u8", true));
+
+        addProviderTile(grid, "FREE-TV IPTV\n(2.200 CANALES)", "tv", "🌐", Color.rgb(60, 180, 120),
+                () -> showM3uList("Free-TV IPTV Global", "https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8", true));
 
         addProviderTile(grid, "NOVELAS TURCAS\nY ASIÁTICAS", "icon", "🇹🇷", Color.rgb(220, 50, 60),
                 () -> {
@@ -5502,7 +5562,7 @@ public class MainActivity extends Activity {
         String[] options = new String[] {
                 "🔄  Actualizar Catálogo y Agenda Deportiva (Fútbol Libre)",
                 "🇦🇷  Actualizar Fuente IPTV-org Argentina (URL M3U)",
-                "📺  Listas M3U / IPTV Personalizadas (Cargar URL)",
+                "📺  Listas M3U / IPTV Personalizadas (TDTChannels, Free-TV, etc.)",
                 "⚙️  Personalizar Carruseles de Inicio (Ordenar y Ocultar)",
                 "📡  Seleccionar Proveedor Activo ("
                         + ((activeProvider == null || activeProvider.isEmpty()) ? "CineHax" : activeProvider) + ")",
@@ -5607,6 +5667,23 @@ public class MainActivity extends Activity {
             arr = new org.json.JSONArray();
         }
 
+        // Si es la primera vez que se abre, sembrar fuentes recomendadas (TDTChannels y Free-TV)
+        if (arr.length() == 0) {
+            try {
+                org.json.JSONObject tdt = new org.json.JSONObject();
+                tdt.put("name", "🇪🇸 TDTChannels TV (España y Autonómicos)");
+                tdt.put("url", "https://www.tdtchannels.com/lists/tv.m3u8");
+                arr.put(tdt);
+
+                org.json.JSONObject freetv = new org.json.JSONObject();
+                freetv.put("name", "🌐 Free-TV Global IPTV (Mundial)");
+                freetv.put("url", "https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8");
+                arr.put(freetv);
+
+                sp.edit().putString("saved_m3u_json", arr.toString()).apply();
+            } catch (Exception ignored) {}
+        }
+
         java.util.List<String> items = new java.util.ArrayList<>();
         items.add("➕  Agregar Nueva Lista M3U (Pegar URL)");
         final int listCount = arr.length();
@@ -5668,7 +5745,8 @@ public class MainActivity extends Activity {
         b.setPositiveButton("Guardar y Abrir", (d, w) -> {
             String name = nameInput.getText().toString().trim();
             String url = urlInput.getText().toString().trim();
-            if (name.isEmpty()) name = "Lista IPTV " + (System.currentTimeMillis() % 1000);
+            if (name.isEmpty())
+                name = "Lista IPTV " + (System.currentTimeMillis() % 1000);
             if (url.isEmpty()) {
                 Toast.makeText(this, "La URL no puede estar vacía", Toast.LENGTH_SHORT).show();
                 return;
@@ -5704,7 +5782,8 @@ public class MainActivity extends Activity {
             try {
                 org.json.JSONArray newArr = new org.json.JSONArray();
                 for (int i = 0; i < arr.length(); i++) {
-                    if (i != which) newArr.put(arr.get(i));
+                    if (i != which)
+                        newArr.put(arr.get(i));
                 }
                 getSharedPreferences("leo_tv_custom_m3u", MODE_PRIVATE)
                         .edit().putString("saved_m3u_json", newArr.toString()).apply();
