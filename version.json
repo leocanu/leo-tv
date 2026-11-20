@@ -1,7 +1,7 @@
 {
-  "versionCode": 41,
-  "versionName": "0.41.0",
-  "apkUrl": "https://github.com/leocanu/leo-tv/releases/download/v0.41.0/LeoTV-v0.41.0.apk",
-  "changelog": "• Integración oficial permanente de IPTV-org Argentina (186 canales únicos agrupados con sus logos oficiales)\n• Agrupamiento inteligente de múltiples señales alternativas bajo un mismo canal con conmutación automática de respaldo\n• Opción para actualizar la fuente desde la URL M3U remota en Ajustes (⚙️)\n• Acceso directo desde el menú de Canales y el estudio de TV en vivo",
+  "versionCode": 42,
+  "versionName": "0.42.0",
+  "apkUrl": "https://github.com/leocanu/leo-tv/releases/download/v0.42.0/LeoTV-v0.42.0.apk",
+  "changelog": "• Filtros combinables de País y Categoría para IPTV-org Mundial (2.369 canales)\n• Selección dinámica de categorías: solo se muestran las categorías con canales disponibles para el país elegido\n• Mapeo oficial de categorías normalizadas (General, Noticias, Deportes, Películas y cine, Series, Documentales, Infantil, Animación, Música, Entretenimiento, Comedia, Cocina, Cultura, Ciencia y tecnología, Viajes, Clásicos, Familiar, Educación y Sin categoría)\n• Soporte multicanal y canales en múltiples categorías (aparecen en cada una pero una sola vez en la vista general)\n• Contenido para adultos totalmente oculto\n• Cruce automático de tvg-id con base de datos oficial de IPTV-org",
   "mandatory": false
 }

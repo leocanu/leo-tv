@@ -89,6 +89,7 @@ public final class LiveTvEngine {
         List<TvCategory> cats = new ArrayList<>();
         cats.add(new TvCategory("favs", "⭐ Favoritos de TV", "⭐"));
         cats.add(new TvCategory("recents", "🕒 Canales Recientes", "🕒"));
+        cats.add(new TvCategory("iptv_org_explorer", "🌍 IPTV-org (Filtros por País y Género)", "🌍"));
         cats.add(new TvCategory("iptv_org_ar", "🇦🇷 IPTV-org Argentina (186 Canales)", "🇦🇷"));
         cats.add(new TvCategory("argentina", "🇦🇷 Argentina (Aire y Noticias)", "🇦🇷"));
         cats.add(new TvCategory("deportes", "⚽ Deportes en Directo", "⚽"));
@@ -988,6 +989,129 @@ public final class LiveTvEngine {
             }
         }
         return channels.size();
+    }
+
+    public static final Map<String, String> CATEGORY_LABELS = new LinkedHashMap<>();
+    static {
+        CATEGORY_LABELS.put("general", "General");
+        CATEGORY_LABELS.put("news", "Noticias");
+        CATEGORY_LABELS.put("sports", "Deportes");
+        CATEGORY_LABELS.put("movies", "Películas y cine");
+        CATEGORY_LABELS.put("series", "Series");
+        CATEGORY_LABELS.put("documentary", "Documentales");
+        CATEGORY_LABELS.put("kids", "Infantil");
+        CATEGORY_LABELS.put("animation", "Animación");
+        CATEGORY_LABELS.put("music", "Música");
+        CATEGORY_LABELS.put("entertainment", "Entretenimiento");
+        CATEGORY_LABELS.put("comedy", "Comedia");
+        CATEGORY_LABELS.put("cooking", "Cocina");
+        CATEGORY_LABELS.put("culture", "Cultura");
+        CATEGORY_LABELS.put("science", "Ciencia y tecnología");
+        CATEGORY_LABELS.put("travel", "Viajes");
+        CATEGORY_LABELS.put("classic", "Clásicos");
+        CATEGORY_LABELS.put("family", "Familiar");
+        CATEGORY_LABELS.put("education", "Educación");
+        CATEGORY_LABELS.put("uncategorized", "Sin categoría");
+    }
+
+    public static final class IptvOrgChannel {
+        public final String id;
+        public final String name;
+        public final String logo;
+        public final String country;
+        public final String countryName;
+        public final List<String> categories;
+        public final List<String> streamUrls;
+
+        public IptvOrgChannel(String id, String name, String logo, String country, String countryName, List<String> categories, List<String> streamUrls) {
+            this.id = id;
+            this.name = name;
+            this.logo = logo != null ? logo : "";
+            this.country = country != null ? country : "";
+            this.countryName = countryName != null ? countryName : country;
+            this.categories = categories != null ? categories : new ArrayList<>();
+            this.streamUrls = streamUrls != null ? streamUrls : new ArrayList<>();
+        }
+
+        public String getPrimaryStream() {
+            return !streamUrls.isEmpty() ? streamUrls.get(0) : "";
+        }
+
+        public String getBackupStream() {
+            return streamUrls.size() > 1 ? streamUrls.get(1) : "";
+        }
+    }
+
+    private static List<IptvOrgChannel> iptvCatalogCache = null;
+
+    public static synchronized List<IptvOrgChannel> loadIptvOrgCatalog(Context ctx) {
+        if (iptvCatalogCache != null && !iptvCatalogCache.isEmpty()) {
+            return iptvCatalogCache;
+        }
+
+        List<IptvOrgChannel> list = new ArrayList<>();
+        try {
+            String jsonStr = null;
+            java.io.File customFile = new java.io.File(ctx.getFilesDir(), "iptv_catalog_updated.json");
+            if (customFile.exists() && customFile.length() > 500) {
+                try (java.io.FileInputStream fis = new java.io.FileInputStream(customFile);
+                     BufferedReader br = new BufferedReader(new InputStreamReader(fis, "UTF-8"))) {
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = br.readLine()) != null) sb.append(line);
+                    jsonStr = sb.toString();
+                }
+            }
+            if (jsonStr == null) {
+                try (java.io.InputStream is = ctx.getAssets().open("iptv_catalog.json");
+                     BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"))) {
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = br.readLine()) != null) sb.append(line);
+                    jsonStr = sb.toString();
+                }
+            }
+
+            if (jsonStr != null) {
+                JSONArray arr = new JSONArray(jsonStr);
+                for (int i = 0; i < arr.length(); i++) {
+                    JSONObject obj = arr.getJSONObject(i);
+                    String id = obj.optString("id", "ch_" + i);
+                    String name = obj.optString("name", "Canal " + (i + 1));
+                    String logo = obj.optString("logo", "");
+                    String country = obj.optString("country", "");
+                    String countryName = obj.optString("country_name", country);
+
+                    List<String> cats = new ArrayList<>();
+                    JSONArray cArr = obj.optJSONArray("categories");
+                    if (cArr != null) {
+                        for (int j = 0; j < cArr.length(); j++) {
+                            cats.add(cArr.getString(j));
+                        }
+                    }
+
+                    List<String> streams = new ArrayList<>();
+                    JSONArray sArr = obj.optJSONArray("streams");
+                    if (sArr != null) {
+                        for (int j = 0; j < sArr.length(); j++) {
+                            JSONObject sObj = sArr.optJSONObject(j);
+                            if (sObj != null) {
+                                String u = sObj.optString("url", "");
+                                if (!u.isEmpty()) streams.add(u);
+                            }
+                        }
+                    }
+
+                    if (!streams.isEmpty()) {
+                        list.add(new IptvOrgChannel(id, name, logo, country, countryName, cats, streams));
+                    }
+                }
+            }
+            iptvCatalogCache = list;
+        } catch (Exception ex) {
+            android.util.Log.w("LiveTvEngine", "Error cargando iptv_catalog: " + ex.getMessage());
+        }
+        return list;
     }
 }
 

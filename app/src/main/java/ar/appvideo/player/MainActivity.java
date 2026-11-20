@@ -1704,6 +1704,535 @@ public class MainActivity extends Activity {
         }, "m3u-catalog").start();
     }
 
+    private String iptvSelCountry = "ALL";
+    private String iptvSelCategory = "all";
+    private String iptvSearchQuery = "";
+    private boolean iptvCompactMode = true;
+    private java.util.List<LiveTvEngine.IptvOrgChannel> iptvCatalogList = null;
+    private LinearLayout iptvChannelsContainer = null;
+    private LinearLayout iptvCategoriesRow = null;
+    private TextView iptvSummaryCountLabel = null;
+    private Button iptvToggleViewBtn = null;
+    private java.util.List<Button> iptvCountryButtons = new java.util.ArrayList<>();
+    private java.util.List<Button> iptvCategoryButtons = new java.util.ArrayList<>();
+
+    private void showIptvOrgExplorer() {
+        page = "iptv_explorer";
+        LinearLayout body = newPage("TV Mundial", "IPTV-org Mundial",
+                "Filtros combinables de País y Categoría con canales oficiales y logos en vivo.");
+        item("←  Volver a menú principal de TV", body, this::showLiveTvStudio);
+
+        iptvCatalogList = LiveTvEngine.loadIptvOrgCatalog(this);
+        iptvSelCountry = "ALL";
+        iptvSelCategory = "all";
+        iptvSearchQuery = "";
+
+        // 1. Barra de controles superiores (Modo de vista + Buscador)
+        LinearLayout topControls = new LinearLayout(this);
+        topControls.setOrientation(LinearLayout.HORIZONTAL);
+        topControls.setGravity(Gravity.CENTER_VERTICAL);
+        topControls.setPadding(0, dp(6), 0, dp(10));
+
+        iptvToggleViewBtn = new Button(this);
+        iptvToggleViewBtn.setText(iptvCompactMode ? "📋  Modo: Lista Compacta" : "🔲  Modo: Cuadrícula");
+        iptvToggleViewBtn.setTextColor(Color.WHITE);
+        iptvToggleViewBtn.setTextSize(13);
+        iptvToggleViewBtn.setAllCaps(false);
+        iptvToggleViewBtn.setFocusable(true);
+        GradientDrawable mbBg = new GradientDrawable();
+        mbBg.setColor(Color.rgb(40, 48, 68));
+        mbBg.setCornerRadius(dp(8));
+        iptvToggleViewBtn.setBackground(mbBg);
+        iptvToggleViewBtn.setPadding(dp(14), dp(8), dp(14), dp(8));
+        iptvToggleViewBtn.setOnFocusChangeListener((v, f) -> {
+            GradientDrawable g = new GradientDrawable();
+            g.setColor(f ? Color.rgb(60, 75, 110) : Color.rgb(40, 48, 68));
+            g.setCornerRadius(dp(8));
+            if (f) g.setStroke(dp(2), Color.rgb(245, 197, 66));
+            iptvToggleViewBtn.setBackground(g);
+        });
+        iptvToggleViewBtn.setOnClickListener(v -> {
+            iptvCompactMode = !iptvCompactMode;
+            iptvToggleViewBtn.setText(iptvCompactMode ? "📋  Modo: Lista Compacta" : "🔲  Modo: Cuadrícula");
+            renderIptvFilteredChannels();
+        });
+        topControls.addView(iptvToggleViewBtn);
+
+        final android.widget.EditText searchBox = new android.widget.EditText(this);
+        searchBox.setHint("🔍  Buscar canal por nombre...");
+        searchBox.setHintTextColor(Color.rgb(150, 160, 180));
+        searchBox.setTextColor(Color.WHITE);
+        searchBox.setTextSize(13);
+        searchBox.setSingleLine(true);
+        searchBox.setFocusable(true);
+        GradientDrawable sbBg = new GradientDrawable();
+        sbBg.setColor(Color.rgb(24, 28, 40));
+        sbBg.setCornerRadius(dp(8));
+        sbBg.setStroke(dp(1), Color.rgb(60, 70, 95));
+        searchBox.setBackground(sbBg);
+        searchBox.setPadding(dp(14), dp(8), dp(14), dp(8));
+        searchBox.setOnFocusChangeListener((v, f) -> {
+            GradientDrawable g = new GradientDrawable();
+            g.setColor(f ? Color.rgb(32, 38, 55) : Color.rgb(24, 28, 40));
+            g.setCornerRadius(dp(8));
+            g.setStroke(dp(f ? 2 : 1), f ? Color.WHITE : Color.rgb(60, 70, 95));
+            searchBox.setBackground(g);
+        });
+        searchBox.addTextChangedListener(new android.text.TextWatcher() {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                iptvSearchQuery = s != null ? s.toString().trim() : "";
+                renderIptvFilteredChannels();
+            }
+            public void afterTextChanged(android.text.Editable s) {}
+        });
+        LinearLayout.LayoutParams sbLp = new LinearLayout.LayoutParams(dp(320), dp(40));
+        sbLp.setMargins(dp(14), 0, 0, 0);
+        topControls.addView(searchBox, sbLp);
+        body.addView(topControls);
+
+        // 2. Fila 1 de Países (HorizontalScrollView)
+        TextView countryLabel = text("🌍 SELECCIONA PAÍS:", 12, Color.rgb(180, 190, 220));
+        countryLabel.setTypeface(null, Typeface.BOLD);
+        countryLabel.setPadding(0, dp(4), 0, dp(4));
+        body.addView(countryLabel);
+
+        HorizontalScrollView countryScroll = new HorizontalScrollView(this);
+        countryScroll.setHorizontalScrollBarEnabled(false);
+        LinearLayout countryRow = new LinearLayout(this);
+        countryRow.setOrientation(LinearLayout.HORIZONTAL);
+        countryRow.setPadding(0, dp(2), 0, dp(8));
+
+        // Contar canales por país
+        java.util.LinkedHashMap<String, Integer> countryCounts = new java.util.LinkedHashMap<>();
+        java.util.Map<String, String> countryNames = new java.util.HashMap<>();
+        countryCounts.put("ALL", iptvCatalogList.size());
+        countryNames.put("ALL", "Todos los países");
+
+        for (LiveTvEngine.IptvOrgChannel ch : iptvCatalogList) {
+            String cCode = ch.country.toUpperCase();
+            if (cCode.isEmpty()) continue;
+            countryCounts.put(cCode, countryCounts.containsKey(cCode) ? countryCounts.get(cCode) + 1 : 1);
+            if (!countryNames.containsKey(cCode)) {
+                countryNames.put(cCode, ch.countryName);
+            }
+        }
+
+        iptvCountryButtons.clear();
+        for (java.util.Map.Entry<String, Integer> cEntry : countryCounts.entrySet()) {
+            final String cCode = cEntry.getKey();
+            final int cCnt = cEntry.getValue();
+            final String cName = countryNames.get(cCode);
+
+            String flag = "AR".equals(cCode) ? "🇦🇷 " : "US".equals(cCode) ? "🇺🇸 " : "ES".equals(cCode) ? "🇪🇸 " : "MX".equals(cCode) ? "🇲🇽 " : "CL".equals(cCode) ? "🇨🇱 " : "CO".equals(cCode) ? "🇨🇴 " : "PE".equals(cCode) ? "🇵🇪 " : "UY".equals(cCode) ? "🇺🇾 " : "ALL".equals(cCode) ? "🌍 " : "🌐 ";
+            String label = flag + cName + " (" + cCnt + ")";
+
+            Button cBtn = new Button(this);
+            cBtn.setText(label);
+            cBtn.setTextColor(cCode.equals(iptvSelCountry) ? Color.WHITE : Color.rgb(180, 190, 210));
+            cBtn.setTextSize(12);
+            cBtn.setAllCaps(false);
+            cBtn.setFocusable(true);
+
+            GradientDrawable cBg = new GradientDrawable();
+            cBg.setColor(cCode.equals(iptvSelCountry) ? Color.rgb(30, 120, 210) : Color.rgb(26, 32, 46));
+            cBg.setCornerRadius(dp(16));
+            cBtn.setBackground(cBg);
+            cBtn.setPadding(dp(14), dp(4), dp(14), dp(4));
+
+            cBtn.setOnFocusChangeListener((v, f) -> {
+                boolean isSel = cCode.equals(iptvSelCountry);
+                GradientDrawable g = new GradientDrawable();
+                g.setColor(f ? Color.rgb(45, 145, 240) : (isSel ? Color.rgb(30, 120, 210) : Color.rgb(26, 32, 46)));
+                g.setCornerRadius(dp(16));
+                if (f) g.setStroke(dp(2), Color.WHITE);
+                cBtn.setBackground(g);
+                cBtn.setTextColor(Color.WHITE);
+            });
+
+            cBtn.setOnClickListener(v -> {
+                iptvSelCountry = cCode;
+                for (Button b : iptvCountryButtons) {
+                    boolean isSel = b == cBtn;
+                    GradientDrawable g = new GradientDrawable();
+                    g.setColor(isSel ? Color.rgb(30, 120, 210) : Color.rgb(26, 32, 46));
+                    g.setCornerRadius(dp(16));
+                    b.setBackground(g);
+                    b.setTextColor(isSel ? Color.WHITE : Color.rgb(180, 190, 210));
+                }
+                rebuildIptvCategoryRow();
+                renderIptvFilteredChannels();
+            });
+
+            LinearLayout.LayoutParams clp = new LinearLayout.LayoutParams(-2, dp(34));
+            clp.setMargins(0, 0, dp(8), 0);
+            countryRow.addView(cBtn, clp);
+            iptvCountryButtons.add(cBtn);
+        }
+        countryScroll.addView(countryRow);
+        body.addView(countryScroll);
+
+        // 3. Fila 2 de Categorías dinámicas (HorizontalScrollView)
+        TextView catLabel = text("🏷️ CATEGORÍA / GÉNERO (SOLO LAS DISPONIBLES PARA EL PAÍS SELECCIONADO):", 12, Color.rgb(180, 190, 220));
+        catLabel.setTypeface(null, Typeface.BOLD);
+        catLabel.setPadding(0, dp(4), 0, dp(4));
+        body.addView(catLabel);
+
+        HorizontalScrollView catScroll = new HorizontalScrollView(this);
+        catScroll.setHorizontalScrollBarEnabled(false);
+        iptvCategoriesRow = new LinearLayout(this);
+        iptvCategoriesRow.setOrientation(LinearLayout.HORIZONTAL);
+        iptvCategoriesRow.setPadding(0, dp(2), 0, dp(10));
+        catScroll.addView(iptvCategoriesRow);
+        body.addView(catScroll);
+
+        // 4. Contador de resultados
+        iptvSummaryCountLabel = text("", 13, Color.rgb(245, 197, 66));
+        iptvSummaryCountLabel.setPadding(0, dp(4), 0, dp(8));
+        body.addView(iptvSummaryCountLabel);
+
+        // 5. Contenedor de canales
+        iptvChannelsContainer = new LinearLayout(this);
+        iptvChannelsContainer.setOrientation(LinearLayout.VERTICAL);
+        body.addView(iptvChannelsContainer);
+
+        rebuildIptvCategoryRow();
+        renderIptvFilteredChannels();
+    }
+
+    private void rebuildIptvCategoryRow() {
+        if (iptvCategoriesRow == null || iptvCatalogList == null) return;
+        iptvCategoriesRow.removeAllViews();
+        iptvCategoryButtons.clear();
+
+        int totalCountryChannels = 0;
+        java.util.LinkedHashMap<String, Integer> catCounts = new java.util.LinkedHashMap<>();
+        for (LiveTvEngine.IptvOrgChannel ch : iptvCatalogList) {
+            if (!"ALL".equals(iptvSelCountry) && !ch.country.equalsIgnoreCase(iptvSelCountry)) {
+                continue;
+            }
+            totalCountryChannels++;
+            for (String cat : ch.categories) {
+                catCounts.put(cat, catCounts.containsKey(cat) ? catCounts.get(cat) + 1 : 1);
+            }
+        }
+
+        if (!"all".equals(iptvSelCategory) && !catCounts.containsKey(iptvSelCategory)) {
+            iptvSelCategory = "all";
+        }
+
+        // 1. Botón 'Todas las categorías'
+        Button allBtn = createCategoryChip("all", "⭐ Todas las categorías (" + totalCountryChannels + ")");
+        iptvCategoriesRow.addView(allBtn);
+        iptvCategoryButtons.add(allBtn);
+
+        // 2. Botones de las categorías que sí tienen canales
+        for (java.util.Map.Entry<String, String> catEntry : LiveTvEngine.CATEGORY_LABELS.entrySet()) {
+            String catId = catEntry.getKey();
+            String catName = catEntry.getValue();
+
+            if (catCounts.containsKey(catId) && catCounts.get(catId) > 0) {
+                int count = catCounts.get(catId);
+                Button chip = createCategoryChip(catId, catName + " (" + count + ")");
+                iptvCategoriesRow.addView(chip);
+                iptvCategoryButtons.add(chip);
+            }
+        }
+    }
+
+    private Button createCategoryChip(String catId, String text) {
+        Button chip = new Button(this);
+        chip.setText(text);
+        chip.setTextColor(catId.equals(iptvSelCategory) ? Color.WHITE : Color.rgb(180, 190, 210));
+        chip.setTextSize(12);
+        chip.setAllCaps(false);
+        chip.setFocusable(true);
+
+        GradientDrawable chipBg = new GradientDrawable();
+        chipBg.setColor(catId.equals(iptvSelCategory) ? Color.rgb(110, 60, 200) : Color.rgb(28, 34, 48));
+        chipBg.setCornerRadius(dp(16));
+        chip.setBackground(chipBg);
+        chip.setPadding(dp(14), dp(4), dp(14), dp(4));
+
+        chip.setOnFocusChangeListener((v, f) -> {
+            boolean isSel = catId.equals(iptvSelCategory);
+            GradientDrawable g = new GradientDrawable();
+            g.setColor(f ? Color.rgb(130, 80, 225) : (isSel ? Color.rgb(110, 60, 200) : Color.rgb(28, 34, 48)));
+            g.setCornerRadius(dp(16));
+            if (f) g.setStroke(dp(2), Color.WHITE);
+            chip.setBackground(g);
+            chip.setTextColor(Color.WHITE);
+        });
+
+        chip.setOnClickListener(v -> {
+            iptvSelCategory = catId;
+            for (Button cb : iptvCategoryButtons) {
+                boolean isSel = cb == chip;
+                GradientDrawable g = new GradientDrawable();
+                g.setColor(isSel ? Color.rgb(110, 60, 200) : Color.rgb(28, 34, 48));
+                g.setCornerRadius(dp(16));
+                cb.setBackground(g);
+                cb.setTextColor(isSel ? Color.WHITE : Color.rgb(180, 190, 210));
+            }
+            renderIptvFilteredChannels();
+        });
+
+        LinearLayout.LayoutParams clp = new LinearLayout.LayoutParams(-2, dp(34));
+        clp.setMargins(0, 0, dp(8), 0);
+        chip.setLayoutParams(clp);
+        return chip;
+    }
+
+    private void renderIptvFilteredChannels() {
+        if (iptvChannelsContainer == null || iptvCatalogList == null) return;
+        iptvChannelsContainer.removeAllViews();
+
+        java.util.List<LiveTvEngine.IptvOrgChannel> filtered = new java.util.ArrayList<>();
+        String q = (iptvSearchQuery != null) ? iptvSearchQuery.toLowerCase() : "";
+
+        for (LiveTvEngine.IptvOrgChannel ch : iptvCatalogList) {
+            // Filtro por País
+            if (!"ALL".equals(iptvSelCountry) && !ch.country.equalsIgnoreCase(iptvSelCountry)) {
+                continue;
+            }
+            // Filtro por Categoría
+            if (!"all".equals(iptvSelCategory) && !ch.categories.contains(iptvSelCategory)) {
+                continue;
+            }
+            // Filtro por Búsqueda de Texto
+            if (!q.isEmpty() && !ch.name.toLowerCase().contains(q) && !ch.countryName.toLowerCase().contains(q)) {
+                continue;
+            }
+            // Cada canal aparece una sola vez en la lista resultante
+            filtered.add(ch);
+        }
+
+        String catDisplay = "all".equals(iptvSelCategory) ? "Todas las categorías" : LiveTvEngine.CATEGORY_LABELS.get(iptvSelCategory);
+        if (catDisplay == null) catDisplay = iptvSelCategory;
+        String countryDisplay = "ALL".equals(iptvSelCountry) ? "Todos los países" : iptvSelCountry;
+
+        if (iptvSummaryCountLabel != null) {
+            iptvSummaryCountLabel.setText("Mostrando " + filtered.size() + " canales · País: " + countryDisplay
+                    + " · Categoría: " + catDisplay
+                    + (!q.isEmpty() ? " · Búsqueda: '" + q + "'" : ""));
+        }
+
+        if (filtered.isEmpty()) {
+            TextView empty = text("No se encontraron canales para los filtros seleccionados.", 14, Color.GRAY);
+            empty.setPadding(dp(12), dp(20), dp(12), dp(20));
+            iptvChannelsContainer.addView(empty);
+            return;
+        }
+
+        if (iptvCompactMode) {
+            // MODO LISTA COMPACTA CON ENLACE SECUENCIAL DE FOCO (CERO SALTOS)
+            final int count = filtered.size();
+            final int[] viewIds = new int[count];
+            for (int i = 0; i < count; i++) {
+                viewIds[i] = android.view.View.generateViewId();
+            }
+
+            for (int i = 0; i < count; i++) {
+                final LiveTvEngine.IptvOrgChannel ch = filtered.get(i);
+                final int chNum = i + 1;
+
+                LinearLayout row = new LinearLayout(this);
+                row.setId(viewIds[i]);
+                row.setOrientation(LinearLayout.HORIZONTAL);
+                row.setGravity(Gravity.CENTER_VERTICAL);
+                row.setPadding(dp(12), dp(6), dp(12), dp(6));
+                row.setFocusable(true);
+                row.setClickable(true);
+
+                if (i > 0) row.setNextFocusUpId(viewIds[i - 1]);
+                if (i < count - 1) row.setNextFocusDownId(viewIds[i + 1]);
+
+                GradientDrawable rowBg = new GradientDrawable();
+                rowBg.setColor(Color.rgb(20, 24, 34));
+                rowBg.setCornerRadius(dp(6));
+                rowBg.setStroke(dp(1), Color.rgb(38, 45, 62));
+                row.setBackground(rowBg);
+
+                LinearLayout.LayoutParams rlp = new LinearLayout.LayoutParams(-1, dp(44));
+                rlp.setMargins(0, 0, 0, dp(4));
+                row.setLayoutParams(rlp);
+
+                // Número
+                TextView num = text("#" + chNum, 12, Color.rgb(150, 160, 190));
+                num.setTypeface(null, Typeface.BOLD);
+                num.setPadding(0, 0, dp(10), 0);
+                row.addView(num);
+
+                // Logo o Icono
+                if (ch.logo != null && !ch.logo.isEmpty()) {
+                    ImageView logoView = new ImageView(this);
+                    logoView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(dp(32), dp(24));
+                    llp.setMargins(0, 0, dp(10), 0);
+                    row.addView(logoView, llp);
+                    CatalogBrowser.loadPoster(this, logoView, ch.logo);
+                } else {
+                    TextView tvIcon = text("📺", 14, Color.WHITE);
+                    tvIcon.setPadding(0, 0, dp(10), 0);
+                    row.addView(tvIcon);
+                }
+
+                // Nombre
+                TextView titleView = text(ch.name, 13, Color.WHITE);
+                titleView.setTypeface(null, Typeface.BOLD);
+                titleView.setSingleLine(true);
+                titleView.setEllipsize(android.text.TextUtils.TruncateAt.END);
+                row.addView(titleView, new LinearLayout.LayoutParams(0, -2, 1));
+
+                // Badge de País
+                TextView countryBadge = text(ch.country, 11, Color.rgb(150, 200, 255));
+                countryBadge.setPadding(dp(6), dp(2), dp(6), dp(2));
+                row.addView(countryBadge);
+
+                // Badge de Categoría
+                String primaryCat = !ch.categories.isEmpty() ? ch.categories.get(0) : "uncategorized";
+                String primaryCatLabel = LiveTvEngine.CATEGORY_LABELS.get(primaryCat);
+                if (primaryCatLabel == null) primaryCatLabel = primaryCat;
+                TextView catBadge = text(primaryCatLabel, 11, Color.rgb(245, 197, 66));
+                catBadge.setSingleLine(true);
+                catBadge.setPadding(dp(6), dp(2), dp(8), dp(2));
+                row.addView(catBadge);
+
+                // Badge de alternativas
+                if (ch.streamUrls.size() > 1) {
+                    TextView altBadge = text("[" + ch.streamUrls.size() + " señales]", 10, Color.rgb(140, 220, 170));
+                    altBadge.setPadding(0, 0, dp(8), 0);
+                    row.addView(altBadge);
+                }
+
+                // Botón VER
+                TextView playBadge = text("▶ EN VIVO", 10, Color.WHITE);
+                playBadge.setTypeface(null, Typeface.BOLD);
+                playBadge.setPadding(dp(8), dp(3), dp(8), dp(3));
+                GradientDrawable pb = new GradientDrawable();
+                pb.setColor(Color.rgb(180, 30, 30));
+                pb.setCornerRadius(dp(4));
+                playBadge.setBackground(pb);
+                row.addView(playBadge);
+
+                row.setOnClickListener(v -> playIptvOrgChannel(ch));
+                row.setOnFocusChangeListener((v, f) -> {
+                    GradientDrawable g = new GradientDrawable();
+                    g.setColor(f ? Color.rgb(44, 56, 85) : Color.rgb(20, 24, 34));
+                    g.setCornerRadius(dp(6));
+                    g.setStroke(dp(f ? 2 : 1), f ? Color.WHITE : Color.rgb(38, 45, 62));
+                    row.setBackground(g);
+                });
+
+                iptvChannelsContainer.addView(row);
+            }
+        } else {
+            // MODO CUADRÍCULA 2 COLUMNAS
+            GridLayout grid = new GridLayout(this);
+            grid.setColumnCount(2);
+            iptvChannelsContainer.addView(grid);
+
+            DisplayMetrics dm = getResources().getDisplayMetrics();
+            int cardW = Math.max(dp(280), (dm.widthPixels - dp(180)) / 2);
+
+            for (LiveTvEngine.IptvOrgChannel ch : filtered) {
+                LinearLayout card = new LinearLayout(this);
+                card.setOrientation(LinearLayout.HORIZONTAL);
+                card.setGravity(Gravity.CENTER_VERTICAL);
+                card.setPadding(dp(12), dp(8), dp(12), dp(8));
+                card.setFocusable(true);
+                card.setClickable(true);
+
+                GradientDrawable bg = new GradientDrawable();
+                bg.setColor(Color.rgb(22, 26, 36));
+                bg.setCornerRadius(dp(8));
+                bg.setStroke(dp(1), Color.rgb(40, 48, 64));
+                card.setBackground(bg);
+
+                GridLayout.LayoutParams lp = new GridLayout.LayoutParams();
+                lp.width = cardW;
+                lp.height = dp(56);
+                lp.setMargins(0, 0, dp(10), dp(8));
+                card.setLayoutParams(lp);
+
+                if (ch.logo != null && !ch.logo.isEmpty()) {
+                    ImageView logoView = new ImageView(this);
+                    logoView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(dp(36), dp(28));
+                    llp.setMargins(0, 0, dp(10), 0);
+                    card.addView(logoView, llp);
+                    CatalogBrowser.loadPoster(this, logoView, ch.logo);
+                } else {
+                    TextView chIcon = text("📺", 18, Color.WHITE);
+                    chIcon.setPadding(0, 0, dp(10), 0);
+                    card.addView(chIcon);
+                }
+
+                LinearLayout col = new LinearLayout(this);
+                col.setOrientation(LinearLayout.VERTICAL);
+                col.setGravity(Gravity.CENTER_VERTICAL);
+
+                TextView t = text(ch.name, 13, Color.WHITE);
+                t.setTypeface(null, Typeface.BOLD);
+                t.setSingleLine(true);
+                t.setEllipsize(android.text.TextUtils.TruncateAt.END);
+                col.addView(t);
+
+                String primaryCat = !ch.categories.isEmpty() ? ch.categories.get(0) : "uncategorized";
+                String primaryCatLabel = LiveTvEngine.CATEGORY_LABELS.get(primaryCat);
+                if (primaryCatLabel == null) primaryCatLabel = primaryCat;
+                TextView g = text(ch.country + " · " + primaryCatLabel + (ch.streamUrls.size() > 1 ? " (" + ch.streamUrls.size() + " señ.)" : ""), 11, Color.rgb(245, 197, 66));
+                g.setSingleLine(true);
+                col.addView(g);
+
+                card.addView(col, new LinearLayout.LayoutParams(0, -2, 1));
+
+                TextView playBadge = text("▶", 11, Color.WHITE);
+                playBadge.setPadding(dp(6), dp(4), dp(6), dp(4));
+                GradientDrawable pb = new GradientDrawable();
+                pb.setColor(Color.rgb(180, 30, 30));
+                pb.setCornerRadius(dp(4));
+                playBadge.setBackground(pb);
+                card.addView(playBadge);
+
+                card.setOnClickListener(v -> playIptvOrgChannel(ch));
+                card.setOnFocusChangeListener((v, f) -> {
+                    GradientDrawable gBg = new GradientDrawable();
+                    gBg.setColor(f ? Color.rgb(36, 48, 72) : Color.rgb(22, 26, 36));
+                    gBg.setCornerRadius(dp(8));
+                    gBg.setStroke(dp(f ? 2 : 1), f ? Color.WHITE : Color.rgb(40, 48, 64));
+                    card.setBackground(gBg);
+                });
+
+                grid.addView(card);
+            }
+        }
+    }
+
+    private void playIptvOrgChannel(LiveTvEngine.IptvOrgChannel ch) {
+        if (ch == null || ch.streamUrls.isEmpty()) return;
+
+        if (ch.streamUrls.size() == 1) {
+            playMovie(ch.name, ch.getPrimaryStream(), "IPTV-org " + ch.country);
+            return;
+        }
+
+        String[] options = new String[ch.streamUrls.size()];
+        for (int i = 0; i < ch.streamUrls.size(); i++) {
+            options[i] = (i == 0 ? "⭐ Señal Principal (" : "📡 Señal Alternativa " + (i + 1) + " (") + (i + 1) + " de " + ch.streamUrls.size() + ")";
+        }
+
+        android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(this);
+        b.setTitle("📺 " + ch.name + " (" + ch.country + ")");
+        b.setItems(options, (dialog, which) -> {
+            if (which >= 0 && which < ch.streamUrls.size()) {
+                playMovie(ch.name, ch.streamUrls.get(which), "IPTV-org " + ch.country);
+            }
+        });
+        b.setNegativeButton("Cancelar", null);
+        b.show();
+    }
+
     private String activeProvider = "CineHax";
     private String activeTab = "all";
 
@@ -5018,14 +5547,16 @@ public class MainActivity extends Activity {
         android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(this);
         b.setTitle("🇦🇷  Fuente IPTV-org Argentina");
         String currentUrl = LiveTvEngine.getIptvOrgArUrl(this);
-        b.setMessage("URL configurada actualmente:\n" + currentUrl + "\n\n¿Deseas sincronizar los 186 canales con la lista oficial ahora?");
+        b.setMessage("URL configurada actualmente:\n" + currentUrl
+                + "\n\n¿Deseas sincronizar los 186 canales con la lista oficial ahora?");
         b.setPositiveButton("Actualizar Ahora", (d, w) -> {
             Toast.makeText(this, "Descargando lista IPTV-org Argentina...", Toast.LENGTH_SHORT).show();
             new Thread(() -> {
                 try {
                     int count = LiveTvEngine.updateIptvOrgArFromNetwork(this);
                     runOnUiThread(() -> {
-                        Toast.makeText(this, "✓ IPTV-org actualizado: " + count + " canales importados", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "✓ IPTV-org actualizado: " + count + " canales importados",
+                                Toast.LENGTH_LONG).show();
                         if ("iptv_org_ar".equals(activeTvCat) && page.equals("live_tv_studio")) {
                             showLiveTvStudio();
                         }
