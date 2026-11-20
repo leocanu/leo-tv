@@ -8,6 +8,8 @@ import android.graphics.drawable.GradientDrawable;
 import android.view.KeyEvent;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.view.View;
+import android.widget.HorizontalScrollView;
 import android.widget.ScrollView;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
@@ -1282,84 +1284,363 @@ public class MainActivity extends Activity {
         grid.addView(card);
     }
 
+    private boolean m3uCompactMode = true;
+    private String m3uSelectedGroup = "Todos";
+    private String m3uSearchFilter = "";
+    private java.util.List<String[]> currentM3uEntries = new java.util.ArrayList<>();
+    private LinearLayout m3uChannelsContainer = null;
+    private TextView m3uCountLabel = null;
+    private Button m3uToggleModeBtn = null;
+
     private void renderM3uChannelsGrid(LinearLayout body, java.util.List<String[]> entries) {
-        GridLayout grid = new GridLayout(this);
-        grid.setColumnCount(2);
-        body.addView(grid);
+        currentM3uEntries = entries;
+        m3uSelectedGroup = "Todos";
+        m3uSearchFilter = "";
 
-        DisplayMetrics dm = getResources().getDisplayMetrics();
-        int cardW = Math.max(dp(280), (dm.widthPixels - dp(180)) / 2);
+        // Barra de control superior (Modo Compacto/Grid, Buscar)
+        LinearLayout topControls = new LinearLayout(this);
+        topControls.setOrientation(LinearLayout.HORIZONTAL);
+        topControls.setGravity(Gravity.CENTER_VERTICAL);
+        topControls.setPadding(0, dp(6), 0, dp(10));
 
+        m3uToggleModeBtn = new Button(this);
+        m3uToggleModeBtn.setText(m3uCompactMode ? "📋  Modo: Lista Compacta" : "🔲  Modo: Cuadrícula");
+        m3uToggleModeBtn.setTextColor(Color.WHITE);
+        m3uToggleModeBtn.setTextSize(13);
+        m3uToggleModeBtn.setAllCaps(false);
+        m3uToggleModeBtn.setFocusable(true);
+        GradientDrawable mbBg = new GradientDrawable();
+        mbBg.setColor(Color.rgb(40, 48, 68));
+        mbBg.setCornerRadius(dp(8));
+        m3uToggleModeBtn.setBackground(mbBg);
+        m3uToggleModeBtn.setPadding(dp(14), dp(8), dp(14), dp(8));
+        m3uToggleModeBtn.setOnFocusChangeListener((v, f) -> {
+            GradientDrawable g = new GradientDrawable();
+            g.setColor(f ? Color.rgb(60, 75, 110) : Color.rgb(40, 48, 68));
+            g.setCornerRadius(dp(8));
+            if (f) g.setStroke(dp(2), Color.rgb(245, 197, 66));
+            m3uToggleModeBtn.setBackground(g);
+        });
+        m3uToggleModeBtn.setOnClickListener(v -> {
+            m3uCompactMode = !m3uCompactMode;
+            m3uToggleModeBtn.setText(m3uCompactMode ? "📋  Modo: Lista Compacta" : "🔲  Modo: Cuadrícula");
+            renderM3uFilteredChannels();
+        });
+        topControls.addView(m3uToggleModeBtn);
+
+        // Campo de búsqueda en tiempo real
+        final android.widget.EditText searchBox = new android.widget.EditText(this);
+        searchBox.setHint("🔍  Buscar canal por nombre...");
+        searchBox.setHintTextColor(Color.rgb(150, 160, 180));
+        searchBox.setTextColor(Color.WHITE);
+        searchBox.setTextSize(13);
+        searchBox.setSingleLine(true);
+        searchBox.setFocusable(true);
+        GradientDrawable sbBg = new GradientDrawable();
+        sbBg.setColor(Color.rgb(24, 28, 40));
+        sbBg.setCornerRadius(dp(8));
+        sbBg.setStroke(dp(1), Color.rgb(60, 70, 95));
+        searchBox.setBackground(sbBg);
+        searchBox.setPadding(dp(14), dp(8), dp(14), dp(8));
+        searchBox.setOnFocusChangeListener((v, f) -> {
+            GradientDrawable g = new GradientDrawable();
+            g.setColor(f ? Color.rgb(32, 38, 55) : Color.rgb(24, 28, 40));
+            g.setCornerRadius(dp(8));
+            g.setStroke(dp(f ? 2 : 1), f ? Color.WHITE : Color.rgb(60, 70, 95));
+            searchBox.setBackground(g);
+        });
+        searchBox.addTextChangedListener(new android.text.TextWatcher() {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                m3uSearchFilter = s != null ? s.toString().trim() : "";
+                renderM3uFilteredChannels();
+            }
+            public void afterTextChanged(android.text.Editable s) {}
+        });
+        LinearLayout.LayoutParams sbLp = new LinearLayout.LayoutParams(dp(320), dp(40));
+        sbLp.setMargins(dp(14), 0, 0, 0);
+        topControls.addView(searchBox, sbLp);
+
+        body.addView(topControls);
+
+        // Barra horizontal de categorías (Chips extraídos del group-title)
+        java.util.LinkedHashMap<String, Integer> groups = new java.util.LinkedHashMap<>();
+        groups.put("Todos", entries.size());
         for (String[] e : entries) {
-            final String chTitle = e[0];
-            final String chGroup = e[1];
-            final String chUrl = e[2];
+            String g = (e[1] != null && !e[1].trim().isEmpty()) ? e[1].trim() : "General";
+            groups.put(g, groups.containsKey(g) ? groups.get(g) + 1 : 1);
+        }
 
-            LinearLayout card = new LinearLayout(this);
-            card.setOrientation(LinearLayout.HORIZONTAL);
-            card.setGravity(Gravity.CENTER_VERTICAL);
-            card.setPadding(dp(16), dp(12), dp(16), dp(12));
-            card.setFocusable(true);
-            card.setClickable(true);
+        HorizontalScrollView catScroll = new HorizontalScrollView(this);
+        catScroll.setHorizontalScrollBarEnabled(false);
+        LinearLayout catRow = new LinearLayout(this);
+        catRow.setOrientation(LinearLayout.HORIZONTAL);
+        catRow.setPadding(0, dp(4), 0, dp(10));
 
-            GradientDrawable bg = new GradientDrawable();
-            bg.setColor(Color.rgb(22, 26, 36));
-            bg.setCornerRadius(dp(12));
-            bg.setStroke(dp(1), Color.rgb(40, 48, 64));
-            card.setBackground(bg);
+        final java.util.List<Button> chipButtons = new java.util.ArrayList<>();
+        for (java.util.Map.Entry<String, Integer> entry : groups.entrySet()) {
+            final String grpName = entry.getKey();
+            final int grpCount = entry.getValue();
 
-            GridLayout.LayoutParams lp = new GridLayout.LayoutParams();
-            lp.width = cardW;
-            lp.height = dp(76);
-            lp.setMargins(0, 0, dp(12), dp(10));
-            card.setLayoutParams(lp);
+            Button chip = new Button(this);
+            chip.setText(grpName + " (" + grpCount + ")");
+            chip.setTextColor(grpName.equals(m3uSelectedGroup) ? Color.WHITE : Color.rgb(180, 190, 210));
+            chip.setTextSize(12);
+            chip.setAllCaps(false);
+            chip.setFocusable(true);
 
-            TextView chIcon = text("📺", 22, Color.WHITE);
-            chIcon.setPadding(0, 0, dp(12), 0);
-            card.addView(chIcon);
+            GradientDrawable chipBg = new GradientDrawable();
+            chipBg.setColor(grpName.equals(m3uSelectedGroup) ? Color.rgb(90, 60, 180) : Color.rgb(30, 35, 50));
+            chipBg.setCornerRadius(dp(16));
+            chip.setBackground(chipBg);
+            chip.setPadding(dp(14), dp(4), dp(14), dp(4));
 
-            LinearLayout col = new LinearLayout(this);
-            col.setOrientation(LinearLayout.VERTICAL);
-            col.setGravity(Gravity.CENTER_VERTICAL);
+            chip.setOnFocusChangeListener((v, f) -> {
+                boolean isSel = grpName.equals(m3uSelectedGroup);
+                GradientDrawable g = new GradientDrawable();
+                g.setColor(f ? Color.rgb(110, 80, 210) : (isSel ? Color.rgb(90, 60, 180) : Color.rgb(30, 35, 50)));
+                g.setCornerRadius(dp(16));
+                if (f) g.setStroke(dp(2), Color.WHITE);
+                chip.setBackground(g);
+                chip.setTextColor(Color.WHITE);
+            });
 
-            TextView t = text(chTitle, 15, Color.WHITE);
-            t.setTypeface(null, Typeface.BOLD);
-            t.setSingleLine(true);
-            t.setEllipsize(android.text.TextUtils.TruncateAt.END);
-            col.addView(t);
-
-            TextView g = text(chGroup, 12, Color.rgb(245, 197, 66));
-            g.setSingleLine(true);
-            col.addView(g);
-
-            card.addView(col, new LinearLayout.LayoutParams(0, -2, 1));
-
-            TextView playBadge = text("▶ VER", 10, Color.WHITE);
-            playBadge.setTypeface(null, Typeface.BOLD);
-            playBadge.setPadding(dp(8), dp(4), dp(8), dp(4));
-            GradientDrawable pb = new GradientDrawable();
-            pb.setColor(Color.rgb(210, 30, 30));
-            pb.setCornerRadius(dp(6));
-            playBadge.setBackground(pb);
-            card.addView(playBadge);
-
-            card.setOnClickListener(v -> {
-                if (ParentalControlEngine.isParentalLocked(this)
-                        && ParentalControlEngine.isAdultContent(chTitle, chGroup, "m3u")) {
-                    showParentalPinDialog(() -> playMovie(chTitle, chUrl, "TV M3U"));
-                } else {
-                    playMovie(chTitle, chUrl, "TV M3U");
+            chip.setOnClickListener(v -> {
+                m3uSelectedGroup = grpName;
+                for (Button cb : chipButtons) {
+                    boolean isSel = cb == chip;
+                    GradientDrawable g = new GradientDrawable();
+                    g.setColor(isSel ? Color.rgb(90, 60, 180) : Color.rgb(30, 35, 50));
+                    g.setCornerRadius(dp(16));
+                    cb.setBackground(g);
+                    cb.setTextColor(isSel ? Color.WHITE : Color.rgb(180, 190, 210));
                 }
+                renderM3uFilteredChannels();
             });
-            card.setOnFocusChangeListener((v, f) -> {
-                GradientDrawable gBg = new GradientDrawable();
-                gBg.setColor(f ? Color.rgb(36, 44, 64) : Color.rgb(22, 26, 36));
-                gBg.setCornerRadius(dp(12));
-                gBg.setStroke(dp(f ? 2 : 1), f ? Color.WHITE : Color.rgb(40, 48, 64));
-                card.setBackground(gBg);
-                card.animate().scaleX(f ? 1.03f : 1f).scaleY(f ? 1.03f : 1f).setDuration(120).start();
-            });
-            grid.addView(card);
+
+            LinearLayout.LayoutParams clp = new LinearLayout.LayoutParams(-2, dp(34));
+            clp.setMargins(0, 0, dp(8), 0);
+            catRow.addView(chip, clp);
+            chipButtons.add(chip);
+        }
+        catScroll.addView(catRow);
+        body.addView(catScroll);
+
+        // Contador de canales
+        m3uCountLabel = text("", 13, Color.rgb(245, 197, 66));
+        m3uCountLabel.setPadding(0, dp(4), 0, dp(8));
+        body.addView(m3uCountLabel);
+
+        // Contenedor dinámico de canales
+        m3uChannelsContainer = new LinearLayout(this);
+        m3uChannelsContainer.setOrientation(LinearLayout.VERTICAL);
+        body.addView(m3uChannelsContainer);
+
+        renderM3uFilteredChannels();
+    }
+
+    private void renderM3uFilteredChannels() {
+        if (m3uChannelsContainer == null) return;
+        m3uChannelsContainer.removeAllViews();
+
+        java.util.List<String[]> filtered = new java.util.ArrayList<>();
+        String q = (m3uSearchFilter != null) ? m3uSearchFilter.toLowerCase() : "";
+        for (String[] e : currentM3uEntries) {
+            String title = e[0] != null ? e[0] : "";
+            String group = e[1] != null ? e[1] : "General";
+
+            if (!"Todos".equals(m3uSelectedGroup) && !group.equalsIgnoreCase(m3uSelectedGroup)) {
+                continue;
+            }
+            if (!q.isEmpty() && !title.toLowerCase().contains(q) && !group.toLowerCase().contains(q)) {
+                continue;
+            }
+            filtered.add(e);
+        }
+
+        if (m3uCountLabel != null) {
+            m3uCountLabel.setText("Mostrando " + filtered.size() + " de " + currentM3uEntries.size()
+                    + " canales" + (!"Todos".equals(m3uSelectedGroup) ? " · Categoría: " + m3uSelectedGroup : "")
+                    + (!q.isEmpty() ? " · Búsqueda: '" + q + "'" : ""));
+        }
+
+        if (filtered.isEmpty()) {
+            TextView empty = text("No se encontraron canales con los filtros seleccionados.", 14, Color.GRAY);
+            empty.setPadding(dp(12), dp(20), dp(12), dp(20));
+            m3uChannelsContainer.addView(empty);
+            return;
+        }
+
+        if (m3uCompactMode) {
+            // MODO LISTA COMPACTA CON ENLACE SECUENCIAL DE FOCO (CERO SALTOS)
+            final int count = filtered.size();
+            final int[] viewIds = new int[count];
+            for (int i = 0; i < count; i++) {
+                viewIds[i] = View.generateViewId();
+            }
+
+            for (int i = 0; i < count; i++) {
+                final String[] e = filtered.get(i);
+                final String chTitle = e[0];
+                final String chGroup = e[1];
+                final String chUrl = e[2];
+                final int chNum = i + 1;
+
+                LinearLayout row = new LinearLayout(this);
+                row.setId(viewIds[i]);
+                row.setOrientation(LinearLayout.HORIZONTAL);
+                row.setGravity(Gravity.CENTER_VERTICAL);
+                row.setPadding(dp(12), dp(6), dp(12), dp(6));
+                row.setFocusable(true);
+                row.setClickable(true);
+
+                // Enlace secuencial de foco para que el D-Pad baje y suba sin retroceder ni saltar
+                if (i > 0) {
+                    row.setNextFocusUpId(viewIds[i - 1]);
+                }
+                if (i < count - 1) {
+                    row.setNextFocusDownId(viewIds[i + 1]);
+                }
+
+                GradientDrawable rowBg = new GradientDrawable();
+                rowBg.setColor(Color.rgb(20, 24, 34));
+                rowBg.setCornerRadius(dp(6));
+                rowBg.setStroke(dp(1), Color.rgb(38, 45, 62));
+                row.setBackground(rowBg);
+
+                LinearLayout.LayoutParams rlp = new LinearLayout.LayoutParams(-1, dp(44));
+                rlp.setMargins(0, 0, 0, dp(4));
+                row.setLayoutParams(rlp);
+
+                // Número
+                TextView num = text("#" + chNum, 12, Color.rgb(150, 160, 190));
+                num.setTypeface(null, Typeface.BOLD);
+                num.setPadding(0, 0, dp(12), 0);
+                row.addView(num);
+
+                // Nombre
+                TextView titleView = text(chTitle, 13, Color.WHITE);
+                titleView.setTypeface(null, Typeface.BOLD);
+                titleView.setSingleLine(true);
+                titleView.setEllipsize(android.text.TextUtils.TruncateAt.END);
+                row.addView(titleView, new LinearLayout.LayoutParams(0, -2, 1));
+
+                // Categoría
+                TextView grpBadge = text(chGroup, 11, Color.rgb(245, 197, 66));
+                grpBadge.setSingleLine(true);
+                grpBadge.setPadding(dp(8), dp(2), dp(8), dp(2));
+                row.addView(grpBadge);
+
+                // Botón VER
+                TextView playBadge = text("▶ EN VIVO", 10, Color.WHITE);
+                playBadge.setTypeface(null, Typeface.BOLD);
+                playBadge.setPadding(dp(8), dp(3), dp(8), dp(3));
+                GradientDrawable pb = new GradientDrawable();
+                pb.setColor(Color.rgb(180, 30, 30));
+                pb.setCornerRadius(dp(4));
+                playBadge.setBackground(pb);
+                row.addView(playBadge);
+
+                row.setOnClickListener(v -> {
+                    if (ParentalControlEngine.isParentalLocked(this)
+                            && ParentalControlEngine.isAdultContent(chTitle, chGroup, "m3u")) {
+                        showParentalPinDialog(() -> playMovie(chTitle, chUrl, "TV M3U"));
+                    } else {
+                        playMovie(chTitle, chUrl, "TV M3U");
+                    }
+                });
+
+                row.setOnFocusChangeListener((v, f) -> {
+                    GradientDrawable g = new GradientDrawable();
+                    g.setColor(f ? Color.rgb(44, 56, 85) : Color.rgb(20, 24, 34));
+                    g.setCornerRadius(dp(6));
+                    g.setStroke(dp(f ? 2 : 1), f ? Color.WHITE : Color.rgb(38, 45, 62));
+                    row.setBackground(g);
+                });
+
+                m3uChannelsContainer.addView(row);
+            }
+        } else {
+            // MODO CUADRÍCULA 2 COLUMNAS COMPACTA
+            GridLayout grid = new GridLayout(this);
+            grid.setColumnCount(2);
+            m3uChannelsContainer.addView(grid);
+
+            DisplayMetrics dm = getResources().getDisplayMetrics();
+            int cardW = Math.max(dp(280), (dm.widthPixels - dp(180)) / 2);
+
+            for (int i = 0; i < filtered.size(); i++) {
+                final String[] e = filtered.get(i);
+                final String chTitle = e[0];
+                final String chGroup = e[1];
+                final String chUrl = e[2];
+
+                LinearLayout card = new LinearLayout(this);
+                card.setOrientation(LinearLayout.HORIZONTAL);
+                card.setGravity(Gravity.CENTER_VERTICAL);
+                card.setPadding(dp(12), dp(8), dp(12), dp(8));
+                card.setFocusable(true);
+                card.setClickable(true);
+
+                GradientDrawable bg = new GradientDrawable();
+                bg.setColor(Color.rgb(22, 26, 36));
+                bg.setCornerRadius(dp(8));
+                bg.setStroke(dp(1), Color.rgb(40, 48, 64));
+                card.setBackground(bg);
+
+                GridLayout.LayoutParams lp = new GridLayout.LayoutParams();
+                lp.width = cardW;
+                lp.height = dp(56);
+                lp.setMargins(0, 0, dp(10), dp(8));
+                card.setLayoutParams(lp);
+
+                TextView chIcon = text("📺", 18, Color.WHITE);
+                chIcon.setPadding(0, 0, dp(10), 0);
+                card.addView(chIcon);
+
+                LinearLayout col = new LinearLayout(this);
+                col.setOrientation(LinearLayout.VERTICAL);
+                col.setGravity(Gravity.CENTER_VERTICAL);
+
+                TextView t = text(chTitle, 13, Color.WHITE);
+                t.setTypeface(null, Typeface.BOLD);
+                t.setSingleLine(true);
+                t.setEllipsize(android.text.TextUtils.TruncateAt.END);
+                col.addView(t);
+
+                TextView g = text(chGroup, 11, Color.rgb(245, 197, 66));
+                g.setSingleLine(true);
+                col.addView(g);
+
+                card.addView(col, new LinearLayout.LayoutParams(0, -2, 1));
+
+                TextView playBadge = text("▶", 11, Color.WHITE);
+                playBadge.setPadding(dp(6), dp(4), dp(6), dp(4));
+                GradientDrawable pb = new GradientDrawable();
+                pb.setColor(Color.rgb(180, 30, 30));
+                pb.setCornerRadius(dp(4));
+                playBadge.setBackground(pb);
+                card.addView(playBadge);
+
+                card.setOnClickListener(v -> {
+                    if (ParentalControlEngine.isParentalLocked(this)
+                            && ParentalControlEngine.isAdultContent(chTitle, chGroup, "m3u")) {
+                        showParentalPinDialog(() -> playMovie(chTitle, chUrl, "TV M3U"));
+                    } else {
+                        playMovie(chTitle, chUrl, "TV M3U");
+                    }
+                });
+
+                card.setOnFocusChangeListener((v, f) -> {
+                    GradientDrawable gBg = new GradientDrawable();
+                    gBg.setColor(f ? Color.rgb(36, 48, 72) : Color.rgb(22, 26, 36));
+                    gBg.setCornerRadius(dp(8));
+                    gBg.setStroke(dp(f ? 2 : 1), f ? Color.WHITE : Color.rgb(40, 48, 64));
+                    card.setBackground(gBg);
+                });
+
+                grid.addView(card);
+            }
         }
     }
 
@@ -1387,7 +1668,7 @@ public class MainActivity extends Activity {
                         new java.io.InputStreamReader(c.getInputStream(), "UTF-8"))) {
                     String line, title = null, group = "";
                     int scanned = 0;
-                    while ((line = r.readLine()) != null && scanned++ < 50000 && entries.size() < 400) {
+                    while ((line = r.readLine()) != null && scanned++ < 100000 && entries.size() < 1200) {
                         line = line.trim();
                         if (line.startsWith("#EXTINF")) {
                             int comma = line.lastIndexOf(',');

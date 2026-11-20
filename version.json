@@ -1,7 +1,7 @@
 {
-  "versionCode": 39,
-  "versionName": "0.39.0",
-  "apkUrl": "https://github.com/leocanu/leo-tv/releases/download/v0.39.0/LeoTV-v0.39.0.apk",
-  "changelog": "• Carga y administración de Listas M3U / IPTV personalizadas desde el menú de Ajustes (⚙️)\n• Soporte para listas remotas http y https con hasta 400 canales\n• Protección automática de Control Parental por PIN en canales de listas M3U etiquetados como adultos/xxx\n• Persistencia local de listas cargadas para abrirlas rápidamente en cualquier momento",
+  "versionCode": 40,
+  "versionName": "0.40.0",
+  "apkUrl": "https://github.com/leocanu/leo-tv/releases/download/v0.40.0/LeoTV-v0.40.0.apk",
+  "changelog": "• Nueva interfaz avanzada para Listas M3U / IPTV:\n• Modo Lista Compacta con navegación secuencial D-Pad estable (sin retrocesos ni saltos involuntarios)\n• Búsqueda de canales en tiempo real por nombre\n• Filtro instantáneo por Categorías / Grupos (group-title) con barra de chips horizontal\n• Alternador de vista entre Modo Lista Compacta y Modo Cuadrícula\n• Capacidad ampliada hasta 1200 canales por lista M3U",
   "mandatory": false
 }
