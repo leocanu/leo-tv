@@ -1,0 +1,62 @@
+[
+  {
+    "test": "inicio",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "OK abre canal Demo",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "Demo preparada",
+    "passed": true,
+    "detail": "VIDEO PROPIA   /   DEMO | Big Buck Bunny | Muestra autorizada de reproducción · Usá OK para mostrar controles. | Reproduciendo demostración."
+  },
+  {
+    "test": "Atras vuelve al canal",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "Atras vuelve al inicio",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "catalogo Blender",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "Blender preparado",
+    "passed": true,
+    "detail": "VIDEO PROPIA   /   BLENDER OPEN MOVIES | Elephants Dream | Muestra autorizada de reproducción · Usá OK para mostrar controles. | Video preparado. Reproduciendo."
+  },
+  {
+    "test": "Pausa con control remoto",
+    "passed": false,
+    "detail": "VIDEO PROPIA   /   BLENDER OPEN MOVIES | Elephants Dream | Muestra autorizada de reproducción · Usá OK para mostrar controles. | Video preparado. Reproduciendo."
+  },
+  {
+    "test": "Reanudar con control remoto",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "Pausa al salir de la app",
+    "passed": false,
+    "detail": "VIDEO PROPIA   /   BLENDER OPEN MOVIES | Elephants Dream | Muestra autorizada de reproducción · Usá OK para mostrar controles. | Video preparado. Reproduciendo."
+  },
+  {
+    "test": "Internet Archive preparado",
+    "passed": true,
+    "detail": "VIDEO PROPIA   /   INTERNET ARCHIVE | Big Buck Bunny · Completa | Muestra autorizada de reproducción · Usá OK para mostrar controles. | Video preparado. Reproduciendo."
+  },
+  {
+    "test": "Inicio final",
+    "passed": true,
+    "detail": ""
+  }
+]

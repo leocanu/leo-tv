@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <!-- Cargo CSS -->
+    <!--<link rel="stylesheet" type="text/css" href="https://static.vodgc.net/css/styles_v2.min.css">-->
+    <link rel="stylesheet" type="text/css" href="https://api.vodgc.net/libs/player/v2/styles_v2.min.css?v=1.0.4">
+                  <link rel="stylesheet" type="text/css" href="https://static.vodgc.net/player/v2/relatedVideos.min.css"><link rel="stylesheet" type="text/css" href="https://api.vodgc.net/libs/player/v2/components-font-awesome/css/font-awesome.min.css">    <style type="text/css">
+        @media screen and (max-width: 480px) {
+            #play-container{
+                position: absolute;
+                height: 50px;
+                width: 50px;
+                border-radius: 100px;
+                border: 2px solid white;
+                padding: 10px;
+                left: 50%;
+                top: 50%;
+                z-index: 9999999999;
+                transform: translate(-50%, -50%);
+                opacity: 0.7;
+                cursor: pointer;
+                background-color: #FFFFFF;
+            }
+
+            .play{
+                position: relative;
+                color: white;
+                padding-left: 12px;
+                padding-top: 1px;
+            }
+        }
+        @media screen and (max-height: 250px) {
+            #play-container{
+                height: 50px;
+                width: 50px;
+            }
+        }
+        @media screen and (min-width: 480px) {
+            #play-container{
+                position: absolute;
+                height: 100px;
+                width: 100px;
+                border-radius: 100px;
+                border: 4px solid white;
+                padding: 10px;
+                left: 50%;
+                top: 50%;
+                z-index: 9999999999;
+                transform: translate(-50%, -50%);
+                opacity: 0.7;
+                cursor: pointer;
+                font-size: 1.7em;
+                background-color: #FFFFFF;
+            }
+            .play{
+                position: relative;
+                color: white;
+                padding-left: 27px;
+                padding-top: 8px;
+            }
+        }
+        #play-container:hover {
+        background-color: #FFFFFF;
+        }
+
+        .vjs-control-bar {
+                            background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzJiMzMzZiIgc3RvcC1vcGFjaXR5PSIwIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMyYjMzM2YiIHN0b3Atb3BhY2l0eT0iMC42Ii8+CiAgPC9saW5lYXJHcmFkaWVudD4KICA8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2dyYWQtdWNnZy1nZW5lcmF0ZWQpIiAvPgo8L3N2Zz4=) !important;
+                            background: -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 100%) !important;
+                            background: -webkit-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,0.6) 100%) !important;
+                            background: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.6) 100%) !important;
+                            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#002b333f', endColorstr='#b32b333f',GradientType=0 ) !important;
+                        }
+
+                        .vjs-brand-container .vjs-brand-container-link img {
+                            margin-top: 0px;
+                        }.video-js .vjs-progress-holder .vjs-play-progress, .video-js .vjs-progress-holder .vjs-load-progress, .video-js .vjs-progress-holder .vjs-tooltip-progress-bar, .video-js .vjs-progress-holder .vjs-load-progress div {
+                        background: #FFFFFF;
+                    }
+                    .video-js .vjs-volume-level {
+                        background: #FFFFFF !important;
+                    }  .video-js .vjs-control {
+                            color: #A7A7A7;
+                        }        .downloadBtn{
+            top: 5px;
+            position: relative;
+            cursor: pointer;
+        }
+        .vjs-brand-container-link > img {
+    padding-top: 9px;
+}
+.play-container{
+opacity:0.7
+}
+.play {
+color:#4c4c4c;
+opacity:0.8
+}
+.vjs-play-progress .vjs-slider-bar {
+background-color: #e09408;
+}  .fa-download{
+                            color: #A7A7A7;
+                        }    </style>
+    <link rel="stylesheet" type="text/css" href="https://static.vodgc.net/player/v2/video-js-5.19.2.min.css">
+    <link rel="stylesheet" type="text/css" href="https://static.vodgc.net/player/v2/videojs-brand-0.0.4.min.css">
+    <link rel="stylesheet" type="text/css" href="https://static.vodgc.net/player/v2/videojs.ads-5.1.5.min.css">
+        <link rel="stylesheet" type="text/css" href="https://api.vodgc.net/libs/player/v2/videojs.ima-0.5.1.min.css">    <!--<link rel="stylesheet" href="https://static.vodgc.net/player/v2/font-awesome-4.7.0/css/font-awesome.min.css" />-->
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">-->
+        <!-- Fin carga css -->
+
+    <!-- Inicio carga cxense -->
+        <!-- Fin carga cxense -->
+
+    <title>Player</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="https://static.vodgc.net/favicon/favicon2-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://static.vodgc.net/favicon/favicon2-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="https://static.vodgc.net/favicon/favicon2-96x96.png">
+</head>
+<body>
+    <div id="wrapper">
+
+        
+        <div id="media-player-container">
+            <div id="mask" class="mask"></div>
+                        <div class="logo-top">
+                            </div>
+            <div id="skip"></div>
+            <video id="media-player"  class="video-js vjs-default-skin" playsinline></video>
+                            <ul id="qualities-selector"></ul>
+            
+            <div id="play-container">
+                <i class="play fa fa-3x fa-play" aria-hidden="true"></i>
+            </div>
+        </div>
+
+        
+
+    </div>
+
+    
+    <!--
+    <br>
+    <div class="forward-container">
+        <i class="fa fa-3x fa-forward" aria-hidden="true"></i>
+    </div>
+    <br>
+    <div class="skip-container">
+            <i class="fa fa-3x fa-window-close" aria-hidden="true"></i>
+    </div>
+    -->
+
+    <script type="text/javascript">
+
+        var playerParams                = {};
+        playerParams.apiUrl             = "https://api.vodgc.net";
+        playerParams.hash               = "HKA9Y71614802794";
+        playerParams.content_id         = 1363280;
+        playerParams.video_name         = "TN Vivo 24hs";
+        playerParams.blockvast          = "";
+        playerParams.custom_poster      = "";
+        playerParams.settings           = {"test":1,"name":"PROD - TN_ARC_Releated ","skin_source":"https:\/\/api.vodgc.net\/player\/style\/dinamic","logo":false,"logo_panel":false,"destination_url":false,"add_tag_url":"https:\/\/pubads.g.doubleclick.net\/gampad\/ads","bg_panel":"#000000","bg_slider":"#FFFFFF","bg_controls":"#A7A7A7","bg_main_btn":"#FFFFFF","bg_main_btn_hover":"#FFFFFF","peer_five":false,"comscore_c3":false,"ga":false,"ga_hostname":"api.vodgc.net","comscore":"tn","vast_skip":false,"vast_ts_key":"correlator","autoplay":false,"video360":false,"vast_custom_text":"Skip","playlist_id":null,"relation":null,"title":"","wt_url":false,"wt_destination":false,"wt_opacity":false,"wt_pos":"center","wt_height":false,"autoplay_relation":true,"download_audio":false,"cxense":false,"related_delay":2,"show_title":false,"quality_picker":"none","external_css":".vjs-brand-container-link > img {\n    padding-top: 9px;\n}\n.play-container{\nopacity:0.7\n}\n.play {\ncolor:#4c4c4c;\nopacity:0.8\n}\n.vjs-play-progress .vjs-slider-bar {\nbackground-color: #e09408;\n}","sharing_facebook":false,"sharing_twitter":false,"sharing_gplus":false,"sharing_embedded":false,"twitter_text_input":false,"countdown_ads":false,"realtime":"https:\/\/rt.vodgc.net","urlAnalytics":"https:\/\/analytics.vodgc.net","content_type":4,"ga_events":"[\"play\",\"start\",\"end\",\"pause\"]"};
+        playerParams.external_playlist  = [];
+        playerParams.playlist_ids       = [];
+        playerParams.comscore           = {"c1":2,"c2":6906409,"ns_site":"tn","ns_type":"hidden"};
+        playerParams.pvast              = "";
+        playerParams.geohost            = "https://geoip.vodgc.net";
+        var ga_hostname =  '';
+        var content_id = 1363280;
+        var video_name = "TN Vivo 24hs";
+        var gid = 1;
+        var pid = 1;
+        var player_id = "HKA9Y71614802794";
+        var referrer  = document.referrer || '';
+        var rt_host   = "https://rt.vodgc.net";
+        var rt_host_test   = "https://genoa-test.appspot.com";
+
+        if(playerParams.settings.ga_hostname != ''){
+            var ga_hostname = playerParams.settings.ga_hostname;
+        }
+        var genoaDebug = false;
+    </script>
+    <!--  Carga de parametros  -->
+
+    <script src="https://static.vodgc.net/player/v2/jquery.min-3.1.1.js"></script>
+    <script src="https://static.vodgc.net/player/v2/video-js-5.19.2.min.js"></script>
+    <script src="https://static.vodgc.net/libs/videojs-ga/videojs.edited2.ga.min.js"></script>
+    <script src="https://static.vodgc.net/player/v2/videojs-overlay-1.1.1.min.js"></script>
+    <script src="https://static.vodgc.net/player/v2/videojs-brand-0.0.4.min.js"></script>
+    <!-- <script src="https://static.vodgc.net/player/v2/socket.min.js"></script> -->
+    <script src="https://sb.scorecardresearch.com/c2/plugins/streamsense_plugin_html5.js"></script><script src="https://static.vodgc.net/player/v2/videojs5-hlsjs-source-handler.min.js"></script><script src="//imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
+              <script src="https://static.vodgc.net/player/v2/videojs.ads-5.1.5.min.js"></script>
+              <script src="https://api.vodgc.net/libs/player/v2/videojs.ima-0.5.1.min.js"></script>    <script src="https://static.vodgc.net/player/v2/relatedVideos.min.js"></script>
+                  <script src="https://static.vodgc.net/player/v2/utils.min.js"></script>
+                  <script src="https://static.vodgc.net/player/v2/showads.js"></script>
+
+                  <script src="https://api.vodgc.net/libs/player/v2/script_v2.min.js?v=4.0.4"></script>                  
+                  <script src="https://api.vodgc.net/libs/player/v2/genoa-event-tracking.min.js?v=4.0.0"></script>
+                      <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
+    <!-- fin de librerias requeridas-->
+</body>
+</html>

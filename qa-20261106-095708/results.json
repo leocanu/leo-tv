@@ -1,0 +1,32 @@
+[
+  {
+    "test": "inicio",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "OK abre canal Demo",
+    "passed": false,
+    "detail": ""
+  },
+  {
+    "test": "Demo preparada",
+    "passed": false,
+    "detail": "VIDEO PROPIA   /   MIS NUBES | Mis nubes | Futura importación de bibliotecas personales autorizadas. | ←  Volver a todos los canales | No disponible todavía  ·  Sin acceso a contenido"
+  },
+  {
+    "test": "Atras vuelve al canal",
+    "passed": false,
+    "detail": ""
+  },
+  {
+    "test": "Atras vuelve al inicio",
+    "passed": false,
+    "detail": ""
+  },
+  {
+    "test": "ejecucion",
+    "passed": false,
+    "detail": "No se encuentra boton BLENDER OPEN MOVIES"
+  }
+]

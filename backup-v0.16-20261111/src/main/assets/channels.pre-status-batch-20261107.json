@@ -1,0 +1,226 @@
+[
+  {
+    "id": "cinecalidad",
+    "name": "CineCalidad",
+    "status": "candidate_unverified",
+    "enabled": false,
+    "description": "Streams en Español desde cinecalidad.vg"
+  },
+  {
+    "id": "lamovie",
+    "name": "LaMovie",
+    "status": "candidate_unverified",
+    "enabled": false,
+    "description": "Streams en Español desde lamovie.org"
+  },
+  {
+    "id": "seriesmetro",
+    "name": "SeriesMetro",
+    "status": "candidate_unverified",
+    "enabled": false,
+    "description": "Streams en Español desde seriesmetro.net"
+  },
+  {
+    "id": "peliserieshoy",
+    "name": "PelisSeriesHoy",
+    "status": "static_review_only_no_live_test",
+    "enabled": false,
+    "description": "Streams en Español desde pelisserieshoy.com"
+  },
+  {
+    "id": "embed69",
+    "name": "Embed69",
+    "status": "static_review_only_no_live_test",
+    "enabled": false,
+    "description": "Streams en Español desde embed69.org"
+  },
+  {
+    "id": "cuevana",
+    "name": "Cuevana",
+    "status": "candidate_unverified",
+    "enabled": false,
+    "description": "Streams en Español desde cuevana3.eu"
+  },
+  {
+    "id": "pelisplus",
+    "name": "Pelisplus",
+    "status": "candidate_unverified",
+    "enabled": false,
+    "description": "Streams en Español desde pelisplushd.bz"
+  },
+  {
+    "id": "pelispedia",
+    "name": "Pelispedia",
+    "status": "candidate_unverified",
+    "enabled": false,
+    "description": "Streams en Español desde pelispedia.is"
+  },
+  {
+    "id": "pelisforte",
+    "name": "Pelisforte",
+    "status": "candidate_unverified",
+    "enabled": false,
+    "description": "Streams en Español desde pelisforte.se (Okhd)"
+  },
+  {
+    "id": "allcalidad",
+    "name": "AllCalidad",
+    "status": "candidate_unverified",
+    "enabled": false,
+    "description": "Streams en Español desde allcalidad.re"
+  },
+  {
+    "id": "doramasflix",
+    "name": "DoramasFlix",
+    "status": "candidate_unverified",
+    "enabled": false,
+    "description": "Streams en Español desde doramasflix.co"
+  },
+  {
+    "id": "tioanime",
+    "name": "TioAnime",
+    "status": "candidate_unverified",
+    "enabled": false,
+    "description": "Streams en Español desde tioanime.com"
+  },
+  {
+    "id": "animeav1",
+    "name": "AnimeAV1",
+    "status": "candidate_unverified",
+    "enabled": false,
+    "description": "Streams en Español desde animeav1.com"
+  },
+  {
+    "id": "jkanime",
+    "name": "JKAnime",
+    "status": "candidate_unverified",
+    "enabled": false,
+    "description": "Streams en Español desde jkanime.net"
+  },
+  {
+    "id": "henaojara",
+    "name": "HenaoJara",
+    "status": "candidate_unverified",
+    "enabled": false,
+    "description": "Streams en Español desde henaojara.net"
+  },
+  {
+    "id": "latanime",
+    "name": "LatAnime",
+    "status": "candidate_unverified",
+    "enabled": false,
+    "description": "Streams en Español desde latanime.org"
+  },
+  {
+    "id": "seriesflix",
+    "name": "Seriesflix",
+    "status": "candidate_unverified",
+    "enabled": false,
+    "description": "Streams en Español desde pelisflixhd1.online"
+  },
+  {
+    "id": "areshd",
+    "name": "AresHD",
+    "status": "static_review_only_no_live_test",
+    "enabled": false,
+    "description": "Streams en Español desde areshd.com"
+  },
+  {
+    "id": "monoschinos",
+    "name": "MonosChinos",
+    "status": "static_review_only_no_live_test",
+    "enabled": false,
+    "description": "Streams en Español desde monoschinos2.net"
+  },
+  {
+    "id": "sololatino",
+    "name": "SoloLatino",
+    "status": "static_review_only_no_live_test",
+    "enabled": false,
+    "description": "Streams en Español desde sololatino.net"
+  },
+  {
+    "id": "deepflix",
+    "name": "DeepFlix",
+    "status": "candidate_unverified",
+    "enabled": false,
+    "description": "Streams en Español desde el portal DeepFlix (mg.homelabx.qzz.io)"
+  },
+  {
+    "id": "cinehaxplus",
+    "name": "CineHax+",
+    "status": "candidate_unverified",
+    "enabled": false,
+    "description": "Streams en Español desde cinehaxplus.com"
+  },
+  {
+    "id": "cinehdplus",
+    "name": "CineHDPlus",
+    "status": "static_review_only_no_live_test",
+    "enabled": false,
+    "description": "Streams en Español desde cinehdplus.org"
+  },
+  {
+    "id": "cinehax",
+    "name": "CineHax",
+    "status": "own_app_matrix_playback_confirmed",
+    "enabled": true,
+    "description": "Streams en Español desde cinehax.org"
+  },
+  {
+    "id": "cineplus123",
+    "name": "Cineplus123",
+    "status": "candidate_requires_cpp_port",
+    "enabled": false,
+    "description": ""
+  },
+  {
+    "id": "detodopeliculas",
+    "name": "DeTodo Peliculas",
+    "status": "candidate_requires_cpp_port",
+    "enabled": false,
+    "description": ""
+  },
+  {
+    "id": "flixlatam",
+    "name": "FlixLatam",
+    "status": "candidate_requires_cpp_port",
+    "enabled": false,
+    "description": ""
+  },
+  {
+    "id": "verpelistop",
+    "name": "VerPelisTop",
+    "status": "candidate_requires_cpp_port",
+    "enabled": false,
+    "description": ""
+  },
+  {
+    "id": "mundodonghua",
+    "name": "MundoDonghua",
+    "status": "candidate_requires_cpp_port",
+    "enabled": false,
+    "description": ""
+  },
+  {
+    "id": "veranime",
+    "name": "VerAni.me",
+    "status": "candidate_requires_cpp_port",
+    "enabled": false,
+    "description": ""
+  },
+  {
+    "id": "veranimes",
+    "name": "VerAnimes",
+    "status": "candidate_requires_cpp_port",
+    "enabled": false,
+    "description": ""
+  },
+  {
+    "id": "beatzanime",
+    "name": "BeatZ Anime",
+    "status": "candidate_requires_cpp_port",
+    "enabled": false,
+    "description": ""
+  }
+]

@@ -1,0 +1,28 @@
+{
+  "source": "allcalidad",
+  "model": "qwen2.5-coder:7b",
+  "status": "unverified_static_local_model",
+  "elapsed_seconds": 6.05,
+  "output_tokens": 189,
+  "analysis": {
+    "source": "https://allcalidad.re",
+    "catalog_search": null,
+    "stream_hosts": [
+      "voe"
+    ],
+    "extraction_steps": [
+      "getStreams(tmdbId, mediaType, season, episode)",
+      "getTmdbTitles(tmdbId, mediaType)",
+      "searchPosts(q)",
+      "getPlayerEmbeds(post_id)",
+      "processEmbed(o)"
+    ],
+    "requires_crypto": false,
+    "needs_browser": false,
+    "uncertainties": [
+      "The code uses a redacted TMDB API key, which is not provided.",
+      "The code uses a function `voeDecode` that appears to be used for decoding embed URLs, but the exact implementation is not provided.",
+      "The code uses a function `resolveVoe` that appears to be used for resolving embed URLs, but the exact implementation is not provided."
+    ]
+  }
+}

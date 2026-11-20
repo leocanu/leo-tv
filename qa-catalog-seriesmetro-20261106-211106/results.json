@@ -1,0 +1,47 @@
+[
+  {
+    "test": "Catalogo online con portadas",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "Busqueda Matrix muestra resultados",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "matrix-from-search reproduce",
+    "passed": true,
+    "detail": "('PAUSED', 5355)"
+  },
+  {
+    "test": "matrix-from-search reanuda",
+    "passed": true,
+    "detail": "(('PAUSED', 5355), ('PAUSED', 8947))"
+  },
+  {
+    "test": "Busqueda de serie",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "Lista de episodios",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "breaking-bad-s1e1 reproduce",
+    "passed": true,
+    "detail": "('PAUSED', 4955)"
+  },
+  {
+    "test": "breaking-bad-s1e1 reanuda",
+    "passed": true,
+    "detail": "(('PAUSED', 4955), ('PAUSED', 8571))"
+  },
+  {
+    "test": "Paginacion siguiente",
+    "passed": true,
+    "detail": ""
+  }
+]

@@ -1,0 +1,7 @@
+[
+  {
+    "test": "Ejecucion",
+    "passed": false,
+    "detail": "cat: /sdcard/fullscreen-1794004565220077100.xml: No such file or directory\r\n"
+  }
+]

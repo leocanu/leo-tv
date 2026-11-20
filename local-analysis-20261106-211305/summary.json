@@ -1,0 +1,25 @@
+{
+  "model": "qwen2.5-coder:7b",
+  "reviewed": 18,
+  "sources": [
+    "monoschinos",
+    "areshd",
+    "embed69",
+    "cinehaxplus",
+    "cinehdplus",
+    "henaojara",
+    "tioanime",
+    "animeav1",
+    "jkanime",
+    "latanime",
+    "cinecalidad",
+    "allcalidad",
+    "pelisforte",
+    "pelisplus",
+    "cuevana",
+    "doramasflix",
+    "seriesflix",
+    "peliserieshoy"
+  ],
+  "note": "Static local-model analysis only; not playback verification"
+}

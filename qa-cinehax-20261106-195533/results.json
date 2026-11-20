@@ -1,0 +1,22 @@
+[
+  {
+    "test": "CineHax ofrece Matrix",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "Enlace resuelto dentro de nuestra app",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "Matrix avanzo y se pauso",
+    "passed": true,
+    "detail": "('PAUSED', 7510)"
+  },
+  {
+    "test": "Matrix reanuda y sigue avanzando",
+    "passed": true,
+    "detail": "(('PAUSED', 7510), ('PAUSED', 12122))"
+  }
+]

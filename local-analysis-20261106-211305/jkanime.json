@@ -1,0 +1,34 @@
+{
+  "source": "jkanime",
+  "model": "qwen2.5-coder:7b",
+  "status": "unverified_static_local_model",
+  "elapsed_seconds": 8.79,
+  "output_tokens": 320,
+  "analysis": {
+    "source": "https://jkanime.net",
+    "catalog_search": null,
+    "stream_hosts": null,
+    "extraction_steps": [
+      "getStreams(tmdbId, mediaType, season, episode)",
+      "getTmdbTitles(tmdbId, mediaType)",
+      "searchSite(title)",
+      "scoreTitle(title, targetTitles)",
+      "getSession(animeUrl)",
+      "getEpisodeNumbers(session)",
+      "fetch(epUrl, { headers: HEADERS, redirect: 'follow' })",
+      "extractServers(html)",
+      "langOf(animeTitle)",
+      "allSettled(serverUrls.map(function(u) { return processEmbed(u, lang, epUrl); }))",
+      "processEmbed(embedUrl, lang, epUrl)"
+    ],
+    "requires_crypto": true,
+    "needs_browser": false,
+    "uncertainties": [
+      "The code uses async/await, which is not supported in all environments.",
+      "The code uses functions like `getTmdbTitles`, `searchSite`, `scoreTitle`, `getSession`, `getEpisodeNumbers`, `fetch`, `extractServers`, `langOf`, `allSettled`, and `processEmbed` which are not defined in the provided code.",
+      "The code uses `__async` which is not a standard JavaScript function.",
+      "The code uses `voeDecode` which is not defined in the provided code.",
+      "The code uses `resolveVoe` which is not defined in the provided code."
+    ]
+  }
+}

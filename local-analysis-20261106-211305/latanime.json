@@ -1,0 +1,28 @@
+{
+  "source": "latanime",
+  "model": "qwen2.5-coder:7b",
+  "status": "unverified_static_local_model",
+  "elapsed_seconds": 7.16,
+  "output_tokens": 238,
+  "analysis": {
+    "source": "https://latanime.org",
+    "catalog_search": null,
+    "stream_hosts": null,
+    "extraction_steps": [
+      "getStreams(tmdbId, mediaType, season, episode)",
+      "searchSite(query)",
+      "extractEpisodes(html, animeUrl)",
+      "extractPlayers(html)",
+      "processEmbed(embedUrl, lang, epUrl)"
+    ],
+    "requires_crypto": true,
+    "needs_browser": false,
+    "uncertainties": [
+      "The code uses async/await for asynchronous operations, which may not be supported in all environments.",
+      "The code uses custom functions like `getTmdbTitles`, `searchSite`, `extractEpisodes`, `extractPlayers`, and `processEmbed` which are not defined in the provided code.",
+      "The code uses `fetch` for HTTP requests, which may not be available in all environments.",
+      "The code uses `atob` for Base64 decoding, which may not be available in all environments.",
+      "The code uses `JSON.parse` for parsing JSON, which may not be available in all environments."
+    ]
+  }
+}

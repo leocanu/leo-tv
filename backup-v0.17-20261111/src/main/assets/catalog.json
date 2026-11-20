@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "providers": [
+    {
+      "id": "Internet Archive",
+      "label": "Internet Archive",
+      "description": "Películas abiertas verificadas",
+      "movies": [
+        {
+          "id": "bbb-archive",
+          "title": "Big Buck Bunny",
+          "year": 2008,
+          "quality": "720p",
+          "url": "https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4",
+          "verification": "audio_video_confirmed"
+        }
+      ]
+    },
+    {
+      "id": "Blender Open Movies",
+      "label": "Blender Open Movies",
+      "description": "Películas de Blender Foundation",
+      "movies": [
+        {
+          "id": "elephants-dream",
+          "title": "Elephants Dream",
+          "year": 2006,
+          "quality": "480p",
+          "url": "https://download.blender.org/ED/elephantsdream-480-h264-st-aac.mov",
+          "verification": "audio_video_confirmed"
+        },
+        {
+          "id": "bbb-blender-archive",
+          "title": "Big Buck Bunny",
+          "year": 2008,
+          "quality": "720p",
+          "url": "https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4",
+          "verification": "audio_video_confirmed"
+        }
+      ]
+    }
+  ]
+}

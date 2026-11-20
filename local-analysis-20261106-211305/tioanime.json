@@ -1,0 +1,31 @@
+{
+  "source": "tioanime",
+  "model": "qwen2.5-coder:7b",
+  "status": "unverified_static_local_model",
+  "elapsed_seconds": 4.6,
+  "output_tokens": 132,
+  "analysis": {
+    "source": "https://tioanime.com",
+    "catalog_search": [
+      "/api/search"
+    ],
+    "stream_hosts": null,
+    "extraction_steps": [
+      "getTmdbTitles",
+      "searchAnime",
+      "fetch anime page",
+      "extractEpisodes",
+      "fetch episode page",
+      "extractVideos",
+      "processVideoEntry"
+    ],
+    "requires_crypto": false,
+    "needs_browser": false,
+    "uncertainties": [
+      "getTmdbTitles",
+      "extractEpisodes",
+      "extractVideos",
+      "processVideoEntry"
+    ]
+  }
+}

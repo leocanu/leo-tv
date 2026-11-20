@@ -1,0 +1,37 @@
+[
+  {
+    "test": "Video ocupa pantalla 1920x1080",
+    "passed": true,
+    "detail": "[0, 0, 1920, 1080]"
+  },
+  {
+    "test": "Atras sale de pantalla completa",
+    "passed": true,
+    "detail": "[409, 260, 1511, 880]"
+  },
+  {
+    "test": "Salida conserva posicion y pausa",
+    "passed": true,
+    "detail": "(('PAUSED', 4437), ('PAUSED', 4437))"
+  },
+  {
+    "test": "Menu vuelve a pantalla completa",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "Boton entra en pantalla completa",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "Segundo Atras vuelve al canal",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "Demo ocupa pantalla completa",
+    "passed": true,
+    "detail": "[0,0][1920,1080]"
+  }
+]

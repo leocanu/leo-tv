@@ -1,0 +1,36 @@
+{
+  "source": "cuevana",
+  "model": "qwen2.5-coder:7b",
+  "status": "unverified_static_local_model",
+  "elapsed_seconds": 8.98,
+  "output_tokens": 322,
+  "analysis": {
+    "source": "https://wv3.cuevana3.eu",
+    "catalog_search": null,
+    "stream_hosts": [
+      "voe"
+    ],
+    "extraction_steps": [
+      "getStreams(tmdbId, mediaType, season, episode)",
+      "getTmdbTitles(tmdbId, mediaType)",
+      "searchCuevana(titles[ti], wantMovie)",
+      "findBestResult(results, titles)",
+      "getSerieSlugBase(pageUrl)",
+      "fetch(pageUrl, { headers: HEADERS, redirect: 'follow' })",
+      "extractPlayerOptions(pageHtml)",
+      "processOption(o, pageUrl)",
+      "voeDecode(ct, luts)"
+    ],
+    "requires_crypto": true,
+    "needs_browser": false,
+    "uncertainties": [
+      "The code uses async/await, which may not be supported in all environments.",
+      "The `HEADERS` and `UA` variables are not defined in the provided code.",
+      "The `LANG_PRIORITY` array is not defined in the provided code.",
+      "The `allSettled` function is not defined in the provided code.",
+      "The `fetch` function is used, which may not be available in all environments.",
+      "The `b64toString` and `voeDecode` functions use `atob`, which may not be available in all environments.",
+      "The `voeDecode` function uses `JSON.parse`, which may throw an error if the input is not valid JSON."
+    ]
+  }
+}

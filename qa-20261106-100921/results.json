@@ -1,0 +1,57 @@
+[
+  {
+    "test": "inicio",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "catalogo Blender",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "Blender preparado",
+    "passed": true,
+    "detail": "VIDEO PROPIA   /   BLENDER OPEN MOVIES | Elephants Dream | Muestra autorizada de reproducción · Usá OK para mostrar controles. | Video preparado. Reproduciendo."
+  },
+  {
+    "test": "Pausa con control remoto",
+    "passed": true,
+    "detail": "('PAUSED', 9438)"
+  },
+  {
+    "test": "Reanudar con control remoto",
+    "passed": true,
+    "detail": "PLAYING"
+  },
+  {
+    "test": "Reloj de video avanza",
+    "passed": true,
+    "detail": "(9438, 12958)"
+  },
+  {
+    "test": "Avance con control remoto",
+    "passed": true,
+    "detail": "(12958, 27972)"
+  },
+  {
+    "test": "Retroceso con control remoto",
+    "passed": true,
+    "detail": "(27972, 22972)"
+  },
+  {
+    "test": "Pausa al salir de la app",
+    "passed": true,
+    "detail": "PAUSED"
+  },
+  {
+    "test": "Vuelve pausado",
+    "passed": true,
+    "detail": "PAUSED"
+  },
+  {
+    "test": "Inicio final",
+    "passed": true,
+    "detail": ""
+  }
+]

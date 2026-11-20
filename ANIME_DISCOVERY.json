@@ -1,0 +1,86 @@
+[
+  {
+    "source": "tioanime",
+    "status": 200,
+    "profile_links": [
+      "https://tioanime.com/directorio?q=Naruto",
+      "https://tioanime.com/anime/naruto",
+      "https://tioanime.com/anime/naruto-shippuden-hd",
+      "https://tioanime.com/anime/naruto-shippuden-road-to-ninja",
+      "https://tioanime.com/anime/naruto-shippuden-blood-prison",
+      "https://tioanime.com/anime/boruto-naruto-the-movie-naruto-ga-hokage-ni-natta-hi"
+    ],
+    "article_count": 12
+  },
+  {
+    "source": "monoschinos",
+    "status": 200,
+    "profile_links": [
+      "https://vww.monoschinos2.net/anime/naruto-shippuden-the-movie-bonds",
+      "https://vww.monoschinos2.net/anime/the-last-naruto-the-movie",
+      "https://vww.monoschinos2.net/anime/naruto-shippuden-castellano",
+      "https://vww.monoschinos2.net/anime/naruto-castellano",
+      "https://vww.monoschinos2.net/anime/naruto-latino",
+      "https://vww.monoschinos2.net/anime/naruto-shippuden-latino"
+    ],
+    "article_count": 0
+  },
+  {
+    "source": "henaojara",
+    "status": 200,
+    "profile_links": [
+      "https://ww1.henaojara.net/anime/naruto-shippuden-the-movie-bonds",
+      "https://ww1.henaojara.net/anime/the-last-naruto-the-movie",
+      "https://ww1.henaojara.net/anime/naruto-shippuden-castellano",
+      "https://ww1.henaojara.net/anime/naruto-castellano",
+      "https://ww1.henaojara.net/anime/naruto-latino",
+      "https://ww1.henaojara.net/anime/naruto-shippuden-latino"
+    ],
+    "article_count": 24
+  },
+  {
+    "source": "veranimes",
+    "status": 200,
+    "profile_links": [
+      "https://wwv.veranimes.net/anime/naruto-shippuden-especial-madara-vs-hashirama",
+      "https://wwv.veranimes.net/anime/naruto-shippuden-naruto-x-uniqlo",
+      "https://wwv.veranimes.net/anime/naruto-ovas",
+      "https://wwv.veranimes.net/anime/naruto-shippuden-sunny-side-battle-jump-festa-special",
+      "https://wwv.veranimes.net/anime/naruto-honoo-no-chuunin-shiken-naruto-vs-konohamaru",
+      "https://wwv.veranimes.net/anime/boruto-naruto-the-movie-latino"
+    ],
+    "article_count": 20
+  },
+  {
+    "source": "latanime",
+    "status": 200,
+    "profile_links": [
+      "https://latanime.org/anime/boruto-naruto-next-generations-castellano",
+      "https://latanime.org/anime/boruto-naruto-next-generations-latino",
+      "https://latanime.org/anime/boruto-naruto-la-pelicula",
+      "https://latanime.org/anime/the-last-naruto-the-movie-latino",
+      "https://latanime.org/anime/naruto-shippuden-castellano",
+      "https://latanime.org/anime/naruto-shippuden-latino"
+    ],
+    "article_count": 0
+  },
+  {
+    "source": "animeav1",
+    "status": 200,
+    "profile_links": [
+      "https://animeav1.com/media/naruto",
+      "https://animeav1.com/media/the-last-naruto-the-movie",
+      "https://animeav1.com/media/naruto-shippuuden-sunny-side-battle",
+      "https://animeav1.com/media/naruto-shippuuden-movie-6-road-to-ninja",
+      "https://animeav1.com/media/naruto-sd-rock-lee-no-seishun-full-power-ninden",
+      "https://animeav1.com/media/naruto-honoo-no-chuunin-shiken-naruto-vs-konohamaru"
+    ],
+    "article_count": 19
+  },
+  {
+    "source": "beatzanime",
+    "status": 200,
+    "profile_links": [],
+    "article_count": 0
+  }
+]

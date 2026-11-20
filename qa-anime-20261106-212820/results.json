@@ -1,0 +1,56 @@
+[
+  {
+    "provider": "TioAnime",
+    "tile_found": true,
+    "initial_texts": [
+      "VIDEO PROPIA   /   TIOANIME",
+      "TioAnime",
+      "Novedades y busqueda de TioAnime. Cada video se comprueba al abrirlo.",
+      "←  Volver a todos los canales",
+      "Buscar en TioAnime",
+      "Buscar",
+      "Novedades",
+      "Catalogo · Pagina 1 · 24 titulos en esta pagina"
+    ],
+    "has_search": true,
+    "search_clicked": true,
+    "search_texts": [
+      "VIDEO PROPIA   /   TIOANIME",
+      "TioAnime",
+      "Novedades y busqueda de TioAnime. Cada video se comprueba al abrirlo.",
+      "←  Volver a todos los canales",
+      "Naruto",
+      "Buscar",
+      "Novedades",
+      "Resultados de \"Naruto\" · Pagina 1 · 12 titulos en esta pagina"
+    ],
+    "outcome": "catalog_checked"
+  },
+  {
+    "provider": "LatAnime",
+    "tile_found": true,
+    "initial_texts": [
+      "VIDEO PROPIA   /   LATANIME",
+      "LatAnime",
+      "Novedades y busqueda de LatAnime. Cada video se comprueba al abrirlo.",
+      "←  Volver a todos los canales",
+      "Buscar en LatAnime",
+      "Buscar",
+      "Novedades",
+      "Catalogo · Pagina 1 · 12 titulos en esta pagina"
+    ],
+    "has_search": true,
+    "search_clicked": true,
+    "search_texts": [
+      "VIDEO PROPIA   /   LATANIME",
+      "LatAnime",
+      "Novedades y busqueda de LatAnime. Cada video se comprueba al abrirlo.",
+      "←  Volver a todos los canales",
+      "Naruto",
+      "Buscar",
+      "Novedades",
+      "Resultados de \"Naruto\" · Pagina 1 · 8 titulos en esta pagina"
+    ],
+    "outcome": "catalog_checked"
+  }
+]

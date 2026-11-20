@@ -1,0 +1,42 @@
+[
+  {
+    "test": "inicio",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "OK abre canal Demo",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "Demo preparada",
+    "passed": true,
+    "detail": "VIDEO PROPIA   /   DEMO | Big Buck Bunny | Muestra autorizada de reproducción · Usá OK para mostrar controles. | Reproduciendo demostración."
+  },
+  {
+    "test": "Atras vuelve al canal",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "Atras vuelve al inicio",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "catalogo Blender",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "Blender preparado",
+    "passed": true,
+    "detail": "VIDEO PROPIA   /   BLENDER OPEN MOVIES | Elephants Dream | Muestra autorizada de reproducción · Usá OK para mostrar controles. | Video preparado. Reproduciendo."
+  },
+  {
+    "test": "ejecucion",
+    "passed": false,
+    "detail": "UIAutomator no produjo captura nueva: "
+  }
+]

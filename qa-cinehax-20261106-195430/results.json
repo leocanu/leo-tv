@@ -1,0 +1,12 @@
+[
+  {
+    "test": "CineHax ofrece Matrix",
+    "passed": false,
+    "detail": ""
+  },
+  {
+    "test": "Ejecucion",
+    "passed": false,
+    "detail": ""
+  }
+]

@@ -1,0 +1,31 @@
+{
+  "source": "cinehaxplus",
+  "model": "qwen2.5-coder:7b",
+  "status": "unverified_static_local_model",
+  "elapsed_seconds": 6.02,
+  "output_tokens": 207,
+  "analysis": {
+    "source": "https://cinehaxplus.com",
+    "catalog_search": null,
+    "stream_hosts": [
+      "https://api-encrypted.moviemaster.lat"
+    ],
+    "extraction_steps": [
+      "getTmdbInfo(tmdbId, mediaType)",
+      "selectTitle(info, isMovie)",
+      "fetchWatchPage(where.slug, isMovie, season, episode)",
+      "parseEmbed(page)",
+      "getPass(embed.pass)",
+      "getPlayerConfig(embed.src, pass)",
+      "getServers(config)",
+      "sweepServers(config, usable, collected, {}, deadline)"
+    ],
+    "requires_crypto": true,
+    "needs_browser": false,
+    "uncertainties": [
+      "The code relies on external APIs and services that may change or be unavailable.",
+      "The code uses custom parsing and error handling which may not work as expected with different data.",
+      "The code does not handle all possible error scenarios, which could lead to unexpected behavior."
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "provider": true,
+  "search_button": true,
+  "naruto_card": true,
+  "episodes_heading": [
+    "VIDEO PROPIA   /   LATANIME",
+    "LatAnime",
+    "Novedades y busqueda de LatAnime. Cada video se comprueba al abrirlo.",
+    "←  Volver a todos los canales",
+    "Naruto",
+    "Buscar",
+    "Novedades",
+    "Naruto Shippuden Latino · Episodios",
+    "Volver a resultados",
+    "La disponibilidad del video se comprueba al reproducir.",
+    "Episodios"
+  ],
+  "episode_button": false
+}

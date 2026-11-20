@@ -1,0 +1,26 @@
+{
+  "source": "monoschinos",
+  "model": "qwen2.5-coder:7b",
+  "status": "unverified_static_local_model",
+  "elapsed_seconds": 8.67,
+  "output_tokens": 300,
+  "analysis": {
+    "source": "function getStreams(tmdbId, mediaType, season, episode) { try { return await flujoAnime({ fuente: FUENTE, buscar, episodio, enlaces }, tmdbId, mediaType, season, episode); } catch (e) { console.log(`[${FUENTE}] ${e.message}`); return []; } } module.exports = { getStreams: limitar(getStreams) };",
+    "catalog_search": null,
+    "stream_hosts": null,
+    "extraction_steps": [
+      "getStreams function is defined to fetch streams using flujoAnime function.",
+      "Error handling is implemented to log errors and return an empty array if an exception occurs.",
+      "limitar function is applied to the getStreams function."
+    ],
+    "requires_crypto": true,
+    "needs_browser": false,
+    "uncertainties": [
+      "FUENTE, buscar, episodio, enlaces, flujoAnime, limitar are not defined in the provided code.",
+      "CryptoJS library is used for decryption, but the exact usage and context are not clear.",
+      "The code attempts to decrypt a string using AES-CBC mode, but the key and IV are not provided.",
+      "The code contains incomplete or incorrect regular expressions and function calls, which may lead to errors.",
+      "The code attempts to fetch data from URLs, but the exact URLs and parameters are not provided."
+    ]
+  }
+}

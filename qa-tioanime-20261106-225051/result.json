@@ -1,0 +1,20 @@
+{
+  "provider": true,
+  "search_button": true,
+  "naruto_card": true,
+  "episodes_heading": [
+    "VIDEO PROPIA   /   TIOANIME",
+    "TioAnime",
+    "Novedades y busqueda de TioAnime. Cada video se comprueba al abrirlo.",
+    "←  Volver a todos los canales",
+    "Naruto",
+    "Buscar",
+    "Novedades",
+    "Naruto Shippuden · Episodios",
+    "Volver a resultados",
+    "La disponibilidad del video se comprueba al reproducir.",
+    "Episodios"
+  ],
+  "open_episodes": true,
+  "episode_button": true
+}

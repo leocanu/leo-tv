@@ -1,0 +1,198 @@
+[
+  {
+    "id": "cinecalidad",
+    "name": "CineCalidad",
+    "status": "adapter_active_domain_updated",
+    "enabled": true,
+    "description": "Streams en Español desde cinecalidad.am (Películas y Series)"
+  },
+  {
+    "id": "lamovie",
+    "name": "LaMovie",
+    "status": "inactivo_sin_catalogo",
+    "enabled": false,
+    "description": "Streams en Español desde lamovie.org"
+  },
+  {
+    "id": "canela",
+    "name": "Canela TV",
+    "status": "inactivo_sin_catalogo",
+    "enabled": false,
+    "description": "Contenido gratuito oficial en Español: películas, telenovelas y series desde canela.tv"
+  },
+  {
+    "id": "seriesmetro",
+    "name": "SeriesMetro",
+    "status": "previously_playback_tested",
+    "enabled": true,
+    "description": "Streams en Español desde seriesmetro.net"
+  },
+  {
+    "id": "pelisplus",
+    "name": "Pelisplus",
+    "status": "inactivo_sin_catalogo",
+    "enabled": false,
+    "description": "Películas, series y animes desde pelisplus.to"
+  },
+  {
+    "id": "seriesflix",
+    "name": "Seriesflix",
+    "status": "adapter_active_domain_updated",
+    "enabled": true,
+    "description": "Películas y series online desde pelisflix1.guru"
+  },
+  {
+    "id": "doramasflix",
+    "name": "DoramasFlix",
+    "status": "inactivo_sin_catalogo",
+    "enabled": false,
+    "description": "K-Dramas y doramas asiáticos desde doramasflix.co con temporadas y capítulos"
+  },
+  {
+    "id": "sololatino",
+    "name": "SoloLatino",
+    "status": "adapter_active_integrated",
+    "enabled": true,
+    "description": "Películas y series en audio latino desde sololatino.net"
+  },
+  {
+    "id": "pelispedia",
+    "name": "Pelispedia",
+    "status": "previously_playback_tested",
+    "enabled": true,
+    "description": "Streams en Español desde pelispedia.is"
+  },
+  {
+    "id": "tioanime",
+    "name": "TioAnime",
+    "status": "catalog_and_episodes_active",
+    "enabled": true,
+    "description": "Episodios y estrenos anime desde tioanime.com"
+  },
+  {
+    "id": "jkanime",
+    "name": "JKAnime",
+    "status": "adapter_active_integrated",
+    "enabled": true,
+    "description": "Directorio de animes y películas desde jkanime.net"
+  },
+  {
+    "id": "latanime",
+    "name": "LatAnime",
+    "status": "catalog_and_episodes_active",
+    "enabled": true,
+    "description": "Anime en español latino desde latanime.org"
+  },
+  {
+    "id": "cinehax",
+    "name": "CineHax",
+    "status": "previously_playback_tested",
+    "enabled": true,
+    "description": "Streams en Español desde cinehax.org"
+  },
+  {
+    "id": "cuevana",
+    "name": "Cuevana",
+    "status": "adapter_compiled_qa_pending",
+    "enabled": true,
+    "description": "Streams en Español desde cuevana3.eu"
+  },
+  {
+    "id": "henaojara",
+    "name": "HenaoJara",
+    "status": "adapter_compiled_qa_pending",
+    "enabled": true,
+    "description": "Streams en Español desde henaojara.net"
+  },
+  {
+    "id": "flixlatam",
+    "name": "FlixLatam",
+    "status": "adapter_compiled_qa_pending",
+    "enabled": true,
+    "description": "Películas y series desde flixlatam.com"
+  },
+  {
+    "id": "areshd",
+    "name": "AresHD",
+    "status": "adapter_compiled_qa_pending",
+    "enabled": true,
+    "description": "Streams en Español desde areshd.com"
+  },
+  {
+    "id": "monoschinos",
+    "name": "MonosChinos",
+    "status": "adapter_compiled_qa_pending",
+    "enabled": true,
+    "description": "Streams de anime desde monoschinos2.net"
+  },
+  {
+    "id": "animeav1",
+    "name": "AnimeAV1",
+    "status": "adapter_compiled_qa_pending",
+    "enabled": true,
+    "description": "Anime en alta definición desde animeav1.com"
+  },
+  {
+    "id": "verpelistop",
+    "name": "VerPelisTop",
+    "status": "adapter_compiled_qa_pending",
+    "enabled": true,
+    "description": "Streams en Español desde verpelis.top"
+  },
+  {
+    "id": "mundodonghua",
+    "name": "MundoDonghua",
+    "status": "adapter_compiled_qa_pending",
+    "enabled": true,
+    "description": "Donghuas y animación china desde mundodonghua.com"
+  },
+  {
+    "id": "veranime",
+    "name": "VerAni.me",
+    "status": "inactivo_sin_catalogo",
+    "enabled": false,
+    "description": "Catálogo anime desde verani.me"
+  },
+  {
+    "id": "veranimes",
+    "name": "VerAnimes",
+    "status": "adapter_compiled_qa_pending",
+    "enabled": true,
+    "description": "Catálogo anime desde veranimes.net"
+  },
+  {
+    "id": "beatzanime",
+    "name": "BeatZ Anime",
+    "status": "adapter_compiled_qa_pending",
+    "enabled": true,
+    "description": "Anime en línea desde beatz-anime.net"
+  },
+  {
+    "id": "cinehaxplus",
+    "name": "CineHax+",
+    "status": "adapter_compiled_qa_pending",
+    "enabled": true,
+    "description": "Streams desde cinehaxplus.com"
+  },
+  {
+    "id": "cinehdplus",
+    "name": "CineHDPlus",
+    "status": "adapter_compiled_qa_pending",
+    "enabled": true,
+    "description": "Streams desde cinehdplus.org"
+  },
+  {
+    "id": "detodopeliculas",
+    "name": "DeTodo Peliculas",
+    "status": "inactivo_sin_catalogo",
+    "enabled": false,
+    "description": "Streams desde detodopeliculas.nu"
+  },
+  {
+    "id": "cineplus123",
+    "name": "Cineplus123",
+    "status": "adapter_compiled_search_406_previous_probe",
+    "enabled": true,
+    "description": "Catálogo cineplus123.org"
+  }
+]

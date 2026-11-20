@@ -1,0 +1,7 @@
+{
+  "versionCode": 17,
+  "versionName": "0.17.0",
+  "apkUrl": "https://github.com/leocanu/leo-tv/releases/download/v0.17.0/LeoTV-v0.17-VerTodo-20Carruseles-Favoritos-2026-11-11.apk",
+  "changelog": "• Tarjeta '••• Ver todo' al final de cada carrusel con acceso a cuadrícula completa de 6 columnas\n• Paginación infinita automática por desplazamiento con carga continua sin límites artificiales\n• Conservación exacta del foco y posición de desplazamiento al volver a Inicio\n• Pantalla Inicio ampliada a 21 carruseles relevantes (Novelas Turcas, Doramas, Anime Shonen, Cine Clásico, Estrenos, etc.)\n• Dos secciones 100% independientes: 'Favoritos' y 'Ver más tarde' con almacenamiento local persistente sin duplicados\n• Personalización de Inicio: Pantalla para reordenar (subir/bajar) y ocultar/mostrar carruseles a gusto del usuario",
+  "mandatory": false
+}

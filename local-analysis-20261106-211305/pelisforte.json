@@ -1,0 +1,36 @@
+{
+  "source": "pelisforte",
+  "model": "qwen2.5-coder:7b",
+  "status": "unverified_static_local_model",
+  "elapsed_seconds": 8.82,
+  "output_tokens": 329,
+  "analysis": {
+    "source": "https://www2.pelisforte.se",
+    "catalog_search": null,
+    "stream_hosts": null,
+    "extraction_steps": [
+      "getStreams(tmdbId, mediaType, season, episode)",
+      "getTmdb(tmdbId, mediaType)",
+      "searchCards(title, !isMovie)",
+      "pickCard(cards, info.titles, info.year)",
+      "fetchText(card.url, BASE + \"/\")",
+      "findEpisode(series.body, card.url, season, episode)",
+      "fetchText(url, BASE + \"/\")",
+      "parseOptions(page.body)",
+      "serverOf(options[i].label) !== \"Okhd\"",
+      "languageOf(options[i].label)",
+      "LANG_PRIORITY[a.language]",
+      "resolveOption(option)",
+      "presentStream(item.result, item.language)"
+    ],
+    "requires_crypto": false,
+    "needs_browser": false,
+    "uncertainties": [
+      "The code relies on external services and may not work if those services are down or change their API.",
+      "The code uses `log` function which is not defined in the provided code snippet.",
+      "The code uses `fetchText` and `findEpisode` functions which are not defined in the provided code snippet.",
+      "The code uses `parseOptions`, `serverOf`, `languageOf`, and `LANG_PRIORITY` which are not defined in the provided code snippet.",
+      "The code uses `resolveOption` and `presentStream` which are not defined in the provided code snippet."
+    ]
+  }
+}

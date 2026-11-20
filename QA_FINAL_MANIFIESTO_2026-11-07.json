@@ -1,0 +1,558 @@
+{
+  "created_local_date": "2026-11-07",
+  "purpose": "Plan de QA final, NO resultados de pruebas",
+  "counts": {
+    "adapter_not_validated": 20,
+    "baseline_previous_playback": 4,
+    "not_integrated_or_restricted": 6,
+    "anime_episode_failed": 2
+  },
+  "sources": [
+    {
+      "name": "CineCalidad",
+      "source_id": "cinecalidad",
+      "stage": "adapter_not_validated",
+      "previous_status": "adapter_compiled_qa_pending",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "episodes_if_available",
+        "resolve",
+        "video_audio"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "LaMovie",
+      "source_id": "lamovie",
+      "stage": "baseline_previous_playback",
+      "previous_status": "previously_playback_tested",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "resolve",
+        "video_audio",
+        "fullscreen"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "SeriesMetro",
+      "source_id": "seriesmetro",
+      "stage": "baseline_previous_playback",
+      "previous_status": "previously_playback_tested",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "resolve",
+        "video_audio",
+        "fullscreen"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "PelisSeriesHoy",
+      "source_id": "peliserieshoy",
+      "stage": "not_integrated_or_restricted",
+      "previous_status": "redirect_to_unrelated_site",
+      "tasks_for_final_qa": [
+        "static_evidence_only"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "Embed69",
+      "source_id": "embed69",
+      "stage": "not_integrated_or_restricted",
+      "previous_status": "catalog_structure_not_identified",
+      "tasks_for_final_qa": [
+        "static_evidence_only"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "Cuevana",
+      "source_id": "cuevana",
+      "stage": "adapter_not_validated",
+      "previous_status": "adapter_compiled_qa_pending",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "episodes_if_available",
+        "resolve",
+        "video_audio"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "Pelisplus",
+      "source_id": "pelisplus",
+      "stage": "adapter_not_validated",
+      "previous_status": "adapter_compiled_qa_pending",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "episodes_if_available",
+        "resolve",
+        "video_audio"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "Pelispedia",
+      "source_id": "pelispedia",
+      "stage": "baseline_previous_playback",
+      "previous_status": "previously_playback_tested",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "resolve",
+        "video_audio",
+        "fullscreen"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "Pelisforte",
+      "source_id": "pelisforte",
+      "stage": "not_integrated_or_restricted",
+      "previous_status": "catalog_structure_not_identified",
+      "tasks_for_final_qa": [
+        "static_evidence_only"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "AllCalidad",
+      "source_id": "allcalidad",
+      "stage": "not_integrated_or_restricted",
+      "previous_status": "catalog_structure_not_identified",
+      "tasks_for_final_qa": [
+        "static_evidence_only"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "DoramasFlix",
+      "source_id": "doramasflix",
+      "stage": "adapter_not_validated",
+      "previous_status": "catalog_adapter_compiled_playback_pending",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "episodes_if_available",
+        "resolve",
+        "video_audio"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "TioAnime",
+      "source_id": "tioanime",
+      "stage": "anime_episode_failed",
+      "previous_status": "catalog_and_episodes_tested_playback_pending",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "episodes",
+        "resolve",
+        "video_audio"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "AnimeAV1",
+      "source_id": "animeav1",
+      "stage": "adapter_not_validated",
+      "previous_status": "adapter_compiled_qa_pending",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "episodes_if_available",
+        "resolve",
+        "video_audio"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "JKAnime",
+      "source_id": "jkanime",
+      "stage": "adapter_not_validated",
+      "previous_status": "adapter_compiled_qa_pending",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "episodes_if_available",
+        "resolve",
+        "video_audio"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "HenaoJara",
+      "source_id": "henaojara",
+      "stage": "adapter_not_validated",
+      "previous_status": "adapter_compiled_qa_pending",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "episodes_if_available",
+        "resolve",
+        "video_audio"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "LatAnime",
+      "source_id": "latanime",
+      "stage": "anime_episode_failed",
+      "previous_status": "catalog_and_episodes_tested_playback_pending",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "episodes",
+        "resolve",
+        "video_audio"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "Seriesflix",
+      "source_id": "seriesflix",
+      "stage": "adapter_not_validated",
+      "previous_status": "adapter_compiled_qa_pending",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "episodes_if_available",
+        "resolve",
+        "video_audio"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "AresHD",
+      "source_id": "areshd",
+      "stage": "adapter_not_validated",
+      "previous_status": "adapter_compiled_qa_pending",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "episodes_if_available",
+        "resolve",
+        "video_audio"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "MonosChinos",
+      "source_id": "monoschinos",
+      "stage": "adapter_not_validated",
+      "previous_status": "adapter_compiled_qa_pending",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "episodes_if_available",
+        "resolve",
+        "video_audio"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "SoloLatino",
+      "source_id": "sololatino",
+      "stage": "not_integrated_or_restricted",
+      "previous_status": "excluded_site_warning",
+      "tasks_for_final_qa": [
+        "do_not_probe_site_warning"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "DeepFlix",
+      "source_id": "deepflix",
+      "stage": "not_integrated_or_restricted",
+      "previous_status": "http_403_previous_probe",
+      "tasks_for_final_qa": [
+        "do_not_retry_403_without_authorization"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "CineHax+",
+      "source_id": "cinehaxplus",
+      "stage": "adapter_not_validated",
+      "previous_status": "adapter_compiled_qa_pending",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "episodes_if_available",
+        "resolve",
+        "video_audio"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "CineHDPlus",
+      "source_id": "cinehdplus",
+      "stage": "adapter_not_validated",
+      "previous_status": "adapter_compiled_qa_pending",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "episodes_if_available",
+        "resolve",
+        "video_audio"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "CineHax",
+      "source_id": "cinehax",
+      "stage": "baseline_previous_playback",
+      "previous_status": "previously_playback_tested",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "resolve",
+        "video_audio",
+        "fullscreen"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "Cineplus123",
+      "source_id": "cineplus123",
+      "stage": "adapter_not_validated",
+      "previous_status": "adapter_compiled_search_406_previous_probe",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "episodes_if_available",
+        "resolve",
+        "video_audio"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "DeTodo Peliculas",
+      "source_id": "detodopeliculas",
+      "stage": "adapter_not_validated",
+      "previous_status": "adapter_compiled_qa_pending",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "episodes_if_available",
+        "resolve",
+        "video_audio"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "FlixLatam",
+      "source_id": "flixlatam",
+      "stage": "adapter_not_validated",
+      "previous_status": "adapter_compiled_qa_pending",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "episodes_if_available",
+        "resolve",
+        "video_audio"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "VerPelisTop",
+      "source_id": "verpelistop",
+      "stage": "adapter_not_validated",
+      "previous_status": "adapter_compiled_qa_pending",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "episodes_if_available",
+        "resolve",
+        "video_audio"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "MundoDonghua",
+      "source_id": "mundodonghua",
+      "stage": "adapter_not_validated",
+      "previous_status": "adapter_compiled_qa_pending",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "episodes_if_available",
+        "resolve",
+        "video_audio"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "VerAni.me",
+      "source_id": "veranime",
+      "stage": "adapter_not_validated",
+      "previous_status": "adapter_compiled_qa_pending",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "episodes_if_available",
+        "resolve",
+        "video_audio"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "VerAnimes",
+      "source_id": "veranimes",
+      "stage": "adapter_not_validated",
+      "previous_status": "adapter_compiled_qa_pending",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "episodes_if_available",
+        "resolve",
+        "video_audio"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    },
+    {
+      "name": "BeatZ Anime",
+      "source_id": "beatzanime",
+      "stage": "adapter_not_validated",
+      "previous_status": "adapter_compiled_qa_pending",
+      "tasks_for_final_qa": [
+        "catalog",
+        "search",
+        "detail",
+        "episodes_if_available",
+        "resolve",
+        "video_audio"
+      ],
+      "results": {
+        "catalog": "not_run_in_this_batch",
+        "playback": "not_run_in_this_batch"
+      }
+    }
+  ]
+}

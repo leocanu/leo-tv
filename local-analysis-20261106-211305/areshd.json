@@ -1,0 +1,33 @@
+{
+  "source": "areshd",
+  "model": "qwen2.5-coder:7b",
+  "status": "unverified_static_local_model",
+  "elapsed_seconds": 8.14,
+  "output_tokens": 287,
+  "analysis": {
+    "source": "https://areshd.com",
+    "catalog_search": null,
+    "stream_hosts": [
+      "xupalace.org"
+    ],
+    "extraction_steps": [
+      "getStreams(tmdbId, mediaType, season, episode)",
+      "datosTmdb(tmdbId, tipo)",
+      "buscar(titulosPosibles(datos), tipo, datos.anio)",
+      "paginaEpisodio(pagina, temporada, episodio)",
+      "enlaces(pagina)",
+      "encabezado(datos, tipo, temporada, episodio)",
+      "abrirXupalace(url)",
+      "leerXupalace(html)",
+      "descifrarVoe(cifrado, ruidos)",
+      "resolverByse(url)"
+    ],
+    "requires_crypto": true,
+    "needs_browser": false,
+    "uncertainties": [
+      "El valor de 'FUENTE' no se define en el código proporcionado.",
+      "La función 'datosTmdb' y otras funciones como 'buscar', 'paginaEpisodio', 'enlaces', 'encabezado', 'leerXupalace', 'descifrarVoe', 'resolverByse' no están definidas en el código proporcionado.",
+      "El valor de 'crudo' y 'clave' no se definen en el código proporcionado."
+    ]
+  }
+}

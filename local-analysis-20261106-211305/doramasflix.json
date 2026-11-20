@@ -1,0 +1,29 @@
+{
+  "source": "doramasflix",
+  "model": "qwen2.5-coder:7b",
+  "status": "unverified_static_local_model",
+  "elapsed_seconds": 9.85,
+  "output_tokens": 337,
+  "analysis": {
+    "source": "function getStreams(tmdbId, mediaType, season, episode) { ... }",
+    "catalog_search": null,
+    "stream_hosts": null,
+    "extraction_steps": [
+      "getTmdbInfo(tmdbId, mediaType)",
+      "gqlOp('searchAll', { input: queries[sqi] }, Q_SEARCH)",
+      "gqlOp('detailMovieExtra', { slug: best.slug }, Q_DETAIL_MOVIE)",
+      "gqlOp('listSeasons', { serie_id: best._id }, Q_LIST_SEASONS)",
+      "gqlOp('listEpisodesPagination', { serie_id: best._id, season_number: sn, page: page }, Q_LIST_EPISODES)",
+      "gqlOp('GetEpisodeLinks', { episode_slug: epSlug }, Q_EP_LINKS)"
+    ],
+    "requires_crypto": false,
+    "needs_browser": false,
+    "uncertainties": [
+      "getTmdbInfo, gqlOp, resolveLink, b64toString, getOrigin, resolveUrl, voeDecode, resolveVoe, allSettled functions are not defined in the provided code.",
+      "TMDB_API_KEY, GQL, UA, GQL_HEADERS, LANG_PRIORITY, LANG_LABELS, LANG_IDS are hardcoded and not defined in the provided code.",
+      "The code uses async/await, which is not supported in all environments.",
+      "The code uses fetch, which is not supported in all environments.",
+      "The code uses Promise.allSettled, which is not supported in all environments."
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+[
+  {
+    "test": "Catalogo online con portadas",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "Busqueda Matrix muestra resultados",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "Ejecucion",
+    "passed": false,
+    "detail": "No se encuentra boton: Reproducir Matrix"
+  }
+]

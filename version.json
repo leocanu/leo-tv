@@ -1,0 +1,7 @@
+{
+  "versionCode": 36,
+  "versionName": "0.36.0",
+  "apkUrl": "https://github.com/leocanu/leo-tv/releases/download/v0.36.0/LeoTV-v0.36.0.apk",
+  "changelog": "• Pantalla limpia en reproducción: barra de opciones (Audio/Subtítulos/Aspecto) oculta por defecto y sincronizada con los controles nativos\n• Navegación D-Pad en reproductor: la flecha abajo muestra y enfoca los controles nativos de reproducción (play, pausa, barra de tiempo y ajustes) sin ciclar aspecto ni bloquear el foco\n• Sinopsis exclusivamente en español: eliminación total de descripciones en inglés y fallback oficial a Wikipedia en Español y TMDB\n• Depuración en Series Latinas: eliminación de películas de Hollywood (Rambo, Conan, Terminator, etc.) para mantener solo series y novelas genuinas\n• Inicio ultra rápido: optimización de la pantalla de bienvenida reduciendo el tiempo de carga a solo 350ms\n• Navegación horizontal fluida: transición directa entre la barra lateral y el contenido central a la altura correspondiente",
+  "mandatory": false
+}

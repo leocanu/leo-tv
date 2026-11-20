@@ -1,0 +1,311 @@
+{
+  "checked_at_host_time": "2026-11-06 20:23:26",
+  "note": "HTTP/catalog discovery is not playback verification",
+  "providers": [
+    {
+      "id": "cinecalidad",
+      "name": "CineCalidad",
+      "host": "cinecalidad.vg",
+      "playback_verified": false,
+      "http_status": 200,
+      "final_host": "www.cinecalidad.vg",
+      "rest_videoapi": false,
+      "wp_api": false,
+      "wordpress": true,
+      "status": "public_home_fetched"
+    },
+    {
+      "id": "lamovie",
+      "name": "LaMovie",
+      "host": "lamovie.org",
+      "playback_verified": false,
+      "http_status": 200,
+      "final_host": "lamovie.org",
+      "rest_videoapi": false,
+      "wp_api": true,
+      "wordpress": true,
+      "status": "public_home_fetched"
+    },
+    {
+      "id": "seriesmetro",
+      "name": "SeriesMetro",
+      "host": "seriesmetro.net",
+      "playback_verified": false,
+      "http_status": 200,
+      "final_host": "www3.seriesmetro.net",
+      "rest_videoapi": false,
+      "wp_api": false,
+      "wordpress": true,
+      "status": "public_home_fetched"
+    },
+    {
+      "id": "peliserieshoy",
+      "name": "PelisSeriesHoy",
+      "host": null,
+      "playback_verified": false,
+      "status": "skipped_previous_restriction"
+    },
+    {
+      "id": "embed69",
+      "name": "Embed69",
+      "host": null,
+      "playback_verified": false,
+      "status": "skipped_previous_restriction"
+    },
+    {
+      "id": "cuevana",
+      "name": "Cuevana",
+      "host": "cuevana3.eu",
+      "playback_verified": false,
+      "http_status": 200,
+      "final_host": "wv3.cuevana3.eu",
+      "rest_videoapi": false,
+      "wp_api": false,
+      "wordpress": true,
+      "status": "public_home_fetched"
+    },
+    {
+      "id": "pelisplus",
+      "name": "Pelisplus",
+      "host": "pelisplushd.bz",
+      "playback_verified": false,
+      "http_status": 200,
+      "final_host": "pelisplushd.bz",
+      "rest_videoapi": false,
+      "wp_api": false,
+      "wordpress": false,
+      "status": "public_home_fetched"
+    },
+    {
+      "id": "pelispedia",
+      "name": "Pelispedia",
+      "host": "pelispedia.is",
+      "playback_verified": false,
+      "http_status": 200,
+      "final_host": "pelispedia.is",
+      "rest_videoapi": false,
+      "wp_api": false,
+      "wordpress": true,
+      "status": "public_home_fetched"
+    },
+    {
+      "id": "pelisforte",
+      "name": "Pelisforte",
+      "host": "pelisforte.se",
+      "playback_verified": false,
+      "http_status": 200,
+      "final_host": "www2.pelisforte.se",
+      "rest_videoapi": false,
+      "wp_api": false,
+      "wordpress": true,
+      "status": "public_home_fetched"
+    },
+    {
+      "id": "allcalidad",
+      "name": "AllCalidad",
+      "host": "allcalidad.re",
+      "playback_verified": false,
+      "http_status": 200,
+      "final_host": "allcalidad.re",
+      "rest_videoapi": false,
+      "wp_api": false,
+      "wordpress": true,
+      "status": "public_home_fetched"
+    },
+    {
+      "id": "doramasflix",
+      "name": "DoramasFlix",
+      "host": "doramasflix.co",
+      "playback_verified": false,
+      "http_status": 200,
+      "final_host": "doramasflix.co",
+      "rest_videoapi": false,
+      "wp_api": false,
+      "wordpress": true,
+      "status": "public_home_fetched"
+    },
+    {
+      "id": "tioanime",
+      "name": "TioAnime",
+      "host": "tioanime.com",
+      "playback_verified": false,
+      "http_status": 200,
+      "final_host": "tioanime.com",
+      "rest_videoapi": false,
+      "wp_api": false,
+      "wordpress": false,
+      "status": "public_home_fetched"
+    },
+    {
+      "id": "animeav1",
+      "name": "AnimeAV1",
+      "host": "animeav1.com",
+      "playback_verified": false,
+      "http_status": 200,
+      "final_host": "animeav1.com",
+      "rest_videoapi": false,
+      "wp_api": false,
+      "wordpress": false,
+      "status": "public_home_fetched"
+    },
+    {
+      "id": "jkanime",
+      "name": "JKAnime",
+      "host": "jkanime.net",
+      "playback_verified": false,
+      "http_status": 200,
+      "final_host": "jkanime.net",
+      "rest_videoapi": false,
+      "wp_api": false,
+      "wordpress": false,
+      "status": "public_home_fetched"
+    },
+    {
+      "id": "henaojara",
+      "name": "HenaoJara",
+      "host": "henaojara.net",
+      "playback_verified": false,
+      "http_status": 200,
+      "final_host": "ww1.henaojara.net",
+      "rest_videoapi": false,
+      "wp_api": false,
+      "wordpress": true,
+      "status": "public_home_fetched"
+    },
+    {
+      "id": "latanime",
+      "name": "LatAnime",
+      "host": "latanime.org",
+      "playback_verified": false,
+      "http_status": 200,
+      "final_host": "latanime.org",
+      "rest_videoapi": false,
+      "wp_api": false,
+      "wordpress": false,
+      "status": "public_home_fetched"
+    },
+    {
+      "id": "seriesflix",
+      "name": "Seriesflix",
+      "host": "pelisflixhd1.online",
+      "playback_verified": false,
+      "http_status": 200,
+      "final_host": "pelisflixhd.love",
+      "rest_videoapi": false,
+      "wp_api": false,
+      "wordpress": false,
+      "status": "public_home_fetched"
+    },
+    {
+      "id": "areshd",
+      "name": "AresHD",
+      "host": null,
+      "playback_verified": false,
+      "status": "skipped_previous_restriction"
+    },
+    {
+      "id": "monoschinos",
+      "name": "MonosChinos",
+      "host": null,
+      "playback_verified": false,
+      "status": "skipped_previous_restriction"
+    },
+    {
+      "id": "sololatino",
+      "name": "SoloLatino",
+      "host": null,
+      "playback_verified": false,
+      "status": "skipped_previous_restriction"
+    },
+    {
+      "id": "deepflix",
+      "name": "DeepFlix",
+      "host": "mg.homelabx.qzz.io",
+      "playback_verified": false,
+      "status": "HTTPError",
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "id": "cinehaxplus",
+      "name": "CineHax+",
+      "host": "cinehaxplus.com",
+      "playback_verified": false,
+      "http_status": 200,
+      "final_host": "cinehaxplus.com",
+      "rest_videoapi": false,
+      "wp_api": false,
+      "wordpress": false,
+      "status": "public_home_fetched"
+    },
+    {
+      "id": "cinehdplus",
+      "name": "CineHDPlus",
+      "host": null,
+      "playback_verified": false,
+      "status": "skipped_previous_restriction"
+    },
+    {
+      "id": "cinehax",
+      "name": "CineHax",
+      "host": "cinehax.org",
+      "playback_verified": false,
+      "status": "rest_catalog_already_verified"
+    },
+    {
+      "id": "cineplus123",
+      "name": "Cineplus123",
+      "host": null,
+      "playback_verified": false,
+      "status": "skipped_previous_restriction"
+    },
+    {
+      "id": "detodopeliculas",
+      "name": "DeTodo Peliculas",
+      "host": null,
+      "playback_verified": false,
+      "status": "skipped_previous_restriction"
+    },
+    {
+      "id": "flixlatam",
+      "name": "FlixLatam",
+      "host": null,
+      "playback_verified": false,
+      "status": "skipped_previous_restriction"
+    },
+    {
+      "id": "verpelistop",
+      "name": "VerPelisTop",
+      "host": null,
+      "playback_verified": false,
+      "status": "skipped_previous_restriction"
+    },
+    {
+      "id": "mundodonghua",
+      "name": "MundoDonghua",
+      "host": null,
+      "playback_verified": false,
+      "status": "skipped_previous_restriction"
+    },
+    {
+      "id": "veranime",
+      "name": "VerAni.me",
+      "host": null,
+      "playback_verified": false,
+      "status": "skipped_previous_restriction"
+    },
+    {
+      "id": "veranimes",
+      "name": "VerAnimes",
+      "host": null,
+      "playback_verified": false,
+      "status": "skipped_previous_restriction"
+    },
+    {
+      "id": "beatzanime",
+      "name": "BeatZ Anime",
+      "host": null,
+      "playback_verified": false,
+      "status": "skipped_previous_restriction"
+    }
+  ]
+}

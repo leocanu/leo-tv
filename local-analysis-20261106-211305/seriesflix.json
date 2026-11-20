@@ -1,0 +1,36 @@
+{
+  "source": "seriesflix",
+  "model": "qwen2.5-coder:7b",
+  "status": "unverified_static_local_model",
+  "elapsed_seconds": 14.4,
+  "output_tokens": 543,
+  "analysis": {
+    "source": "https://nupload.my",
+    "catalog_search": [
+      "https://pelisflixhd1.online/episodio/{variant}-{season}x{episode}",
+      "https://pelisflixhd1.online/episodio/{variant}-{year}-{season}x{episode}",
+      "https://pelisflixhd1.online/pelicula/{variant}",
+      "https://pelisflixhd1.online/pelicula/{variant}-{year}"
+    ],
+    "stream_hosts": [
+      "nupload.my"
+    ],
+    "extraction_steps": [
+      "Buscar información de TMDB",
+      "Generar variantes de URL",
+      "Intentar cargar páginas",
+      "Extraer enlaces de embebidos",
+      "Procesar enlaces de Nupload",
+      "Obtener URL final",
+      "Bypass de redirección"
+    ],
+    "requires_crypto": false,
+    "needs_browser": false,
+    "uncertainties": [
+      "El código contiene referencias a funciones y variables que no se muestran completamente, lo que podría indicar que hay partes del código que no se han proporcionado o que están ocultas.",
+      "El código utiliza funciones como `getTmdbData`, `buildSlug`, `fetchPage`, `raceFirstSuccess`, `extractEmbeds`, `resolveNupload`, `getFinalUrlBypass`, `detectQ`, `withSourceName` y `getFinalUrlBypass`, pero no se proporcionan sus definiciones, lo que podría indicar que estas funciones son parte de una biblioteca o módulo que no se ha incluido en el código proporcionado.",
+      "El código utiliza expresiones regulares complejas para extraer información de la página HTML, lo que podría indicar que el contenido de la página puede cambiar y que el código podría no funcionar correctamente si el contenido de la página cambia.",
+      "El código utiliza variables como `BASE_URL`, `BASE_URL2`, `tmdbId`, `mediaType`, `season`, `episode`, `startTime`, `tmdbInfo`, `variants`, `pageUrls`, `pushUrl`, `html`, `embeds`, `streams`, `elapsed`, `UA2`, `offset`, `arrayVar`, `arrayMatch`, `sesz`, `finalUrl`, `videoUrl`, `refererHeaders` y `quality`, pero no se proporcionan sus valores, lo que podría indicar que estos valores son generados dinámicamente y que el código podría no funcionar correctamente si estos valores cambian."
+    ]
+  }
+}

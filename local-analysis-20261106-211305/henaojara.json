@@ -1,0 +1,29 @@
+{
+  "source": "henaojara",
+  "model": "qwen2.5-coder:7b",
+  "status": "unverified_static_local_model",
+  "elapsed_seconds": 7.78,
+  "output_tokens": 263,
+  "analysis": {
+    "source": "https://ww1.henaojara.net",
+    "catalog_search": null,
+    "stream_hosts": [
+      "https://ww1.henaojara.net"
+    ],
+    "extraction_steps": [
+      "Obtiene títulos de TMDB",
+      "Busca en sitios web",
+      "Selecciona el mejor resultado",
+      "Descarga el contenido del episodio",
+      "Resuelve enlaces de reproducción"
+    ],
+    "requires_crypto": true,
+    "needs_browser": false,
+    "uncertainties": [
+      "El código utiliza funciones como `getTmdbTitles`, `searchSite`, `scoreTitle`, `entryLang`, `normalize`, `allSettled`, `hexDecode`, `voeDecode`, `resolveVoe` que no están definidas en el código proporcionado.",
+      "El código utiliza funciones como `__async` y `Promise.all` que no están definidas en el código proporcionado.",
+      "El código utiliza funciones como `fetch` y `console.log` que no están definidas en el código proporcionado.",
+      "El código utiliza funciones como `atob` y `JSON.parse` que no están definidas en el código proporcionado."
+    ]
+  }
+}

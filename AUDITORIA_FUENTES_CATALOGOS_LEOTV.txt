@@ -1,0 +1,605 @@
+================================================================================
+AUDITORIA COMPLETA DE FUENTES, CATALOGOS Y CATEGORIAS - LEO TV
+================================================================================
+Fecha de auditoria: 2026-11-11
+Entorno: Android TV Emulator API 34 (emulator-5554), JADX 1.5.1, OpenJDK 17
+Proyecto: Leo TV (ar.appvideo.player) en C:\workspace\app-video-propia-android-v1
+Objetivo: Diagnostico integral de fuentes, arquitectura de navegacion, amplitud
+          de catalogos de referencia y plan de ampliacion para Leo TV.
+================================================================================
+
+INDICE DEL DOCUMENTO:
+1. INVENTARIO COMPLETO DE FUENTES ENCONTRADAS Y AUDITADAS
+2. LISTADO DETALLADO DE CATEGORIAS, SUBCATEGORIAS Y RIELES IDENTIFICADOS
+3. COMPARATIVA OBJETIVA DE AMPLITUD DE CATALOGOS (LEO TV VS REFERENCIAS)
+4. ANALISIS PROFUNDO DE XUPER SMART BOX: MECANICA DE CATALOGO Y FILTROS
+5. ANALISIS DE ZAPP TV Y LUNIFIED: ESTRUCTURA, RIELES Y MULTI-AUDIO
+6. ACLARACION Y CORRECCION FUNDAMENTAL: CATEGORIA ADULTOS (+18 VS XXX)
+7. FUENTES NUEVAS DE INTEGRACION LEGITIMA Y TECNICAMENTE FACTIBLE
+8. FUENTES EXISTENTES SUBAPROVECHADAS EN LEO TV (DIAGNOSTICO DE CODIGO)
+9. LIMITACIONES Y RESTRICCIONES TECNICAS DETECTADAS
+10. PLAN DE ACCION Y RECOMENDACIONES DE ARQUITECTURA PARA LEO TV
+
+
+================================================================================
+1. INVENTARIO COMPLETO DE FUENTES ENCONTRADAS Y AUDITADAS
+================================================================================
+
+A continuacion se clasifican las fuentes analizadas en 6 grupos claramente
+diferenciados:
+
+--------------------------------------------------------------------------------
+GRUPO A: PROVEEDORES DE STREAMING CON CATALOGO Y VIDEO
+--------------------------------------------------------------------------------
+
+1. CineHax
+   - Aplicacion / Origen: Analisis web / API REST propia en https://cinehax.org
+   - Categorias: Peliculas nuevas, Series, Animacion, Taxonomias por Pais
+     (Turquia, Corea del Sur, Japon, EE.UU., Espana, Mexico, Colombia, etc.),
+     Taxonomias por Genero (Accion, Comedia, Terror, Romance, Ciencia Ficcion, etc.).
+   - URL verificable: https://cinehax.org/api/rest/v1/
+   - Tipo de contenido: Peliculas y Series completas con episodios.
+   - Idiomas: Espanol Latino preponderante (90%), Castellano y Subtitulado.
+   - Metadatos o Reproduccion: Ambos (devuelve JSON estructurado y URLs HLS/embed).
+   - Metodo de acceso: Endpoints REST HTTP GET con cabecera User-Agent y Referer.
+   - Estado de funcionamiento: COMPROBADO y funcional en pruebas locales.
+   - Restricciones: Requiere control de tasa de peticiones para evitar bloqueos por IP.
+   - Integracion en Leo TV: Ya integrada parcialmente, pero limitada a pagina 1 y
+     maximo 12 items por riel.
+
+2. DoramasFlix
+   - Aplicacion / Origen: Conector propio en Leo TV / Web doramasflix.in
+   - Categorias: K-Dramas (Corea), J-Dramas (Japon), C-Dramas (China), Lakorns (Tailandia).
+   - URL verificable: https://doramasflix.in
+   - Tipo de contenido: Series asiaticas completas y peliculas asiaticas.
+   - Idiomas: Subtitulado al espanol y doblaje espanol latino.
+   - Metadatos o Reproduccion: Catalogo y reproductores incrustados.
+   - Metodo de acceso: Scraping HTML de rejillas y busqueda REST.
+   - Estado de funcionamiento: Catalogo funcional; reproductores variables por token.
+   - Restricciones: Cambios frecuentes de CDN y ofuscacion de reproductores.
+   - Integracion en Leo TV: Adaptador presente en codigo; desaprovechado (solo 1 llamada).
+
+3. LatAnime
+   - Aplicacion / Origen: Conector propio en Leo TV / Web latanime.org
+   - Categorias: Anime en emision, Anime finalizado, Peliculas de Anime, OVAs.
+   - URL verificable: https://latanime.org
+   - Tipo de contenido: Series de animacion japonesa y peliculas.
+   - Idiomas: Espanol Latino (audio) y Japones con subtitulos en espanol.
+   - Metadatos o Reproduccion: Catalogo y servidores de streaming (Fembed, Stape, etc.).
+   - Metodo de acceso: Extraccion HTML y decodificacion de iframe.
+   - Estado de funcionamiento: Catalogo verificado; reproduccion requiere resolver
+     tokens dinamicos de los hosts de video.
+   - Restricciones: Bloqueos por headers anti-hotlinking.
+   - Integracion en Leo TV: Adaptador presente; catalogacion funciona, reproduccion parcial.
+
+4. TioAnime
+   - Aplicacion / Origen: Conector propio en Leo TV / Web tioanime.com
+   - Categorias: Anime en emision, Directorio por generos, Peliculas de Anime.
+   - URL verificable: https://tioanime.com
+   - Tipo de contenido: Anime japones en emision y clasico.
+   - Idiomas: Japones con subtitulos en espanol.
+   - Metadatos o Reproduccion: Catalogo y enlaces a servidores de video.
+   - Metodo de acceso: Scraping HTML / Directorio paginado.
+   - Estado de funcionamiento: Catalogo verificado; reproductor pendiente de actualizacion.
+   - Restricciones: Uso de protectores de enlaces.
+   - Integracion en Leo TV: Registrado en channels.json; ejecucion en QA pendiente.
+
+5. SeriesMetro
+   - Aplicacion / Origen: Conector propio / seriesmetro.net
+   - Categorias: Series de television internacionales, novelas latinas y turcas.
+   - URL verificable: https://seriesmetro.net
+   - Tipo de contenido: Series y novelas organizadas por temporadas y capitulos.
+   - Idiomas: Espanol Latino.
+   - Metadatos o Reproduccion: Catalogo y reproductores.
+   - Metodo de acceso: HTML sobre WordPress.
+   - Estado de funcionamiento: Comprobado previamente en lote anterior.
+   - Restricciones: Dependiente de la estabilidad del dominio de turno.
+   - Integracion en Leo TV: Adaptador compilado y funcional en version 0.10.
+
+6. Pelispedia
+   - Aplicacion / Origen: Conector propio / pelispedia.is
+   - Categorias: Estrenos de cine, peliculas HD, sagas completas.
+   - URL verificable: https://pelispedia.is
+   - Tipo de contenido: Peliculas completas.
+   - Idiomas: Espanol Latino y Castellano.
+   - Metadatos o Reproduccion: Catalogo y video.
+   - Metodo de acceso: HTML / JSON de busqueda.
+   - Estado de funcionamiento: Comprobado previamente.
+   - Integracion en Leo TV: Adaptador disponible.
+
+7. LaMovie
+   - Aplicacion / Origen: Conector propio / lamovie.org
+   - Categorias: Peliculas recientes, accion, terror, infantiles.
+   - URL verificable: https://lamovie.org
+   - Tipo de contenido: Peliculas.
+   - Idiomas: Espanol Latino.
+   - Metadatos o Reproduccion: Catalogo y streaming.
+   - Metodo de acceso: API REST de WordPress.
+   - Estado de funcionamiento: Comprobado previamente.
+   - Integracion en Leo TV: Adaptador compilado.
+
+8. CineCalidad
+   - Aplicacion / Origen: Conector propio / cinecalidad.vg
+   - Categorias: Peliculas en calidad 1080p y 4K, filtradas por ano y genero.
+   - URL verificable: https://cinecalidad.vg
+   - Tipo de contenido: Cine internacional doblado.
+   - Idiomas: Exclusivamente Espanol Latino Neutro.
+   - Metadatos o Reproduccion: Catalogo con enlaces a reproductores directos y torrents.
+   - Metodo de acceso: Scraping HTML de WordPress.
+   - Estado de funcionamiento: Adaptador compilado; pendiente validacion en lote QA.
+   - Integracion en Leo TV: Adaptador preparado en el arbol de providers.
+
+9. Cuevana3 / PelisplusHD
+   - Aplicacion / Origen: Conectores secundarios en channels.json
+   - Categorias: Peliculas y Series populares.
+   - URL verificable: Dominios espejos dinamicos (cuevana3.eu, pelisplushd.bz).
+   - Idiomas: Espanol Latino.
+   - Estado: Adaptadores compilados con estatus provisional por alta volatilidad de dominios.
+
+--------------------------------------------------------------------------------
+GRUPO B: PROVEEDORES DE REFERENCIA EN APPS DE TERCEROS (DESCOMPILADAS)
+--------------------------------------------------------------------------------
+
+10. Xuper Smart Box Core Engine (PortalCore)
+    - Aplicacion: Xuper Smart Box (cl.smartboxconnect.xupersbc.especial2p1)
+    - Origen tecnico: Assets internos decompilados (sb.b.java / PortalApi, Retrofit,
+      domain_test.json, xuper.conf con tunel WireGuard a 144.217.253.149:443).
+    - Endpoints de backend identificados:
+        * /api/portalCore/v3/getShelveData (paginacion de rieles y columnas)
+        * /api/portalCore/v3/filterByContent (filtro por tipo y categoria)
+        * /api/portalCore/v3/filterGenre (generos y taxonomias)
+        * /api/portalCore/v3/searchByName (busqueda global)
+        * /api/portalCore/v4/getItemData (ficha tecnica completa, audio, subtitulos)
+        * /api/portalCore/v10/startPlayVOD (token y URL directa de video HLS)
+        * /api/portalCore/v4/startPlayLive (canales de television en vivo)
+        * /api/portalCore/epg/v3/getFootballMatch (agenda de partidos)
+    - Categorias que ofrece: Live TV (Deportes, Argentina, Especiales), Featured,
+      Movies, Series, Kids, Anime, Adultos (XXX explicito), Explorar con filtros.
+    - Idiomas: Espanol Latino, Portugues, Ingles.
+    - Observaciones y limitaciones: Es un servicio privado OTT protegido por
+      autenticacion y encapsulado en VPN WireGuard para evitar bloqueos de operadoras.
+      NO se deben sustraer claves ni eludir su tunel. Su verdadero valor para Leo TV
+      radica en su ARQUITECTURA DE UI/UX (paginacion, ficha y filtros).
+
+11. Zapp TV Catalog (com.xgoe.app)
+    - Aplicacion: Zapp TV (com.yyt.zapptv)
+    - Origen tecnico: Cliente Android TV OTT con backend cloud REST.
+    - Categorias que ofrece: Recommend, Series, Movies, Popular, Kids, Variety Shows,
+      Documentary. Rieles de origen: Netflix, Amazon Prime Video, Disney+, Anime.
+    - Idiomas: Deteccion de multi-audio: "EN - ES - PT_BR" y subtitulos "CC EN - ES - PT_BR".
+    - Observaciones: Demuestra como organizar el contenido por plataforma de origen
+      con fichas tecnicas ricas en clasificacion, ano, sinopsis y seleccion de temporadas.
+
+12. Lunified / SoloLatino / Skidush
+    - Aplicacion: Lunified (com.skidush.clonex v5.6.5 y v5.7.3)
+    - Origen tecnico: Wrapper Android de endpoints para SoloLatino, PelisSeriesHoy,
+      Embed69 y Skidush Core.
+    - Estado de funcionamiento: Bloqueado en emulador por dialogo de actualizacion
+      obligatoria forzada a 5.7.3. SoloLatino cuenta con restricciones Cloudflare.
+
+13. Flama TV (OpenPlayer)
+    - Aplicacion: Flama TV (com.flamatv.app v0.0.21)
+    - Origen tecnico: Compose Multiplatform conectando a proxies y hosts de video
+      (api.proxies.sx, capo8play.com, goodstream.one).
+    - Estado de funcionamiento: Bloqueada por pantalla de actualizacion forzada a v0.0.22.
+
+--------------------------------------------------------------------------------
+GRUPO C: FUENTES DE VIDEO PUBLICO, LEGITIMO Y ABIERTO
+--------------------------------------------------------------------------------
+
+14. Internet Archive (archive.org)
+    - Categorias: Cine clasico de dominio publico, peliculas de los anos 1920-1960,
+      cine negro, ciencia ficcion clasica, documentales historicos, cine mudo,
+      cortometrajes de animacion clasica (Popeye, Superman 1941, Betty Boop).
+    - URL: https://archive.org/advancedsearch.php
+    - Idiomas: Audio original en ingles, espanol neutro en clasicos doblados.
+    - Metadatos o Reproduccion: Metadatos completos y video MP4/OGV directo.
+    - Metodo de acceso: API REST oficial JSON (sin API key) y descargas HTTPS directas.
+    - Estado de funcionamiento: COMPROBADO al 100% (caso Big Buck Bunny verificado).
+    - Licencia: Dominio Publico y Creative Commons.
+    - Integracion en Leo TV: Totalmente legal, segura y reproducible en Media3.
+
+15. Blender Foundation Open Movies
+    - Categorias: Cortometrajes y mediometrajes de animacion 3D y VFX.
+    - Titulos verificados: Big Buck Bunny, Elephants Dream, Sintel, Tears of Steel,
+      Cosmos Laundromat, Spring, Charge.
+    - URL: https://download.blender.org/ED/ y https://cloud.blender.org/open-projects
+    - Metadatos o Reproduccion: Video directo en MP4, MOV, H.264/AAC.
+    - Estado de funcionamiento: COMPROBADO al 100% en Leo TV.
+    - Licencia: Creative Commons Attribution (CC BY 3.0 / 4.0).
+
+16. Wikimedia Commons Video
+    - Categorias: Documentales cientificos, naturaleza, tecnologia e historia universal.
+    - URL: https://commons.wikimedia.org/w/api.php
+    - Licencia: Dominio publico y CC BY-SA. Video directo WebM/MP4.
+
+--------------------------------------------------------------------------------
+GRUPO D: LISTAS PUBLICAS DE TELEVISION EN VIVO (M3U / IPTV)
+--------------------------------------------------------------------------------
+
+17. TDTChannels TV (Espana y seccion internacional)
+    - URL: https://www.tdtchannels.com/lists/tv.m3u8
+    - Entradas auditadas: 573 canales.
+    - Contenido: Canales de emision abierta y TDT (La 1, La 2, Antena 3, Telecinco,
+      canales autonomicos e informativos).
+    - Estado: Publico y legal para redifusion de senales libres.
+
+18. IPTV-org (Seccion Espanol)
+    - URL: https://iptv-org.github.io/iptv/languages/spa.m3u
+    - Entradas auditadas: 2.421 canales.
+    - Contenido: Canales de Argentina, Mexico, Colombia, Chile, Peru, Espana, EE.UU.
+    - Estado: Canales de television abierta recopilados colaborativamente en GitHub.
+
+19. IPTV-SV (Latinoamerica)
+    - URL: https://raw.githubusercontent.com/JMigue85/IPTV-SV/refs/heads/main/IPTVSV.m3u
+    - Entradas auditadas: 1.883 canales.
+    - Contenido: Senales de Centro y Sudamerica, noticias, infantiles y musica.
+
+20. Listas Tematicas Mametchi (Argentina, Dibujos Animados, Studio Ghibli)
+    - URLs:
+      https://www.m3u.cl/lista/AR.m3u (147 canales de Argentina)
+      https://mametchikitty.github.io/Listas-IPTV/dibujos-animados.m3u (279 senales)
+      https://mametchikitty.github.io/Listas-IPTV/studio-ghibli-latino.m3u (23 titulos)
+    - Contenido: Animacion infantil en espanol latino y television argentina.
+
+21. Telechancho Infinity (Canales 24/7 de series clasicas)
+    - URL: https://telechancho.github.io/telechancho-iptv/telechancho-infinity.m3u
+    - Entradas: 50 canales 24/7 tematicos (Los Simpsons, Futurama, Malcolm, etc.).
+
+--------------------------------------------------------------------------------
+GRUPO E: APIS DE METADATOS ABIERTAS (NO PROVEEN VIDEO DIRECTO)
+--------------------------------------------------------------------------------
+
+22. The Movie Database (TMDB API v3)
+    - Finalidad: Fichas tecnicas completas, sinopsis oficiales en espanol latino,
+      posters y backdrops en alta resolucion (w342, w780, original), reparto
+      completo de actores, fecha de estreno, calificacion de usuarios, generos,
+      trailers oficiales de YouTube.
+    - URL: https://api.themoviedb.org/3/
+    - Idiomas: Parametro language=es-MX / es-ES.
+    - Licencia: Uso de API gratuito para metadatos con atribucion obligatoria.
+    - Importancia para Leo TV: Transforma cualquier lista o conector basico en una
+      experiencia visual del nivel de Netflix o Zapp TV.
+
+23. TVMaze API
+    - Finalidad: Metadatos de series de television, guia de episodios completa,
+      temporadas, fechas de emision y fotos de personajes.
+    - URL: https://api.tvmaze.com/ (No requiere clave API).
+    - Estado: Operativa y utilizada en Leo TV para fichas de series turcas y anime.
+
+24. Jikan API (Unofficial MyAnimeList API)
+    - Finalidad: Metadatos especializados en anime (sinopsis, generos, rating, ranking).
+    - URL: https://api.jikan.moe/v4/
+    - Estado: Abierta y gratuita, sin clave. Ideal para complementar la seccion Anime.
+
+--------------------------------------------------------------------------------
+GRUPO F: FUENTES CON ACCESO RESTRINGIDO O DESCARTADAS
+--------------------------------------------------------------------------------
+25. SoloLatino: Protegido por reto Cloudflare / Captcha. Descartado eludirlo.
+26. PelisSeriesHoy: Redirige a pagina ajena / Google. Descartado.
+27. Embed69: Archivo vacio (2 bytes), sin estructura publica identificable.
+28. Pelisforte: Sitio WordPress vacio de articulos en inspeccion.
+29. AllCalidad: Endpoint API interno sin documentacion publica ni permisos.
+30. DeepFlix: Error HTTP 403 Forbidden.
+31. Magis Pro TV: Acceso restringido por usuario y clave privada obligatoria.
+
+
+================================================================================
+2. LISTADO DETALLADO DE CATEGORIAS, SUBCATEGORIAS Y RIELES IDENTIFICADOS
+================================================================================
+
+A partir de la inspeccion exhaustiva de Xuper, Zapp TV, Cactus TV y el codigo de
+Leo TV, se identifican las siguientes estructuras y taxonomias:
+
+1. BARRA DE NAVEGACION PRINCIPAL (SIDEBAR VERTICAL O TABS SUPERIORES):
+   - INICIO / DESTACADOS (Hero banner + Top 10 + Rieles combinados)
+   - PELICULAS (Estrenos, Por Genero, Por Decada, Calidad)
+   - SERIES (Por Pais, Por Genero, Por Plataforma de Origen)
+   - ANIME Y DIBUJOS (En emision, Finalizados, Peliculas Anime, Estudio Ghibli)
+   - NOVELAS Y DRAMAS (Series Turcas, K-Dramas Coreanos, Novelas Latinas)
+   - TV EN VIVO (Por Pais: Argentina, Mexico, Espana, Chile; Por Tema: Noticias, Deportes)
+   - EXPLORAR Y BUSCAR (Motor de busqueda unificado + Filtros multidimensionales)
+   - MI LISTA / CONTINUAR VIENDO (Historial y Favoritos locales)
+
+2. SUBCATEGORIAS Y RIELES DE PELICULAS:
+   - Estrenos 2026 y Novedades de Cartelera
+   - Accion y Aventura
+   - Terror, Suspenso y Thriller
+   - Ciencia Ficcion y Fantasia
+   - Comedia y Familiar
+   - Romance y Drama
+   - Cine Clasico de Oro (Dominio Publico 1930-1960)
+   - Animacion para Adultos vs Animacion Infantil
+
+3. SUBCATEGORIAS Y RIELES DE SERIES:
+   - Series Turcas (Dobladas al Latino y Subtituladas)
+   - K-Dramas y Series Asiaticas (Corea del Sur, Japon, China)
+   - Series Latinoamericanas (Mexico, Argentina, Colombia)
+   - Series Internacionales (EE.UU., Reino Unido, Espana)
+   - Miniseries y Documentales
+
+4. SUBCATEGORIAS DE TV EN VIVO:
+   - Canales Nacionales Argentina (Telefe, El Trece, America, C5N, TN, etc.)
+   - Canales Espana TDT (La 1, La 2, Antena 3, Cuatro, Telecinco, La Sexta)
+   - Canales Mexico y Latinoamerica
+   - Canales de Noticias 24/7
+   - Deportes y Agenda en Directo
+   - Canales Musicales e Infantiles 24/7
+
+5. TAXONOMIA MULTIDIMENSIONAL DE LA SECCION EXPLORAR (MODELO XUPER):
+   En Xuper, la seccion Explorar cuenta con una matriz de 5 filtros independientes:
+   a) TIPO: Todos | Peliculas | Series | Infantil | Anime
+   b) GENERO: Todos | Accion | Drama | Aventura | Crimen | Ciencia Ficcion |
+              Dibujos | Comedia | Romance | Animacion | Misterio | Terror
+   c) ANO: Todos | 2026 | 2025 | 2024 | 2023 | 2022 | 2021 | 2020 | 2019...
+   d) PAIS: Todos | Brasil | Portugal | EE.UU. | Mexico | Reino Unido | Japon |
+            Corea del Sur | Espana | Alemania | Turquia | Colombia | Argentina
+   e) AUDIO: Todos | Espanol Latino | Portugues | Ingles Original
+
+
+================================================================================
+3. COMPARATIVA OBJETIVA DE AMPLITUD DE CATALOGOS (LEO TV VS REFERENCIAS)
+================================================================================
+
++-----------------------+-------------------+-----------------+-----------------+
+| Categoria / Segmento  | Leo TV (Actual)   | CineHax / Zapp  | Xuper Smart Box |
++-----------------------+-------------------+-----------------+-----------------+
+| Series Turcas         | 8 fijas + 12 live | ~180 titulos    | > 450 titulos   |
+| K-Dramas Coreanos     | 5 fijas + 12 live | ~320 titulos    | > 600 titulos   |
+| Anime                 | 6 fijas + 12 live | > 1.200 titulos | > 2.500 titulos |
+| Peliculas Estrenos    | 12 titulos (pg 1) | > 5.000 titulos | > 20.000 tit    |
+| Series Latinas        | Solo busqueda     | ~400 titulos    | > 1.000 titulos |
+| TV en Vivo            | ~25 canales demo  | N/A (solo VOD)  | > 1.500 canales |
+| Cine Clasico          | 2 titulos         | ~50 titulos     | > 800 titulos   |
+| Documentales          | 0 rieles          | ~150 titulos    | > 400 titulos   |
++-----------------------+-------------------+-----------------+-----------------+
+
+Diagnostico de la brecha de contenido:
+La percepcion del usuario de que Leo TV ofrece "menos del 10%" es matematicamente
+correcta en la presentacion visual. La causa principal NO es que las fuentes no
+tengan contenido, sino que Leo TV tiene un limite codificado en el frontend:
+- Cada riel (`populateLiveRow`) corta la lista a `live.size() < 12`.
+- Solo se consulta la pagina 1 (`pageNum = 1`).
+- No existe el boton de tres puntos ("... Mas") al final del carrusel.
+- No existe la pantalla de rejilla paginada (`VodCategoryActivity`) para ver los
+  cientos de titulos restantes de cada categoria.
+
+
+================================================================================
+4. ANALISIS PROFUNDO DE XUPER SMART BOX: MECANICA DE CATALOGO Y FILTROS
+================================================================================
+
+A traves de la descompilacion del APK `Xuper Smart Box.apk` y el analisis dinamico
+en el emulador con ADB, se descubrieron los siguientes componentes clave:
+
+1. Tarjeta "... Mas" al final de cada carrusel horizontal:
+   - En cada riel de la pantalla principal, despues del item 15 o 20, Xuper inserta
+     un elemento especial: una tarjeta con un icono circular de tres puntos ("...").
+   - Al pulsar OK sobre esa tarjeta con el D-Pad del control remoto, no reproduce
+     un video, sino que abre una nueva pantalla: `com.vod.ui.activity.VodCategoryActivity`.
+
+2. Pantalla Completa de Categoria (`VodCategoryActivity`):
+   - Muestra arriba a la izquierda el titulo de la categoria (ej. "Series Turcas").
+   - Muestra arriba a la derecha un contador real: "Total: 184" y "Pagina: 1 / 7".
+   - Utiliza un componente `VerticalGridView` de Android Leanback con 6 columnas
+     de posters verticales de 130x180 dp.
+   - Paginacion continua con control remoto: Al navegar con la tecla ABAJO del D-Pad
+     y alcanzar la ultima fila visible, el metodo `onLoadMore()` dispara una peticion
+     asincrona a `getShelveData(categoryId, page + 1)` y anexa los nuevos 30 items
+     sin parpadeo ni perdida de foco.
+
+3. Motor de Filtros en la seccion Explorar:
+   - Organizado en filas de selectores horizontales (chips/pills) navegables con
+     ARRIBA/ABAJO y DERECHA/IZQUIERDA.
+   - Cada seleccion actualiza la peticion `/api/portalCore/v3/filterByContent`
+     con parametros combinados: `?type=series&country=tr&year=2024&audio=es`.
+   - Esto permite al usuario aislar al instante, por ejemplo, todas las "Series
+     Turcas del ano 2024 con audio en espanol".
+
+4. Ficha de Detalle de VOD (`VodDetailsActivity`):
+   - Poster lateral izquierdo + Sinopsis completa + Ano + Genero + Duracion + Calificacion.
+   - Badges de Audio: Selector interactivo para alternar la pista de audio antes
+     o durante la reproduccion (Espanol Latino vs Portugues vs Ingles).
+   - Selector de Calidad: 1080p FHD, 720p HD, SD.
+   - Fila de Episodios con numeracion clara ("Episodio 1", "Episodio 2"...).
+
+
+================================================================================
+5. ANALISIS DE ZAPP TV Y LUNIFIED: ESTRUCTURA, RIELES Y MULTI-AUDIO
+================================================================================
+
+1. Zapp TV (com.yyt.zapptv):
+   - Hero Banner cinematografico con imagen de fondo completa (backdrop 1920x1080),
+     con gradiente inferior oscuro para asegurar la legibilidad del texto.
+   - Fila de Ranking "Top 10" con numeros gigantes (1 al 10) en tipografia gruesa
+     superpuesta al lado de cada poster, exactamente como la aplicacion oficial de
+     Netflix y MXL Movies.
+   - Rieles de "Origen por Plataforma":
+     * Lo mas visto de Netflix (ej. *Reina Roja*, *El Juego del Calamar*).
+     * Lo mas visto de Amazon Prime Video (ej. *Betty la Fea: La Historia Continua*,
+       *Atasco*, *Nadie nos va a extranar*).
+     * Lo mas visto de Disney+ / Star+.
+   - Metadatos de idioma visibles en ficha:
+     Zapp resalta explicitamente las pistas disponibles con etiquetas claras:
+     `[Audio: EN | ES | PT_BR]` y `[Subtitulos: CC EN | ES | PT_BR]`. Esto es de
+     enorme valor para el publico hispanohablante, que desea confirmar si una serie
+     esta en audio latino antes de darle a reproducir.
+
+2. Lunified / SoloLatino (com.skidush.clonex):
+   - Utilizaba agregacion de sitios web de streaming latino (SoloLatino, PelisSeriesHoy).
+   - Fue bloqueada en el emulador por comprobacion de integridad de version (5.6.5 obsoleta
+     forzando 5.7.3) y controles anti-emulador en sus bibliotecas nativas.
+   - Conclusion tecnica: Depender de empaquetar o clonar Lunified es fragil y propenso
+     a quedar inutilizable de un dia para otro. La solucion correcta para Leo TV es
+     poseer nuestros propios conectores limpios y desacoplados.
+
+
+================================================================================
+6. ACLARACION Y CORRECCION FUNDAMENTAL: CATEGORIA ADULTOS (+18 VS XXX)
+================================================================================
+
+El analisis comparativo aclaro una confusion de diseno crucial planteada por el usuario:
+
+1. Que es la seccion "Adultos" en Xuper Smart Box:
+   - Es contenido estrictamente SEXUAL EXPLICITO / PORNOGRAFICO (XXX).
+   - Cuenta con una proteccion de control parental (PIN de 4 digitos predeterminado
+     o configurable por el usuario).
+   - Sus miniaturas y titulos corresponden a la industria de entretenimiento para
+     adultos, completamente segregada del cine general.
+
+2. Que se habia implementado en Leo TV como "Adultos +18":
+   - En Leo TV se habian colocado peliculas y series de ficcion con clasificacion R
+     o erotismo cinematografico comercial de Netflix / cartelera (ejemplos: *365 Dias*,
+     *Cincuenta Sombras de Grey*, *Instinto Basico*, *La Vida Secreta de las Parejas*).
+   - Este material pertenece al genero "Thriller Erotico", "Drama Psicologico" o
+     "Romance Adulto", NO a la categoria de pornografia XXX.
+
+3. Accion y recomendacion para Leo TV:
+   - Mantener separado el contenido: Si el usuario desea una zona de cine maduro,
+     debe denominarse "Thrillers Eroticos y Suspenso Adulto" dentro de Peliculas/Series.
+   - Si a futuro se decide incorporar una seccion XXX real al estilo Xuper, esta
+     debera estar estrictamente protegida por un PIN de bloqueo parental, desactivada
+     por defecto y sin mezclar sus catalogos con las categorias de cine general.
+
+
+================================================================================
+7. FUENTES NUEVAS DE INTEGRACION LEGITIMA Y TECNICAMENTE FACTIBLE
+================================================================================
+
+Para expandir masivamente Leo TV sin violar protecciones ni caer en fragilidad,
+se identifican las siguientes fuentes de rapida y solida incorporacion:
+
+1. Internet Archive Open Cinema API (Peliculas Clasicas y Joyas de Dominio Publico):
+   - Endpoint: https://archive.org/advancedsearch.php?q=mediatype:movies+AND+collection:feature_films&fl[]=identifier,title,year,description&rows=50&page=1&output=json
+   - Permite agregar al instante un riel de "Cine Clasico de Oro" y "Ciencia Ficcion Retro"
+     con mas de 1.000 peliculas 100% legales, estables y sin riesgo de caida.
+
+2. Repositorio IPTV-org Espanol (Television en Vivo por Paises):
+   - Archivo base: https://iptv-org.github.io/iptv/languages/spa.m3u
+   - Permite organizar la seccion "TV en Vivo" de Leo TV en categorias reales:
+     * Argentina (Canales abiertos y noticias)
+     * Mexico
+     * Espana (TDT)
+     * Colombia / Chile / Peru
+     * Noticias 24/7 / Deportes / Musica
+
+3. Listas Tematicas Infantiles y Anime Abiertas (Mametchi & Studio Ghibli):
+   - Proporcionan senales continuas de dibujos animados en audio espanol latino
+     y clasicos de la animacion sin requerir servidores propios.
+
+4. The Movie Database (TMDB) como Capa Unificada de Metadatos:
+   - Al consultar TMDB en segundo plano para cualquier titulo encontrado en
+     CineHax, DoramasFlix o listas M3U, Leo TV obtiene de forma instantanea:
+     * Poster en alta definicion (evita posters borrosos).
+     * Fondo de pantalla (backdrop) para el Hero Banner.
+     * Sinopsis oficial redactada en espanol latino.
+     * Ano exacto, clasificacion de edad y duracion.
+     * Director y elenco de actores con fotos para la ficha de reparto.
+
+
+================================================================================
+8. FUENTES EXISTENTES SUBAPROVECHADAS EN LEO TV (DIAGNOSTICO DE CODIGO)
+================================================================================
+
+Al revisar exhaustivamente `MainActivity.java` y los adaptadores de Leo TV, se
+encontraron las causas exactas por las cuales el catalogo parece pequeno a pesar
+de contar con buenas fuentes:
+
+1. CineHax esta limitado artificialmente:
+   - En `populateLiveRow`, el codigo realiza:
+     `for (int i = offset; i < res.entries.size() && live.size() < 12; i++)`
+     CineHax entrega 24 o 30 elementos por pagina, y tiene cientos de paginas para
+     cada taxonomia (`country:tr`, `country:kr`, `country:jp`, `genre:accion`, etc.).
+   - Leo TV solo toma los primeros 12 de la pagina 1 y descarta el resto.
+   - Subaprovechamiento: Se esta mostrando menos del 2% del catalogo real que
+     CineHax ya tiene disponible por su API.
+
+2. Ausencia de Paginacion ("Cargar Mas" / Infinite Scroll):
+   - Ningun riel horizontal ni vista de categoria tiene listener de fin de scroll
+     para cargar la pagina 2, 3 o 4.
+   - Falta el boton "... Mas" al final del carrusel para abrir la vista completa.
+
+3. DoramasFlix no esta conectado al inicio:
+   - El adaptador `DoramasFlixProvider` esta compilado en el proyecto, pero en el
+     metodo `home()` de `MainActivity.java` los rieles de K-Dramas apuntan
+     unicamente a CineHax (`country:kr`).
+   - Los doramas especificos de DoramasFlix no se estan inyectando en la interfaz.
+
+4. LatAnime y TioAnime desaprovechados en la seccion Anime:
+   - El riel de Anime de la pantalla de inicio consulta `CineHax (country:jp)`,
+     mientras que las bases de datos completas de LatAnime y TioAnime solo se
+     usan si el usuario cambia manualmente de proveedor en el menu secundario.
+
+5. TV en Vivo limitada a un listado plano de demostracion:
+   - En lugar de parsear y categorizar la lista IPTV-SV o IPTV-org en pestanas
+     (Deportes, Noticias, Argentina, Espana), se muestran unos pocos canales sueltos
+     sin logos optimizados ni navegacion comoda con control remoto.
+
+
+================================================================================
+9. LIMITACIONES Y RESTRICCIONES TECNICAS DETECTADAS
+================================================================================
+
+1. Bloqueo de Emulador y Verificacion en Apps de Referencia:
+   - Lunified v5.6.5 quedo inhabilitada por chequeo de version contra su servidor.
+   - Flama TV v0.0.21 quedo bloqueada por ventana modal que exige actualizacion a v0.0.22.
+   - Xuper utiliza un tunel WireGuard interno cifrado hacia su servidor canadiense.
+   - Magis Pro exige credenciales pagas privadas.
+   - Conclusion: Ninguna de estas aplicaciones de terceros es una fuente que podamos
+     invocar directamente desde Leo TV. Intentar puentearlas o conectarse a sus servidores
+     privados generaria fallos continuos por caducidad de tokens o medidas anti-bot.
+
+2. Volatilidad de Enlaces y Servidores de Video Gratuitos:
+   - Los reproductores incrustados de anime (LatAnime/TioAnime) cambian periodicamente
+     de dominio (ej. Fembed, Streamwish, Doodstream, Filemoon) y anaden tokens con
+     tiempo de expiracion.
+   - Se requiere un extractor resiliente que soporte multiples espejos por capitulo.
+
+3. Consumo de Memoria en Android TV:
+   - Los dispositivos Android TV suelen contar con 1.5 GB o 2 GB de RAM.
+   - Descargar simultaneamente cientos de imagenes en alta resolucion sin reciclaje
+     de vistas (`RecyclerView` / Leanback `VerticalGridView`) provocaria errores
+     `OutOfMemoryError` en hardware real (como Xiaomi Mi Box o Chromecast con Google TV).
+
+
+================================================================================
+10. PLAN DE ACCION Y RECOMENDACIONES DE ARQUITECTURA PARA LEO TV
+================================================================================
+
+Para alcanzar la riqueza visual y amplitud de catalogo de Xuper y Zapp TV, sin
+depender de servicios ajenos, se recomiendan las siguientes etapas de mejora:
+
+ETAPA 1: Paginacion y Rieles de Categoria Completa (Estilo Xuper)
+- Anadir al final de cada carrusel horizontal una tarjeta especial "... Ver Mas".
+- Crear la actividad / pantalla `CategoryGridActivity` que cargue la lista completa
+  de esa categoria en una cuadricula vertical de 5 o 6 columnas con contador
+  de elementos ("Total: X titulos") y paginacion infinita con el D-Pad.
+
+ETAPA 2: Explotacion Profunda de CineHax y DoramasFlix
+- Conectar `DoramasFlix` directamente al riel de K-Dramas y Doramas Asiaticos.
+- Conectar `LatAnime` directamente al riel de Anime en Emision y Finalizados.
+- Permitir que las taxonomias de CineHax naveguen por todas sus paginas mediante
+  el parametro `?page=N`. Con esto, solo en Series Turcas el catalogo saltara
+  de 12 titulos a mas de 150 titulos de inmediato.
+
+ETAPA 3: Pantalla de Explorar con Filtros Multidimensionales
+- Construir en Leo TV la pantalla "Explorar" inspirada en Xuper, permitiendo
+  combinar:
+  * Tipo (Pelicula / Serie / Anime / Novela)
+  * Pais (Turquia, Corea, Japon, Espana, Mexico, EE.UU., etc.)
+  * Genero (Accion, Terror, Comedia, Romance, Ciencia Ficcion)
+  * Ano (2026 hasta clasicos)
+
+ETAPA 4: Integracion de Metadatos TMDB y TVMaze
+- Enriquecer la ficha tecnica de cada pelicula y serie con sinopsis oficial en
+  espanol latino, backdrop para el Hero Banner y badges de audio/subtitulos.
+
+ETAPA 5: Organizacion Profesional de TV en Vivo
+- Reestructurar la seccion de television en vivo mediante un panel lateral con
+  filtros por pais (Argentina, Espana TDT, Mexico, Colombia) y tematicos (Deportes,
+  Noticias 24/7, Infantiles), alimentado por listas abiertas verificadas.
+
+================================================================================
+FIN DE LA AUDITORIA - ARCHIVO GENERADO PARA EL PROYECTO LEO TV
+================================================================================
+

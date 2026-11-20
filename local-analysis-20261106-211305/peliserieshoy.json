@@ -1,0 +1,29 @@
+{
+  "source": "peliserieshoy",
+  "model": "qwen2.5-coder:7b",
+  "status": "unverified_static_local_model",
+  "elapsed_seconds": 7.14,
+  "output_tokens": 244,
+  "analysis": {
+    "source": "https://player.pelisserieshoy.com",
+    "catalog_search": null,
+    "stream_hosts": [
+      "pelisserieshoy.com"
+    ],
+    "extraction_steps": [
+      "Obtiene el IMDb ID a partir del TMDB ID utilizando la API de TheMovieDB.",
+      "Construye la URL HTML para la película o episodio.",
+      "Extrae el token `_t` y el valor `_qc` del HTML.",
+      "Realiza una solicitud POST para obtener los datos de escaneo.",
+      "Itera a través de los idiomas preferidos y resuelve los servidores disponibles.",
+      "Filtrar los servidores válidos y asignar nombres y títulos."
+    ],
+    "requires_crypto": false,
+    "needs_browser": false,
+    "uncertainties": [
+      "La función `extractRt` depende de la estructura específica del HTML, lo que puede variar.",
+      "La función `fnv1a` no se define en el código proporcionado.",
+      "La función `withSourceName` no se define en el código proporcionado."
+    ]
+  }
+}

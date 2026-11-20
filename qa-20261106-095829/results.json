@@ -1,0 +1,37 @@
+[
+  {
+    "test": "inicio",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "OK abre canal Demo",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "Demo preparada",
+    "passed": true,
+    "detail": "VIDEO PROPIA   /   DEMO | Big Buck Bunny | Muestra autorizada de reproducción · Usá OK para mostrar controles. | Reproduciendo demostración."
+  },
+  {
+    "test": "Atras vuelve al canal",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "Atras vuelve al inicio",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "catalogo Blender",
+    "passed": false,
+    "detail": ""
+  },
+  {
+    "test": "ejecucion",
+    "passed": false,
+    "detail": "No se encuentra boton Elephants Dream"
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "test": "CineHax ofrece Matrix",
+    "passed": true,
+    "detail": ""
+  },
+  {
+    "test": "Ejecucion",
+    "passed": false,
+    "detail": "VIDEO PROPIA   /   CINEHAX | CineHax | Prueba de integracion: Matrix (1999). El enlace se obtiene al reproducir. | ←  Volver a todos los canales | Matrix (1999) | Probar reproduccion | No se pudo abrir Matrix: No se encontro un enlace de video."
+  }
+]

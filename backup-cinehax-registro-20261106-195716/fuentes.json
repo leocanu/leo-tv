@@ -1,0 +1,665 @@
+{
+  "schema_version": 1,
+  "project": "App propia de video - nombre pendiente",
+  "purpose": "Inventario de candidatos; no equivale a conectores integrados",
+  "platforms": [
+    "android_tv",
+    "android"
+  ],
+  "policy": {
+    "streaming": true,
+    "full_downloads": false,
+    "pc_server_required": false,
+    "pc_server_requirement_status": "objetivo_de_diseno",
+    "automatic_runtime_enable": false,
+    "provider_priority": [
+      "cinehax",
+      "sololatino"
+    ],
+    "protected_site_retesting": false
+  },
+  "provenance": {
+    "repository": "https://github.com/ticolibre/Nuvio",
+    "manifest_url": "https://raw.githubusercontent.com/ticolibre/Nuvio/main/manifest.json",
+    "manifest_version": "2.2.18",
+    "license_status": "no_declarada_en_GitHub",
+    "third_party_implementation_included": false
+  },
+  "sources": [
+    {
+      "id": "cinecalidad",
+      "name": "CineCalidad",
+      "description_declared": "Streams en Español desde cinecalidad.vg",
+      "types_declared": [
+        "movie"
+      ],
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/ticolibre/Nuvio/blob/main/providers/cinecalidad.js",
+      "reference_dependencies": [],
+      "status": "candidate_unverified",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": true,
+      "test": null
+    },
+    {
+      "id": "lamovie",
+      "name": "LaMovie",
+      "description_declared": "Streams en Español desde lamovie.org",
+      "types_declared": [
+        "movie",
+        "tv"
+      ],
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/ticolibre/Nuvio/blob/main/providers/lamovie.js",
+      "reference_dependencies": [],
+      "status": "candidate_unverified",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": true,
+      "test": null
+    },
+    {
+      "id": "seriesmetro",
+      "name": "SeriesMetro",
+      "description_declared": "Streams en Español desde seriesmetro.net",
+      "types_declared": [
+        "movie",
+        "tv"
+      ],
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/ticolibre/Nuvio/blob/main/providers/seriesmetro.js",
+      "reference_dependencies": [],
+      "status": "candidate_unverified",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": true,
+      "test": null
+    },
+    {
+      "id": "peliserieshoy",
+      "name": "PelisSeriesHoy",
+      "description_declared": "Streams en Español desde pelisserieshoy.com",
+      "types_declared": [
+        "movie",
+        "tv"
+      ],
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/ticolibre/Nuvio/blob/main/providers/peliserieshoy.js",
+      "reference_dependencies": [],
+      "status": "static_review_only_no_live_test",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": false,
+      "test": null
+    },
+    {
+      "id": "embed69",
+      "name": "Embed69",
+      "description_declared": "Streams en Español desde embed69.org",
+      "types_declared": [
+        "movie",
+        "tv"
+      ],
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/ticolibre/Nuvio/blob/main/providers/embed69.js",
+      "reference_dependencies": [
+        "crypto"
+      ],
+      "status": "static_review_only_no_live_test",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": false,
+      "test": null
+    },
+    {
+      "id": "cuevana",
+      "name": "Cuevana",
+      "description_declared": "Streams en Español desde cuevana3.eu",
+      "types_declared": [
+        "movie",
+        "tv"
+      ],
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/ticolibre/Nuvio/blob/main/providers/cuevana.js",
+      "reference_dependencies": [],
+      "status": "candidate_unverified",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": true,
+      "test": null
+    },
+    {
+      "id": "pelisplus",
+      "name": "Pelisplus",
+      "description_declared": "Streams en Español desde pelisplushd.bz",
+      "types_declared": [
+        "movie",
+        "tv"
+      ],
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/ticolibre/Nuvio/blob/main/providers/pelisplus.js",
+      "reference_dependencies": [],
+      "status": "candidate_unverified",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": true,
+      "test": null
+    },
+    {
+      "id": "pelispedia",
+      "name": "Pelispedia",
+      "description_declared": "Streams en Español desde pelispedia.is",
+      "types_declared": [
+        "movie",
+        "tv"
+      ],
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/ticolibre/Nuvio/blob/main/providers/pelispedia.js",
+      "reference_dependencies": [],
+      "status": "candidate_unverified",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": true,
+      "test": null
+    },
+    {
+      "id": "pelisforte",
+      "name": "Pelisforte",
+      "description_declared": "Streams en Español desde pelisforte.se (Okhd)",
+      "types_declared": [
+        "movie",
+        "tv"
+      ],
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/ticolibre/Nuvio/blob/main/providers/pelisforte.js",
+      "reference_dependencies": [],
+      "status": "candidate_unverified",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": true,
+      "test": null
+    },
+    {
+      "id": "allcalidad",
+      "name": "AllCalidad",
+      "description_declared": "Streams en Español desde allcalidad.re",
+      "types_declared": [
+        "movie",
+        "tv"
+      ],
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/ticolibre/Nuvio/blob/main/providers/allcalidad.js",
+      "reference_dependencies": [],
+      "status": "candidate_unverified",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": true,
+      "test": null
+    },
+    {
+      "id": "doramasflix",
+      "name": "DoramasFlix",
+      "description_declared": "Streams en Español desde doramasflix.co",
+      "types_declared": [
+        "movie",
+        "tv"
+      ],
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/ticolibre/Nuvio/blob/main/providers/doramasflix.js",
+      "reference_dependencies": [],
+      "status": "candidate_unverified",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": true,
+      "test": null
+    },
+    {
+      "id": "tioanime",
+      "name": "TioAnime",
+      "description_declared": "Streams en Español desde tioanime.com",
+      "types_declared": [
+        "movie",
+        "tv"
+      ],
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/ticolibre/Nuvio/blob/main/providers/tioanime.js",
+      "reference_dependencies": [],
+      "status": "candidate_unverified",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": true,
+      "test": null
+    },
+    {
+      "id": "animeav1",
+      "name": "AnimeAV1",
+      "description_declared": "Streams en Español desde animeav1.com",
+      "types_declared": [
+        "movie",
+        "tv"
+      ],
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/ticolibre/Nuvio/blob/main/providers/animeav1.js",
+      "reference_dependencies": [],
+      "status": "candidate_unverified",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": true,
+      "test": null
+    },
+    {
+      "id": "jkanime",
+      "name": "JKAnime",
+      "description_declared": "Streams en Español desde jkanime.net",
+      "types_declared": [
+        "movie",
+        "tv"
+      ],
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/ticolibre/Nuvio/blob/main/providers/jkanime.js",
+      "reference_dependencies": [],
+      "status": "candidate_unverified",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": true,
+      "test": null
+    },
+    {
+      "id": "henaojara",
+      "name": "HenaoJara",
+      "description_declared": "Streams en Español desde henaojara.net",
+      "types_declared": [
+        "movie",
+        "tv"
+      ],
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/ticolibre/Nuvio/blob/main/providers/henaojara.js",
+      "reference_dependencies": [],
+      "status": "candidate_unverified",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": true,
+      "test": null
+    },
+    {
+      "id": "latanime",
+      "name": "LatAnime",
+      "description_declared": "Streams en Español desde latanime.org",
+      "types_declared": [
+        "movie",
+        "tv"
+      ],
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/ticolibre/Nuvio/blob/main/providers/latanime.js",
+      "reference_dependencies": [],
+      "status": "candidate_unverified",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": true,
+      "test": null
+    },
+    {
+      "id": "seriesflix",
+      "name": "Seriesflix",
+      "description_declared": "Streams en Español desde pelisflixhd1.online",
+      "types_declared": [
+        "movie",
+        "tv"
+      ],
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/ticolibre/Nuvio/blob/main/providers/seriesflix.js",
+      "reference_dependencies": [],
+      "status": "candidate_unverified",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": true,
+      "test": null
+    },
+    {
+      "id": "areshd",
+      "name": "AresHD",
+      "description_declared": "Streams en Español desde areshd.com",
+      "types_declared": [
+        "movie",
+        "tv"
+      ],
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/ticolibre/Nuvio/blob/main/providers/areshd.js",
+      "reference_dependencies": [
+        "crypto-js"
+      ],
+      "status": "static_review_only_no_live_test",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": false,
+      "test": null
+    },
+    {
+      "id": "monoschinos",
+      "name": "MonosChinos",
+      "description_declared": "Streams en Español desde monoschinos2.net",
+      "types_declared": [
+        "movie",
+        "tv"
+      ],
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/ticolibre/Nuvio/blob/main/providers/monoschinos.js",
+      "reference_dependencies": [
+        "crypto-js"
+      ],
+      "status": "static_review_only_no_live_test",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": false,
+      "test": null
+    },
+    {
+      "id": "sololatino",
+      "name": "SoloLatino",
+      "description_declared": "Streams en Español desde sololatino.net",
+      "types_declared": [
+        "movie",
+        "tv"
+      ],
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/ticolibre/Nuvio/blob/main/providers/sololatino.js",
+      "reference_dependencies": [
+        "crypto-js"
+      ],
+      "status": "static_review_only_no_live_test",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": false,
+      "test": null
+    },
+    {
+      "id": "deepflix",
+      "name": "DeepFlix",
+      "description_declared": "Streams en Español desde el portal DeepFlix (mg.homelabx.qzz.io)",
+      "types_declared": [
+        "movie",
+        "tv"
+      ],
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/ticolibre/Nuvio/blob/main/providers/deepflix.js",
+      "reference_dependencies": [],
+      "status": "candidate_unverified",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": true,
+      "test": null
+    },
+    {
+      "id": "cinehaxplus",
+      "name": "CineHax+",
+      "description_declared": "Streams en Español desde cinehaxplus.com",
+      "types_declared": [
+        "movie",
+        "tv"
+      ],
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/ticolibre/Nuvio/blob/main/providers/cinehaxplus.js",
+      "reference_dependencies": [],
+      "status": "candidate_unverified",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": true,
+      "test": null
+    },
+    {
+      "id": "cinehdplus",
+      "name": "CineHDPlus",
+      "description_declared": "Streams en Español desde cinehdplus.org",
+      "types_declared": [
+        "movie",
+        "tv"
+      ],
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/ticolibre/Nuvio/blob/main/providers/cinehdplus.js",
+      "reference_dependencies": [
+        "crypto-js"
+      ],
+      "status": "static_review_only_no_live_test",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": false,
+      "test": null
+    },
+    {
+      "id": "cinehax",
+      "name": "CineHax",
+      "description_declared": "Streams en Español desde cinehax.org",
+      "types_declared": [
+        "movie",
+        "tv"
+      ],
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": "es-LA (Matrix, confirmado por Leo)",
+      "reference_code_url": "https://github.com/ticolibre/Nuvio/blob/main/providers/cinehax.js",
+      "reference_dependencies": [],
+      "status": "playback_confirmed_in_reference_app",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": true,
+      "test": {
+        "title": "The Matrix (1999)",
+        "tmdb_id": 603,
+        "app": "Nuvio TV full 1.0.0",
+        "device": "emulator-5554",
+        "observed_progress": "00:32 / 02:16:09",
+        "provider_label": "720p - Latino - Vimeos",
+        "audio_codec": "AAC",
+        "audio_language_confirmed_by": "Leo"
+      }
+    },
+    {
+      "id": "cineplus123",
+      "name": "Cineplus123",
+      "category": "peliculas",
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/DiGiTaLAnGeL92/AnikkuNX/blob/main/switch/src/sources/dooplay.cpp",
+      "reference_license": "GPL-3.0",
+      "status": "candidate_requires_cpp_port",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": false,
+      "test": null
+    },
+    {
+      "id": "detodopeliculas",
+      "name": "DeTodo Peliculas",
+      "category": "peliculas",
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/DiGiTaLAnGeL92/AnikkuNX/blob/main/switch/src/sources/dooplay.cpp",
+      "reference_license": "GPL-3.0",
+      "status": "candidate_requires_cpp_port",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": false,
+      "test": null
+    },
+    {
+      "id": "flixlatam",
+      "name": "FlixLatam",
+      "category": "peliculas",
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/DiGiTaLAnGeL92/AnikkuNX/blob/main/switch/src/sources/dooplay.cpp",
+      "reference_license": "GPL-3.0",
+      "status": "candidate_requires_cpp_port",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": false,
+      "test": null
+    },
+    {
+      "id": "verpelistop",
+      "name": "VerPelisTop",
+      "category": "peliculas",
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/DiGiTaLAnGeL92/AnikkuNX/blob/main/switch/src/sources/dooplay.cpp",
+      "reference_license": "GPL-3.0",
+      "status": "candidate_requires_cpp_port",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": false,
+      "test": null
+    },
+    {
+      "id": "mundodonghua",
+      "name": "MundoDonghua",
+      "category": "donghua",
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/DiGiTaLAnGeL92/AnikkuNX/blob/main/switch/src/sources/lang_es.cpp",
+      "reference_license": "GPL-3.0",
+      "status": "candidate_requires_cpp_port",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": false,
+      "test": null
+    },
+    {
+      "id": "veranime",
+      "name": "VerAni.me",
+      "category": "anime",
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/DiGiTaLAnGeL92/AnikkuNX/blob/main/switch/src/sources/lang_es.cpp",
+      "reference_license": "GPL-3.0",
+      "status": "candidate_requires_cpp_port",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": false,
+      "test": null
+    },
+    {
+      "id": "veranimes",
+      "name": "VerAnimes",
+      "category": "anime",
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/DiGiTaLAnGeL92/AnikkuNX/blob/main/switch/src/sources/lang_es.cpp",
+      "reference_license": "GPL-3.0",
+      "status": "candidate_requires_cpp_port",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": false,
+      "test": null
+    },
+    {
+      "id": "beatzanime",
+      "name": "BeatZ Anime",
+      "category": "anime",
+      "language_declared": [
+        "es"
+      ],
+      "language_verified": null,
+      "reference_code_url": "https://github.com/DiGiTaLAnGeL92/AnikkuNX/blob/main/switch/src/sources/lang_es.cpp",
+      "reference_license": "GPL-3.0",
+      "status": "candidate_requires_cpp_port",
+      "implemented_in_own_app": false,
+      "enabled_in_own_app": false,
+      "live_test_allowed": false,
+      "test": null
+    }
+  ],
+  "additional_provenance": [
+    {
+      "repository": "https://github.com/DiGiTaLAnGeL92/AnikkuNX",
+      "license": "GPL-3.0",
+      "platform": "Nintendo Switch",
+      "port_to_android_required": true,
+      "live_playback_verified": false
+    }
+  ]
+}

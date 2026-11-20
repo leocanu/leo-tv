@@ -1,0 +1,7 @@
+{
+  "versionCode": 16,
+  "versionName": "0.16.0",
+  "apkUrl": "https://github.com/leocanu/leo-tv/releases/download/v0.16.0/LeoTV-v0.16-Netflix-Categorias-TV-2026-11-10.apk",
+  "changelog": "• Búsqueda Global Unificada: Reconocimiento semántico para novelas turcas, k-dramas, anime y adultos\n• TV en Vivo Moderna: Grilla de 6 categorías con badges EN VIVO y tarjetas de canales con reproducción directa\n• Organización estilo Netflix: Rieles de Novelas Turcas, K-Dramas, Japón y Anime, Acción, Terror, Comedia, Ciencia Ficción y Zona Adultos (+18)\n• Categorías reales por proveedor en barra horizontal dinámica (CineHax, DoramasFlix, LatAnime)\n• Eliminación completa de la sección Demo y atajos innecesarios",
+  "mandatory": false
+}

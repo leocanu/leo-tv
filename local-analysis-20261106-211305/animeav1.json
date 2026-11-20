@@ -1,0 +1,29 @@
+{
+  "source": "animeav1",
+  "model": "qwen2.5-coder:7b",
+  "status": "unverified_static_local_model",
+  "elapsed_seconds": 7.18,
+  "output_tokens": 252,
+  "analysis": {
+    "source": "https://animeav1.com",
+    "catalog_search": null,
+    "stream_hosts": null,
+    "extraction_steps": [
+      "getStreams(tmdbId, mediaType, season, episode)",
+      "getTmdbTitles(tmdbId, mediaType)",
+      "searchCatalog(titles[ti])",
+      "scoreTitle(results[bi].title, titles)",
+      "fetch(mediaUrl, { headers: HEADERS, redirect: 'follow' })",
+      "parseEmbedsJson(yield eRes.text())",
+      "allSettled(groups[gi].list.map(function(s) { return processServer(s.server, s.url, groups[gi].lang, epUrl); }))",
+      "processServer(s.server, s.url, groups[gi].lang, epUrl)"
+    ],
+    "requires_crypto": false,
+    "needs_browser": false,
+    "uncertainties": [
+      "The code relies on external services and APIs, which may change or be unavailable.",
+      "The code uses asynchronous operations, which may fail or take longer than expected.",
+      "The code may not work as expected if the external services or APIs change their behavior."
+    ]
+  }
+}

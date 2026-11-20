@@ -1,0 +1,18 @@
+{
+  "source": "cinehdplus",
+  "model": "qwen2.5-coder:7b",
+  "status": "unverified_static_local_model",
+  "elapsed_seconds": 10.94,
+  "output_tokens": 409,
+  "analysis": {
+    "source": "const BASE = 'https://cinehdplus.org';\nfunction getStreams(tmdbId, mediaType, season, episode) {\n  try {\n    const tipo = mediaType === 'movie' ? 'movie' : 'tv';\n    const datos = await datosTmdb(tmdbId, tipo);\n    if (!datos) return [];\n    const temporada = Number(season) || 1;\n    const episodio = Number(episode) || 1;\n\n    const encontrada = await buscarPagina(datos, tipo);\n    if (!encontrada) return [];\n    let pagina = encontrada.href;\n    let html = encontrada.html;\n    if (tipo === 'tv') {\n      pagina = paginaEpisodio(html, temporada, episodio);\n      if (!pagina) return [];\n      html = await texto(pagina, { headers: { Referer: `${BASE}/` }, limite: 12000 });\n    }\n\n    const items = await enlaces(pagina, html);\n    if (!items.length) return [];\n    return await armarCine(items, FUENTE);\n  } catch (e) {\n    console.log(`[${FUENTE}] ${e.message}`);\n    return [];\n  }\n}\n\nmodule.exports = { getStreams: limitar(getStreams) };",
+    "catalog_search": null,
+    "stream_hosts": null,
+    "extraction_steps": null,
+    "requires_crypto": true,
+    "needs_browser": false,
+    "uncertainties": [
+      "The code contains cryptographic operations that may involve sensitive data. The exact nature of the encryption and decryption processes is not clear without additional context. The code also includes a function `resolverByse` that interacts with external APIs, but the details of this interaction are not provided."
+    ]
+  }
+}
