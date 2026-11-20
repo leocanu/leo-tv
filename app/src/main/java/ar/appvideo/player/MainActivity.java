@@ -1009,7 +1009,8 @@ public class MainActivity extends Activity {
                     runOnUiThread(() -> startLivePlayerInternal(ch, ch.backupUrl));
                 }
             }).start();
-        } else if (ch.streamUrl != null && (ch.streamUrl.contains("tvf90.com") || ch.streamUrl.contains("r=")) && !ch.streamUrl.contains(".m3u8")) {
+        } else if (ch.streamUrl != null && (ch.streamUrl.contains("tvf90.com") || ch.streamUrl.contains("r="))
+                && !ch.streamUrl.contains(".m3u8")) {
             new Thread(() -> {
                 try {
                     java.util.Map<String, String> hdrs = new java.util.HashMap<>();
@@ -1342,7 +1343,14 @@ public class MainActivity extends Activity {
             playBadge.setBackground(pb);
             card.addView(playBadge);
 
-            card.setOnClickListener(v -> playMovie(chTitle, chUrl, "TV M3U"));
+            card.setOnClickListener(v -> {
+                if (ParentalControlEngine.isParentalLocked(this)
+                        && ParentalControlEngine.isAdultContent(chTitle, chGroup, "m3u")) {
+                    showParentalPinDialog(() -> playMovie(chTitle, chUrl, "TV M3U"));
+                } else {
+                    playMovie(chTitle, chUrl, "TV M3U");
+                }
+            });
             card.setOnFocusChangeListener((v, f) -> {
                 GradientDrawable gBg = new GradientDrawable();
                 gBg.setColor(f ? Color.rgb(36, 44, 64) : Color.rgb(22, 26, 36));
@@ -1379,7 +1387,7 @@ public class MainActivity extends Activity {
                         new java.io.InputStreamReader(c.getInputStream(), "UTF-8"))) {
                     String line, title = null, group = "";
                     int scanned = 0;
-                    while ((line = r.readLine()) != null && scanned++ < 24000 && entries.size() < 90) {
+                    while ((line = r.readLine()) != null && scanned++ < 50000 && entries.size() < 400) {
                         line = line.trim();
                         if (line.startsWith("#EXTINF")) {
                             int comma = line.lastIndexOf(',');
@@ -1387,7 +1395,7 @@ public class MainActivity extends Activity {
                             java.util.regex.Matcher m = java.util.regex.Pattern.compile("group-title=\"([^\"]*)\"")
                                     .matcher(line);
                             group = m.find() ? m.group(1) : "Otros";
-                        } else if (title != null && line.startsWith("https://")) {
+                        } else if (title != null && (line.startsWith("https://") || line.startsWith("http://"))) {
                             entries.add(new String[] { title, group, line });
                             title = null;
                         } else if (!line.isEmpty() && !line.startsWith("#"))
@@ -4162,11 +4170,13 @@ public class MainActivity extends Activity {
             if (diary != null && !diary.isEmpty()) {
                 java.util.List<LiveSportEvent> res = new java.util.ArrayList<>();
                 for (LiveTvEngine.LiveSportEvent ev : diary) {
-                    res.add(new LiveSportEvent(ev.title, ev.tournament, ev.timeStatus, ev.isLiveNow, ev.streamUrl, ev.icon));
+                    res.add(new LiveSportEvent(ev.title, ev.tournament, ev.timeStatus, ev.isLiveNow, ev.streamUrl,
+                            ev.icon));
                 }
                 return res;
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         return java.util.Arrays.asList(
                 new LiveSportEvent("TyC Sports HD", "Fútbol de Primera & Torneos · En Vivo",
                         "🔴 EN VIVO", true,
@@ -4678,6 +4688,7 @@ public class MainActivity extends Activity {
         boolean locked = ParentalControlEngine.isParentalLocked(this);
         String[] options = new String[] {
                 "🔄  Actualizar Catálogo y Agenda Deportiva (Fútbol Libre)",
+                "📺  Listas M3U / IPTV Personalizadas (Cargar URL)",
                 "⚙️  Personalizar Carruseles de Inicio (Ordenar y Ocultar)",
                 "📡  Seleccionar Proveedor Activo ("
                         + ((activeProvider == null || activeProvider.isEmpty()) ? "CineHax" : activeProvider) + ")",
@@ -4689,10 +4700,12 @@ public class MainActivity extends Activity {
             if (which == 0) {
                 triggerCatalogUpdate();
             } else if (which == 1) {
-                showCarouselCustomizer();
+                showCustomM3uManager();
             } else if (which == 2) {
-                showProviderSelector();
+                showCarouselCustomizer();
             } else if (which == 3) {
+                showProviderSelector();
+            } else if (which == 4) {
                 if (ParentalControlEngine.isParentalLocked(this)) {
                     showParentalPinDialog(() -> {
                         Toast.makeText(this, "Control parental desbloqueado para esta sesión", Toast.LENGTH_SHORT)
@@ -4706,12 +4719,132 @@ public class MainActivity extends Activity {
                         home();
                     }
                 }
-            } else if (which == 4) {
+            } else if (which == 5) {
                 showParentalChangePinDialog();
             }
         });
         builder.setNegativeButton("Cerrar", null);
         builder.show();
+    }
+
+    private void showCustomM3uManager() {
+        android.content.SharedPreferences sp = getSharedPreferences("leo_tv_custom_m3u", MODE_PRIVATE);
+        String raw = sp.getString("saved_m3u_json", "[]");
+        org.json.JSONArray arr;
+        try {
+            arr = new org.json.JSONArray(raw);
+        } catch (Exception e) {
+            arr = new org.json.JSONArray();
+        }
+
+        java.util.List<String> items = new java.util.ArrayList<>();
+        items.add("➕  Agregar Nueva Lista M3U (Pegar URL)");
+        final int listCount = arr.length();
+        for (int i = 0; i < listCount; i++) {
+            org.json.JSONObject obj = arr.optJSONObject(i);
+            if (obj != null) {
+                String n = obj.optString("name", "Lista " + (i + 1));
+                items.add("▶  " + n);
+            }
+        }
+        if (listCount > 0) {
+            items.add("🗑️  Borrar una Lista Guardada");
+        }
+
+        android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(this);
+        b.setTitle("📺  Listas M3U Personalizadas");
+        final org.json.JSONArray finalArr = arr;
+        b.setItems(items.toArray(new String[0]), (d, which) -> {
+            if (which == 0) {
+                showAddCustomM3uDialog();
+            } else if (which <= listCount) {
+                org.json.JSONObject selected = finalArr.optJSONObject(which - 1);
+                if (selected != null) {
+                    String name = selected.optString("name", "Lista Personalizada");
+                    String url = selected.optString("url", "");
+                    if (!url.isEmpty()) {
+                        showM3uList(name, url, true);
+                    }
+                }
+            } else {
+                showDeleteCustomM3uDialog(finalArr);
+            }
+        });
+        b.setNegativeButton("Cerrar", null);
+        b.show();
+    }
+
+    private void showAddCustomM3uDialog() {
+        android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(this);
+        b.setTitle("➕  Agregar Lista M3U");
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(dp(24), dp(10), dp(24), dp(10));
+
+        final android.widget.EditText nameInput = new android.widget.EditText(this);
+        nameInput.setHint("Nombre (ej: Mi IPTV Personal)");
+        nameInput.setTextColor(Color.WHITE);
+        nameInput.setTextSize(15);
+        layout.addView(nameInput);
+
+        final android.widget.EditText urlInput = new android.widget.EditText(this);
+        urlInput.setHint("URL M3U (ej: http://... o https://.../lista.m3u)");
+        urlInput.setTextColor(Color.WHITE);
+        urlInput.setTextSize(14);
+        layout.addView(urlInput);
+
+        b.setView(layout);
+        b.setPositiveButton("Guardar y Abrir", (d, w) -> {
+            String name = nameInput.getText().toString().trim();
+            String url = urlInput.getText().toString().trim();
+            if (name.isEmpty()) name = "Lista IPTV " + (System.currentTimeMillis() % 1000);
+            if (url.isEmpty()) {
+                Toast.makeText(this, "La URL no puede estar vacía", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            try {
+                android.content.SharedPreferences sp = getSharedPreferences("leo_tv_custom_m3u", MODE_PRIVATE);
+                String raw = sp.getString("saved_m3u_json", "[]");
+                org.json.JSONArray arr = new org.json.JSONArray(raw);
+                org.json.JSONObject newObj = new org.json.JSONObject();
+                newObj.put("name", name);
+                newObj.put("url", url);
+                arr.put(newObj);
+                sp.edit().putString("saved_m3u_json", arr.toString()).apply();
+                Toast.makeText(this, "Lista guardada exitosamente", Toast.LENGTH_SHORT).show();
+                showM3uList(name, url, true);
+            } catch (Exception ex) {
+                Toast.makeText(this, "Error guardando lista: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        b.setNegativeButton("Cancelar", null);
+        b.show();
+    }
+
+    private void showDeleteCustomM3uDialog(org.json.JSONArray arr) {
+        java.util.List<String> names = new java.util.ArrayList<>();
+        for (int i = 0; i < arr.length(); i++) {
+            org.json.JSONObject obj = arr.optJSONObject(i);
+            names.add(obj != null ? obj.optString("name", "Lista " + (i + 1)) : "Lista " + (i + 1));
+        }
+        android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(this);
+        b.setTitle("🗑️  Selecciona la lista a eliminar");
+        b.setItems(names.toArray(new String[0]), (d, which) -> {
+            try {
+                org.json.JSONArray newArr = new org.json.JSONArray();
+                for (int i = 0; i < arr.length(); i++) {
+                    if (i != which) newArr.put(arr.get(i));
+                }
+                getSharedPreferences("leo_tv_custom_m3u", MODE_PRIVATE)
+                        .edit().putString("saved_m3u_json", newArr.toString()).apply();
+                Toast.makeText(this, "Lista eliminada", Toast.LENGTH_SHORT).show();
+            } catch (Exception ex) {
+                Toast.makeText(this, "Error: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        b.setNegativeButton("Cancelar", null);
+        b.show();
     }
 
     private void showParentalPinDialog(Runnable onUnlocked) {
@@ -7464,17 +7597,20 @@ public class MainActivity extends Activity {
     }
 
     private void playMovie(String title, String url, String origin, java.util.Map<String, String> headers) {
-        if (url != null && (url.contains("tvf90.com") || url.contains("r=") || url.contains("stream=")) && !url.contains(".m3u8")) {
+        if (url != null && (url.contains("tvf90.com") || url.contains("r=") || url.contains("stream="))
+                && !url.contains(".m3u8")) {
             Toast.makeText(this, "Conectando con señal deportiva en vivo...", Toast.LENGTH_SHORT).show();
             new Thread(() -> {
                 java.util.Map<String, String> resolvedHdrs = new java.util.HashMap<>();
-                if (headers != null) resolvedHdrs.putAll(headers);
+                if (headers != null)
+                    resolvedHdrs.putAll(headers);
                 String realM3u8 = LiveTvEngine.resolveDynamicStream(url, resolvedHdrs);
                 runOnUiThread(() -> {
                     if (realM3u8 != null && !realM3u8.isEmpty() && realM3u8.startsWith("http")) {
                         playMovie(title, realM3u8, origin, resolvedHdrs);
                     } else {
-                        Toast.makeText(this, "La señal deportiva no está disponible en este momento", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "La señal deportiva no está disponible en este momento",
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
             }).start();

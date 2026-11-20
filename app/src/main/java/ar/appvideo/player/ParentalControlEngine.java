@@ -82,7 +82,7 @@ public final class ParentalControlEngine {
         String k = (kind != null ? kind.toLowerCase() : "");
         String p = (provider != null ? provider.toLowerCase() : "");
 
-        if (k.contains("xxx") || k.contains("adulto_explicito") || k.contains("hentai")) return true;
+        if (k.contains("xxx") || k.contains("adulto_explicito") || k.contains("hentai") || k.contains("adultos") || k.contains("adult")) return true;
         if (p.contains("xxx") || p.contains("adult_explicit")) return true;
         if (t.contains("xxx") || t.contains("porn") || t.contains("porno") || t.contains("hentai")) return true;
         return false;

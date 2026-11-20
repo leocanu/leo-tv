@@ -1,7 +1,7 @@
 {
-  "versionCode": 38,
-  "versionName": "0.38.0",
-  "apkUrl": "https://github.com/leocanu/leo-tv/releases/download/v0.38.0/LeoTV-v0.38.0.apk",
-  "changelog": "• Limpieza del filtro de catálogo de adultos: el cine comercial, romance y drama ya no se bloquea indebidamente y se navega libremente en sus categorías\n• Control Parental con PIN restringido estrictamente para resguardo de contenidos correspondientes\n• Corrección de señales de televisión en vivo y canales de cine (RTVE Cine, Canela TV, Cartoon Network, Alterna TV)\n• Identificación y descripción del botón de descargas locales (offline) en la barra lateral",
+  "versionCode": 39,
+  "versionName": "0.39.0",
+  "apkUrl": "https://github.com/leocanu/leo-tv/releases/download/v0.39.0/LeoTV-v0.39.0.apk",
+  "changelog": "• Carga y administración de Listas M3U / IPTV personalizadas desde el menú de Ajustes (⚙️)\n• Soporte para listas remotas http y https con hasta 400 canales\n• Protección automática de Control Parental por PIN en canales de listas M3U etiquetados como adultos/xxx\n• Persistencia local de listas cargadas para abrirlas rápidamente en cualquier momento",
   "mandatory": false
 }
