@@ -1,7 +1,7 @@
 {
-  "versionCode": 40,
-  "versionName": "0.40.0",
-  "apkUrl": "https://github.com/leocanu/leo-tv/releases/download/v0.40.0/LeoTV-v0.40.0.apk",
-  "changelog": "• Nueva interfaz avanzada para Listas M3U / IPTV:\n• Modo Lista Compacta con navegación secuencial D-Pad estable (sin retrocesos ni saltos involuntarios)\n• Búsqueda de canales en tiempo real por nombre\n• Filtro instantáneo por Categorías / Grupos (group-title) con barra de chips horizontal\n• Alternador de vista entre Modo Lista Compacta y Modo Cuadrícula\n• Capacidad ampliada hasta 1200 canales por lista M3U",
+  "versionCode": 41,
+  "versionName": "0.41.0",
+  "apkUrl": "https://github.com/leocanu/leo-tv/releases/download/v0.41.0/LeoTV-v0.41.0.apk",
+  "changelog": "• Integración oficial permanente de IPTV-org Argentina (186 canales únicos agrupados con sus logos oficiales)\n• Agrupamiento inteligente de múltiples señales alternativas bajo un mismo canal con conmutación automática de respaldo\n• Opción para actualizar la fuente desde la URL M3U remota en Ajustes (⚙️)\n• Acceso directo desde el menú de Canales y el estudio de TV en vivo",
   "mandatory": false
 }

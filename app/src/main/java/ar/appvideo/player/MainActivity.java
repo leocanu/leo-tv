@@ -1963,8 +1963,11 @@ public class MainActivity extends Activity {
         grid.setColumnCount(3);
         wrapper.addView(grid, new LinearLayout.LayoutParams(-2, -2));
 
-        addProviderTile(grid, "ARGENTINA\nSOLO CANALES", "tv", "TV", Color.WHITE,
-                () -> showM3uList("Mametchi Argentina", "https://www.m3u.cl/lista/AR.m3u", false));
+        addProviderTile(grid, "IPTV-ORG\nARGENTINA (186 CH)", "tv", "🇦🇷", Color.rgb(40, 160, 220),
+                () -> {
+                    activeTvCat = "iptv_org_ar";
+                    showLiveTvStudio();
+                });
 
         addProviderTile(grid, "CANALES DE\nTV Y CINE\nRECOMENDADO", "tv", "TV", Color.WHITE,
                 this::showLiveTvStudio);
@@ -4969,6 +4972,7 @@ public class MainActivity extends Activity {
         boolean locked = ParentalControlEngine.isParentalLocked(this);
         String[] options = new String[] {
                 "🔄  Actualizar Catálogo y Agenda Deportiva (Fútbol Libre)",
+                "🇦🇷  Actualizar Fuente IPTV-org Argentina (URL M3U)",
                 "📺  Listas M3U / IPTV Personalizadas (Cargar URL)",
                 "⚙️  Personalizar Carruseles de Inicio (Ordenar y Ocultar)",
                 "📡  Seleccionar Proveedor Activo ("
@@ -4981,12 +4985,14 @@ public class MainActivity extends Activity {
             if (which == 0) {
                 triggerCatalogUpdate();
             } else if (which == 1) {
-                showCustomM3uManager();
+                showIptvOrgUpdateDialog();
             } else if (which == 2) {
-                showCarouselCustomizer();
+                showCustomM3uManager();
             } else if (which == 3) {
-                showProviderSelector();
+                showCarouselCustomizer();
             } else if (which == 4) {
+                showProviderSelector();
+            } else if (which == 5) {
                 if (ParentalControlEngine.isParentalLocked(this)) {
                     showParentalPinDialog(() -> {
                         Toast.makeText(this, "Control parental desbloqueado para esta sesión", Toast.LENGTH_SHORT)
@@ -5000,12 +5006,64 @@ public class MainActivity extends Activity {
                         home();
                     }
                 }
-            } else if (which == 5) {
+            } else if (which == 6) {
                 showParentalChangePinDialog();
             }
         });
         builder.setNegativeButton("Cerrar", null);
         builder.show();
+    }
+
+    private void showIptvOrgUpdateDialog() {
+        android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(this);
+        b.setTitle("🇦🇷  Fuente IPTV-org Argentina");
+        String currentUrl = LiveTvEngine.getIptvOrgArUrl(this);
+        b.setMessage("URL configurada actualmente:\n" + currentUrl + "\n\n¿Deseas sincronizar los 186 canales con la lista oficial ahora?");
+        b.setPositiveButton("Actualizar Ahora", (d, w) -> {
+            Toast.makeText(this, "Descargando lista IPTV-org Argentina...", Toast.LENGTH_SHORT).show();
+            new Thread(() -> {
+                try {
+                    int count = LiveTvEngine.updateIptvOrgArFromNetwork(this);
+                    runOnUiThread(() -> {
+                        Toast.makeText(this, "✓ IPTV-org actualizado: " + count + " canales importados", Toast.LENGTH_LONG).show();
+                        if ("iptv_org_ar".equals(activeTvCat) && page.equals("live_tv_studio")) {
+                            showLiveTvStudio();
+                        }
+                    });
+                } catch (Exception ex) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(this, "Error actualizando: " + ex.getMessage(), Toast.LENGTH_LONG).show();
+                    });
+                }
+            }).start();
+        });
+        b.setNeutralButton("Editar URL", (d, w) -> {
+            showEditIptvOrgUrlDialog();
+        });
+        b.setNegativeButton("Cerrar", null);
+        b.show();
+    }
+
+    private void showEditIptvOrgUrlDialog() {
+        android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(this);
+        b.setTitle("✏️  Configurar URL M3U de IPTV-org Argentina");
+        final android.widget.EditText input = new android.widget.EditText(this);
+        input.setText(LiveTvEngine.getIptvOrgArUrl(this));
+        input.setTextColor(Color.WHITE);
+        input.setTextSize(13);
+        LinearLayout wrap = new LinearLayout(this);
+        wrap.setPadding(dp(20), dp(10), dp(20), dp(10));
+        wrap.addView(input, new LinearLayout.LayoutParams(-1, -2));
+        b.setView(wrap);
+        b.setPositiveButton("Guardar", (d, w) -> {
+            String newUrl = input.getText().toString().trim();
+            if (!newUrl.isEmpty()) {
+                LiveTvEngine.setIptvOrgArUrl(this, newUrl);
+                Toast.makeText(this, "URL guardada", Toast.LENGTH_SHORT).show();
+            }
+        });
+        b.setNegativeButton("Cancelar", null);
+        b.show();
     }
 
     private void showCustomM3uManager() {

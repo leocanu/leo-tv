@@ -89,6 +89,7 @@ public final class LiveTvEngine {
         List<TvCategory> cats = new ArrayList<>();
         cats.add(new TvCategory("favs", "⭐ Favoritos de TV", "⭐"));
         cats.add(new TvCategory("recents", "🕒 Canales Recientes", "🕒"));
+        cats.add(new TvCategory("iptv_org_ar", "🇦🇷 IPTV-org Argentina (186 Canales)", "🇦🇷"));
         cats.add(new TvCategory("argentina", "🇦🇷 Argentina (Aire y Noticias)", "🇦🇷"));
         cats.add(new TvCategory("deportes", "⚽ Deportes en Directo", "⚽"));
         cats.add(new TvCategory("noticias", "📰 Noticias 24/7", "📰"));
@@ -106,6 +107,8 @@ public final class LiveTvEngine {
             return getFavorites(ctx);
         } else if ("recents".equals(catId)) {
             return getRecents(ctx);
+        } else if ("iptv_org_ar".equals(catId)) {
+            return getIptvOrgArgentinaChannels(ctx);
         }
         return getPresetChannels(catId);
     }
@@ -835,6 +838,156 @@ public final class LiveTvEngine {
             }
         }
         return target;
+    }
+
+    public static final String DEFAULT_IPTV_ORG_AR_URL = "https://iptv-org.github.io/iptv/countries/ar.m3u";
+    private static final String PREF_IPTV_ORG = "leo_tv_iptv_org";
+    private static final String KEY_IPTV_URL = "iptv_org_ar_url";
+
+    public static String getIptvOrgArUrl(Context ctx) {
+        return ctx.getSharedPreferences(PREF_IPTV_ORG, Context.MODE_PRIVATE)
+                .getString(KEY_IPTV_URL, DEFAULT_IPTV_ORG_AR_URL);
+    }
+
+    public static void setIptvOrgArUrl(Context ctx, String url) {
+        ctx.getSharedPreferences(PREF_IPTV_ORG, Context.MODE_PRIVATE)
+                .edit().putString(KEY_IPTV_URL, url).apply();
+    }
+
+    public static List<LiveChannel> getIptvOrgArgentinaChannels(Context ctx) {
+        List<LiveChannel> out = new ArrayList<>();
+        try {
+            String jsonStr = null;
+            java.io.File customFile = new java.io.File(ctx.getFilesDir(), "iptv_org_ar_custom.json");
+            if (customFile.exists() && customFile.length() > 100) {
+                try (java.io.FileInputStream fis = new java.io.FileInputStream(customFile);
+                     BufferedReader br = new BufferedReader(new InputStreamReader(fis, "UTF-8"))) {
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = br.readLine()) != null) sb.append(line);
+                    jsonStr = sb.toString();
+                }
+            }
+            if (jsonStr == null) {
+                try (java.io.InputStream is = ctx.getAssets().open("iptv_org_ar.json");
+                     BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"))) {
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = br.readLine()) != null) sb.append(line);
+                    jsonStr = sb.toString();
+                }
+            }
+
+            JSONArray arr = new JSONArray(jsonStr);
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject obj = arr.getJSONObject(i);
+                String id = obj.optString("id", "iptv_ar_" + i);
+                String name = obj.optString("name", "Canal " + (i + 1));
+                String logo = obj.optString("logo", "");
+                String group = obj.optString("group", "General");
+                JSONArray streams = obj.optJSONArray("streams");
+                String streamUrl = "";
+                String backupUrl = "";
+                if (streams != null && streams.length() > 0) {
+                    streamUrl = streams.getJSONObject(0).optString("url", "");
+                    if (streams.length() > 1) {
+                        backupUrl = streams.getJSONObject(1).optString("url", "");
+                    }
+                }
+                if (!streamUrl.isEmpty()) {
+                    String epgSub = (streams != null && streams.length() > 1) 
+                            ? ("Alternativas: " + streams.length() + " señales") 
+                            : "Señal Oficial en Directo";
+                    out.add(new LiveChannel(id, name, "iptv_org_ar", streamUrl, backupUrl, logo, "HD", group, epgSub));
+                }
+            }
+        } catch (Exception e) {
+            android.util.Log.w("LiveTvEngine", "Error cargando iptv_org_ar: " + e.getMessage());
+        }
+        return out;
+    }
+
+    public static int updateIptvOrgArFromNetwork(Context ctx) throws Exception {
+        String m3uUrl = getIptvOrgArUrl(ctx);
+        URL endpoint = new URL(m3uUrl);
+        HttpURLConnection c = (HttpURLConnection) endpoint.openConnection();
+        c.setConnectTimeout(10000);
+        c.setReadTimeout(15000);
+        c.setRequestProperty("User-Agent", "VideoPropia-TV/0.4");
+        c.setInstanceFollowRedirects(true);
+
+        LinkedHashMap<String, JSONObject> channels = new LinkedHashMap<>();
+        try (BufferedReader r = new BufferedReader(new InputStreamReader(c.getInputStream(), "UTF-8"))) {
+            String line, title = null, group = "General", logo = "", id = "", ua = "", ref = "";
+            while ((line = r.readLine()) != null) {
+                line = line.trim();
+                if (line.startsWith("#EXTINF:")) {
+                    int comma = line.lastIndexOf(',');
+                    title = comma >= 0 ? line.substring(comma + 1).trim() : "Sin nombre";
+                    Matcher mId = Pattern.compile("tvg-id=\"([^\"]*)\"").matcher(line);
+                    id = mId.find() ? mId.group(1) : "";
+                    Matcher mLogo = Pattern.compile("tvg-logo=\"([^\"]*)\"").matcher(line);
+                    logo = mLogo.find() ? mLogo.group(1) : "";
+                    Matcher mGrp = Pattern.compile("group-title=\"([^\"]*)\"").matcher(line);
+                    group = mGrp.find() ? mGrp.group(1) : "General";
+                    Matcher mUa = Pattern.compile("user-agent=\"([^\"]*)\"").matcher(line);
+                    ua = mUa.find() ? mUa.group(1) : "";
+                    Matcher mRef = Pattern.compile("referrer=\"([^\"]*)\"").matcher(line);
+                    ref = mRef.find() ? mRef.group(1) : "";
+                } else if (line.startsWith("#EXTVLCOPT:http-user-agent=")) {
+                    ua = line.substring(line.indexOf('=') + 1);
+                } else if (line.startsWith("#EXTVLCOPT:http-referrer=")) {
+                    ref = line.substring(line.indexOf('=') + 1);
+                } else if (title != null && (line.startsWith("http://") || line.startsWith("https://"))) {
+                    String baseId = id.contains("@") ? id.split("@")[0].trim() : id;
+                    String cleanName = title.replaceAll("\\s*\\([^)]*\\)", "").trim();
+                    String key = (!baseId.isEmpty()) ? baseId.toLowerCase() : cleanName.toLowerCase();
+
+                    JSONObject chObj = channels.get(key);
+                    if (chObj == null) {
+                        chObj = new JSONObject();
+                        chObj.put("id", id);
+                        chObj.put("name", cleanName.isEmpty() ? title : cleanName);
+                        chObj.put("logo", logo);
+                        chObj.put("group", group);
+                        chObj.put("streams", new JSONArray());
+                        channels.put(key, chObj);
+                    } else {
+                        if (chObj.optString("logo").isEmpty() && !logo.isEmpty()) chObj.put("logo", logo);
+                    }
+                    JSONObject sObj = new JSONObject();
+                    sObj.put("url", line);
+                    sObj.put("label", title);
+                    sObj.put("ua", ua);
+                    sObj.put("ref", ref);
+                    chObj.getJSONArray("streams").put(sObj);
+
+                    title = null;
+                    id = "";
+                    logo = "";
+                    group = "General";
+                    ua = "";
+                    ref = "";
+                } else if (!line.isEmpty() && !line.startsWith("#")) {
+                    title = null;
+                }
+            }
+        } finally {
+            c.disconnect();
+        }
+
+        if (!channels.isEmpty()) {
+            JSONArray outArr = new JSONArray();
+            for (JSONObject chObj : channels.values()) {
+                outArr.put(chObj);
+            }
+            java.io.File customFile = new java.io.File(ctx.getFilesDir(), "iptv_org_ar_custom.json");
+            try (java.io.FileOutputStream fos = new java.io.FileOutputStream(customFile);
+                 java.io.OutputStreamWriter osw = new java.io.OutputStreamWriter(fos, "UTF-8")) {
+                osw.write(outArr.toString());
+            }
+        }
+        return channels.size();
     }
 }
 
