@@ -123,15 +123,22 @@ public class MainActivity extends Activity {
         @Override
         public void run() {
             if (externalPlayer != null && "playing".equals(page) && externalPlayer.isPlaying()) {
-                long pos = externalPlayer.getCurrentPosition();
-                long dur = externalPlayer.getDuration();
-                if (pos > 0 && dur > 0 && currentPlayingTitle != null && !currentPlayingTitle.isEmpty()) {
-                    PlaybackEngine.saveProgress(MainActivity.this, currentPlayingTitle, currentPlayingTitle,
-                            currentPlayingPoster, pos, dur, currentPlayingOrigin, currentPlayingKind);
+                final long pos = externalPlayer.getCurrentPosition();
+                final long dur = externalPlayer.getDuration();
+                if (pos > 0 && dur > 0 && currentPlayingTitle != null && !currentPlayingTitle.isEmpty()
+                        && !"live_tv".equals(playbackReturnPage)) {
+                    final String sTitle = currentPlayingTitle;
+                    final String sPoster = currentPlayingPoster;
+                    final String sOrigin = currentPlayingOrigin;
+                    final String sKind = currentPlayingKind;
+                    new Thread(() -> {
+                        PlaybackEngine.saveProgress(MainActivity.this, sTitle, sTitle,
+                                sPoster, pos, dur, sOrigin, sKind);
+                    }).start();
                 }
             }
             if ("playing".equals(page)) {
-                mainHandler.postDelayed(this, 5000);
+                mainHandler.postDelayed(this, 15000);
             }
         }
     };
@@ -356,6 +363,7 @@ public class MainActivity extends Activity {
     private String page = "home";
     private String channel = "";
     private String playingChannel = "Demo";
+    private String playbackReturnPage = "home";
     private JSONArray channels = new JSONArray();
     private JSONArray catalogProviders = new JSONArray();
     private JSONObject audit = new JSONObject();
@@ -818,7 +826,8 @@ public class MainActivity extends Activity {
                     showM3uList("TDTChannels TV", "https://www.tdtchannels.com/lists/tv.m3u8", true);
                     return;
                 } else if ("freetv".equals(cat.id)) {
-                    showM3uList("Free-TV Global IPTV", "https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8", true);
+                    showM3uList("Free-TV Global IPTV",
+                            "https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8", true);
                     return;
                 }
                 activeTvCat = cat.id;
@@ -1182,6 +1191,7 @@ public class MainActivity extends Activity {
     private void enterLiveTvFullscreen() {
         if (activeTvChannel == null)
             return;
+        playbackReturnPage = "live_tv";
         page = "live_tv_fullscreen";
         final LiveTvEngine.LiveChannel ch = activeTvChannel;
         if (ch.streamUrl != null && ch.streamUrl.contains("lambda-url")) {
@@ -2562,7 +2572,8 @@ public class MainActivity extends Activity {
                 () -> showM3uList("TDTChannels TV", "https://www.tdtchannels.com/lists/tv.m3u8", true));
 
         addProviderTile(grid, "FREE-TV IPTV\n(2.200 CANALES)", "tv", "🌐", Color.rgb(60, 180, 120),
-                () -> showM3uList("Free-TV IPTV Global", "https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8", true));
+                () -> showM3uList("Free-TV IPTV Global",
+                        "https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8", true));
 
         addProviderTile(grid, "NOVELAS TURCAS\nY ASIÁTICAS", "icon", "🇹🇷", Color.rgb(220, 50, 60),
                 () -> {
@@ -5667,7 +5678,8 @@ public class MainActivity extends Activity {
             arr = new org.json.JSONArray();
         }
 
-        // Si es la primera vez que se abre, sembrar fuentes recomendadas (TDTChannels y Free-TV)
+        // Si es la primera vez que se abre, sembrar fuentes recomendadas (TDTChannels y
+        // Free-TV)
         if (arr.length() == 0) {
             try {
                 org.json.JSONObject tdt = new org.json.JSONObject();
@@ -5681,7 +5693,8 @@ public class MainActivity extends Activity {
                 arr.put(freetv);
 
                 sp.edit().putString("saved_m3u_json", arr.toString()).apply();
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
 
         java.util.List<String> items = new java.util.ArrayList<>();
@@ -8566,6 +8579,21 @@ public class MainActivity extends Activity {
             return;
         }
 
+        if (origin != null && (origin.startsWith("TV") || origin.contains("Deportes")
+                || origin.contains("Live") || origin.contains("Señales TV"))) {
+            playbackReturnPage = "live_tv";
+        } else if ("m3u_list".equals(page)) {
+            playbackReturnPage = "m3u_list";
+        } else if ("favorites".equals(page)) {
+            playbackReturnPage = "favorites";
+        } else if ("watch_later".equals(page)) {
+            playbackReturnPage = "watch_later";
+        } else if (catalogBrowser != null || (channel != null && !channel.isEmpty())) {
+            playbackReturnPage = "channel";
+        } else if (!"live_tv".equals(playbackReturnPage)) {
+            playbackReturnPage = "home";
+        }
+
         playingChannel = origin;
         page = "playing";
         currentPlayingTitle = title;
@@ -8712,17 +8740,18 @@ public class MainActivity extends Activity {
             body.addView(status);
         }
         DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(this)
-                .forceDisableMediaCodecAsynchronousQueueing()
                 .setEnableDecoderFallback(true)
                 .setAllowedVideoJoiningTimeMs(5000);
 
         DefaultLoadControl loadControl = new DefaultLoadControl.Builder()
                 .setBufferDurationsMs(
-                        15000,
-                        50000,
-                        2500,
-                        5000)
+                        30000,  // minBufferMs: 30 segundos (evita trabas cada 10-15s)
+                        120000, // maxBufferMs: 2 minutos de anticipación
+                        1000,   // bufferForPlaybackMs: arranque rápido en 1s
+                        2500    // bufferForPlaybackAfterRebufferMs: 2.5s tras rebuffer
+                )
                 .setPrioritizeTimeOverSizeThresholds(true)
+                .setBackBuffer(20000, true) // conserva 20s de búfer previo
                 .build();
 
         AudioAttributes audioAttrs = new AudioAttributes.Builder()
@@ -8733,14 +8762,29 @@ public class MainActivity extends Activity {
         ExoPlayer.Builder builder = new ExoPlayer.Builder(this, renderersFactory);
         builder.setLoadControl(loadControl);
         builder.setAudioAttributes(audioAttrs, true);
+
+        java.util.Map<String, String> safeHeaders = new java.util.HashMap<>();
+        String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
+        if (headers != null) {
+            for (java.util.Map.Entry<String, String> entry : headers.entrySet()) {
+                if ("user-agent".equalsIgnoreCase(entry.getKey())) {
+                    userAgent = entry.getValue();
+                } else {
+                    safeHeaders.put(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+        if (url != null && (url.contains("tvf90.com") || url.contains("ftlly.com"))) {
+            safeHeaders.put("Referer", "https://tvf90.com/");
+            safeHeaders.put("Origin", "https://tvf90.com");
+        }
         androidx.media3.datasource.DefaultHttpDataSource.Factory http = new androidx.media3.datasource.DefaultHttpDataSource.Factory()
-                .setUserAgent(headers != null && headers.containsKey("User-Agent")
-                        ? headers.get("User-Agent")
-                        : "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Mobile Safari/537.36")
-                .setConnectTimeoutMs(15000).setReadTimeoutMs(20000)
+                .setUserAgent(userAgent)
+                .setConnectTimeoutMs(15000)
+                .setReadTimeoutMs(25000)
                 .setAllowCrossProtocolRedirects(true);
-        if (headers != null)
-            http.setDefaultRequestProperties(headers);
+        if (!safeHeaders.isEmpty())
+            http.setDefaultRequestProperties(safeHeaders);
         builder.setMediaSourceFactory(
                 new androidx.media3.exoplayer.source.DefaultMediaSourceFactory(http));
         externalPlayer = builder.build();
@@ -8748,7 +8792,6 @@ public class MainActivity extends Activity {
         TrackSelectionParameters trackParams = externalPlayer.getTrackSelectionParameters()
                 .buildUpon()
                 .setMaxVideoSize(1920, 1080)
-                .setMaxVideoFrameRate(30)
                 .build();
         externalPlayer.setTrackSelectionParameters(trackParams);
         externalPlayer.setPlaybackParameters(new PlaybackParameters(1.0f, 1.0f));
@@ -9295,18 +9338,52 @@ public class MainActivity extends Activity {
     public void onBackPressed() {
         if ("playing".equals(page)) {
             mainHandler.removeCallbacks(periodicSaveRunnable);
+            getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             if (externalPlayer != null) {
-                long pos = externalPlayer.getCurrentPosition();
-                long dur = externalPlayer.getDuration();
-                if (pos > 0 && currentPlayingTitle != null && !currentPlayingTitle.isEmpty()) {
-                    PlaybackEngine.saveProgress(this, currentPlayingTitle, currentPlayingTitle,
-                            currentPlayingPoster, pos, dur, currentPlayingOrigin, currentPlayingKind);
+                final long pos = externalPlayer.getCurrentPosition();
+                final long dur = externalPlayer.getDuration();
+                if (pos > 0 && currentPlayingTitle != null && !currentPlayingTitle.isEmpty()
+                        && !"live_tv".equals(playbackReturnPage)) {
+                    final String sTitle = currentPlayingTitle;
+                    final String sPoster = currentPlayingPoster;
+                    final String sOrigin = currentPlayingOrigin;
+                    final String sKind = currentPlayingKind;
+                    new Thread(() -> {
+                        PlaybackEngine.saveProgress(MainActivity.this, sTitle, sTitle,
+                                sPoster, pos, dur, sOrigin, sKind);
+                    }).start();
                 }
                 externalPlayer.stop();
                 externalPlayer.release();
                 externalPlayer = null;
             }
-            home();
+            if (video != null) {
+                video.stopPlayback();
+                video = null;
+            }
+            releaseMediaSession();
+            fullscreen = false;
+
+            if ("live_tv".equals(playbackReturnPage) || "live_tv_fullscreen".equals(playbackReturnPage)
+                    || (playingChannel != null && (playingChannel.startsWith("TV") || playingChannel.contains("Deportes")
+                            || playingChannel.contains("Live") || playingChannel.contains("Tele")))) {
+                playbackReturnPage = "home";
+                showLiveTvStudio();
+            } else if ("m3u_list".equals(playbackReturnPage)) {
+                playbackReturnPage = "home";
+                showLiveTvStudio();
+            } else if ("channel".equals(playbackReturnPage) && channel != null && !channel.isEmpty()) {
+                playbackReturnPage = "home";
+                openChannel(channel);
+            } else if ("favorites".equals(playbackReturnPage)) {
+                playbackReturnPage = "home";
+                showFavoritesPage();
+            } else if ("watch_later".equals(playbackReturnPage)) {
+                playbackReturnPage = "home";
+                showWatchLaterPage();
+            } else {
+                home();
+            }
             return;
         }
         if (page.equals("live_tv_fullscreen")) {

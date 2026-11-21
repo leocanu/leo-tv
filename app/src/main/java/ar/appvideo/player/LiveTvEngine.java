@@ -87,20 +87,16 @@ public final class LiveTvEngine {
 
     public static List<TvCategory> getCategories() {
         List<TvCategory> cats = new ArrayList<>();
-        cats.add(new TvCategory("favs", "⭐ Favoritos de TV", "⭐"));
-        cats.add(new TvCategory("recents", "🕒 Canales Recientes", "🕒"));
-        cats.add(new TvCategory("iptv_org_explorer", "🌍 IPTV-org (Filtros por País y Género)", "🌍"));
-        cats.add(new TvCategory("iptv_org_ar", "🇦🇷 IPTV-org Argentina (186 Canales)", "🇦🇷"));
-        cats.add(new TvCategory("tdtchannels", "🇪🇸 TDTChannels TV (574 Canales)", "🇪🇸"));
-        cats.add(new TvCategory("freetv", "🌐 Free-TV Global IPTV (2.200 Canales)", "🌐"));
         cats.add(new TvCategory("argentina", "🇦🇷 Argentina (Aire y Noticias)", "🇦🇷"));
         cats.add(new TvCategory("deportes", "⚽ Deportes en Directo", "⚽"));
         cats.add(new TvCategory("noticias", "📰 Noticias 24/7", "📰"));
         cats.add(new TvCategory("cine", "🎬 Cine y Series", "🎬"));
-        cats.add(new TvCategory("kids", "🧸 Infantiles y Animación", "🧸"));
-        cats.add(new TvCategory("musica", "🎸 Música y Recitales 24/7", "🎸"));
-        cats.add(new TvCategory("espana", "🇪🇸 España TDT Abierta", "🇪🇸"));
-        cats.add(new TvCategory("latam", "🌐 Latinoamérica Variedades", "🌐"));
+        cats.add(new TvCategory("favs", "⭐ Favoritos de TV", "⭐"));
+        cats.add(new TvCategory("recents", "🕒 Canales Recientes", "🕒"));
+        cats.add(new TvCategory("iptv_org_ar", "🇦🇷 IPTV-org Argentina (186 Canales)", "🇦🇷"));
+        cats.add(new TvCategory("tdtchannels", "🇪🇸 TDTChannels TV (574 Canales)", "🇪🇸"));
+        cats.add(new TvCategory("freetv", "🌐 Free-TV Global IPTV (2.200 Canales)", "🌐"));
+        cats.add(new TvCategory("iptv_org_explorer", "🌍 IPTV-org (Filtros por País y Género)", "🌍"));
         cats.add(new TvCategory("adults", "🔞 Adultos +18 (PIN Requerido)", "🔞"));
         return cats;
     }
@@ -185,11 +181,6 @@ public final class LiveTvEngine {
                     "https://i.imgur.com/3wZdPwN.png",
                     "HD 720p", "Perfil Periodismo Puro", "Noticias de Fondo"));
 
-            list.add(new LiveChannel("ar_cinear", "Cine.AR (Cine Nacional)", "argentina",
-                    "https://5fb24b460df87.streamlock.net/live-cont.ar/cinear/playlist.m3u8", "",
-                    "https://i.imgur.com/RPLyrIC.png",
-                    "HD 720p", "Cine Argentino sin Cortes", "Estrenos INCAA"));
-
             list.add(new LiveChannel("ar_deportv", "DeporTV Argentina", "argentina",
                     "http://158.172.155.130:8000/play/a09y/index.m3u8", "",
                     "https://i.imgur.com/iyYLNRt.png",
@@ -272,23 +263,13 @@ public final class LiveTvEngine {
                     "https://i.imgur.com/iyYLNRt.png",
                     "HD 1080p", "Copa Sudamericana & Fútbol Exclusivo", "Debate Fútbol"));
 
-            list.add(new LiveChannel("dep_goltv", "GolTV Latino HD", "deportes",
-                    "https://tvf90.com/1.php?stream=goltv", "",
-                    "https://i.imgur.com/iyYLNRt.png",
-                    "HD 1080p", "Ligas de Sudamérica & GolTV Noticias", "Fútbol 24/7"));
-
             list.add(new LiveChannel("dep_rmtv", "Real Madrid TV HD (Español)", "deportes",
                     "https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/master.m3u8", "",
                     "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Real_Madrid_CF.svg/600px-Real_Madrid_CF.svg.png",
                     "HD 1080p", "Hoy Jugamos · Actualidad del Club Blanco", "La Fábrica y Partidos Históricos"));
 
-            list.add(new LiveChannel("dep_tdeporte", "Teledeporte RTVE (España)", "deportes",
-                    "https://rtvelivestream.akamaized.net/rtvesec/tdp/tdp_main.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Teledeporte_2008.svg/600px-Teledeporte_2008.svg.png",
-                    "HD 720p", "Estudio Estadio · En Vivo", "Polideportivo y Ligas Internacionales"));
-
             list.add(new LiveChannel("dep_deportv", "DeporTV Argentina", "deportes",
-                    "https://5fb24b460df87.streamlock.net/live-cont.ar/deportv/playlist.m3u8", "",
+                    "http://158.172.155.130:8000/play/a09y/index.m3u8", "",
                     "https://i.imgur.com/iyYLNRt.png",
                     "HD 720p", "Deporte Inclusivo y Federal", "Torneos y Magazine"));
 
@@ -296,11 +277,6 @@ public final class LiveTvEngine {
                     "https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8", "",
                     "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Red_Bull_logo.svg/600px-Red_Bull_logo.svg.png",
                     "HD 1080p", "Red Bull Cliff Diving & Motorsport", "Ciclismo Downhill Extremo"));
-
-            list.add(new LiveChannel("dep_elchiringuito", "El Chiringuito TV (Mega Deportes)", "deportes",
-                    "https://atresmedia-live.secure.footprint.net/live/mega/master.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Mega_logo_2014.svg/500px-Mega_logo_2014.svg.png",
-                    "HD 720p", "El Chiringuito de Jugones", "Debate Futbolero y Exclusivas"));
         } else if ("noticias".equals(catId)) {
             list.add(new LiveChannel("not_tn", "TN (Todo Noticias 24H)", "noticias",
                     "https://live-01-01-tn.vodgc.net/TN_DAI_Beta/index.m3u8",
@@ -328,151 +304,21 @@ public final class LiveTvEngine {
                     "https://stream-gtlc.telecentro.net.ar/hls/telemaxhls/main.m3u8", "",
                     "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Telemax_Argentina_%282018%29.png/500px-Telemax_Argentina_%282018%29.png",
                     "HD 1080p", "Telemax Noticias y Actualidad", "Música y Deportes"));
-
-            list.add(new LiveChannel("not_rtve24", "RTVE 24 Horas (España)", "noticias",
-                    "https://rtvelivestream.akamaized.net/rtvesec/24h/24h_main.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Canal_24_horas_2008.svg/600px-Canal_24_horas_2008.svg.png",
-                    "HD 720p", "Diario 24 Horas · Edición Internacional", "La Tarde en 24 Horas"));
-
-            list.add(new LiveChannel("not_dw", "Deutsche Welle (Español)", "noticias",
-                    "https://dwstream4-lh.akamaihd.net/i/dwtv_spa@313214/master.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Deutsche_Welle_logo.svg/600px-Deutsche_Welle_logo.svg.png",
-                    "HD 720p", "El Noticiero DW · Europa y el Mundo", "Economía Global y Tecnología"));
-
-            list.add(new LiveChannel("not_euronews", "Euronews en Español", "noticias",
-                    "https://rakuten-euronews-7-es.samsung.wurl.tv/playlist.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Euronews_logo_2016.svg/600px-Euronews_logo_2016.svg.png",
-                    "HD 1080p", "Euronews Hoy · La Mirada Europea", "No Comment & Actualidad"));
-
-            list.add(new LiveChannel("not_24h_rtve", "Canal 24 Horas RTVE", "noticias",
-                    "https://rtvelivestream.akamaized.net/rtvesec/24h/24h_main.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Canal_24_horas_2008.svg/600px-Canal_24_horas_2008.svg.png",
-                    "HD 720p", "Diario 24 Horas · Edición Internacional", "La Tarde en 24 Horas"));
-
-            list.add(new LiveChannel("not_dw_es", "DW Español Noticias (Alemania)", "noticias",
-                    "https://dwstream4-lh.akamaihd.net/i/dwtv_spa@313214/master.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Deutsche_Welle_logo.svg/600px-Deutsche_Welle_logo.svg.png",
-                    "HD 720p", "El Noticiero DW · Europa y el Mundo", "Economía Global y Tecnología"));
-
-            list.add(new LiveChannel("not_euronews", "Euronews en Español", "noticias",
-                    "https://rakuten-euronews-7-es.samsung.wurl.tv/playlist.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Euronews_logo_2016.svg/600px-Euronews_logo_2016.svg.png",
-                    "HD 1080p", "Euronews Hoy · La Mirada Europea", "No Comment & Actualidad"));
         } else if ("cine".equals(catId)) {
             list.add(new LiveChannel("cine_alterna", "Alterna TV Cine y Series", "cine",
                     "https://tv.alterna.ar/stream/hls/live.m3u8", "",
                     "https://tv.alterna.ar/alternatv.png",
                     "HD 720p", "Cine Independiente y Series", "Maratón Nocturno de Ficción"));
 
-            list.add(new LiveChannel("cine_comedy", "Comedy Central Latino HD", "cine",
-                    "https://bantel-cdn1.iptvperu.tv:1936/btnscrtn/Comedy_Central/playlist.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Comedy_Central_2018.svg/960px-Comedy_Central_2018.svg.png",
-                    "HD 1080p", "South Park · Temporadas dobladas", "Especiales de Comedia y Risas"));
-
             list.add(new LiveChannel("cine_canela", "Canela TV Cine Latino", "cine",
                     "https://stream.ads.ottera.tv/playlist.m3u8?network_id=2376", "",
                     "https://i.imgur.com/8QO9n8R.png",
                     "HD 1080p", "Cine Mexicano, Clásico y Estrenos", "Festival de Películas Latinas"));
-
-            list.add(new LiveChannel("cine_rtve", "RTVE Somos Cine y Ficción", "cine",
-                    "https://rtvelivestream.akamaized.net/rtvesec/somos/somos_main.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/RTVE.es_Logo.svg/600px-RTVE.es_Logo.svg.png",
-                    "HD 1080p", "Cine en Español 24/7", "Grandes Producciones y Festivales"));
-        } else if ("kids".equals(catId)) {
-            list.add(new LiveChannel("kid_cn", "Cartoon Network Latino HD", "kids",
-                    "https://bantel-cdn1.iptvperu.tv:1936/btnscrtn/cartoonnetwork.stream/chunks.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Cartoon_Network_2010_logo.svg/960px-Cartoon_Network_2010_logo.svg.png",
-                    "HD 1080p", "El Increíble Mundo de Gumball", "Hora de Aventura y Teen Titans Go"));
-
-            list.add(new LiveChannel("kid_pluto_nick", "Pluto TV Nick Clásico Latino", "kids",
-                    "https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/5f971ba48e4265000780f2d3/master.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Nickelodeon_2009_logo.svg/600px-Nickelodeon_2009_logo.svg.png",
-                    "HD 1080p", "Animación Clásica y Aventuras", "Rugrats, Bob Esponja y Más"));
-
-            list.add(new LiveChannel("kid_clan", "Clan TV RTVE (Infantil)", "kids",
-                    "https://rtvelivestream.akamaized.net/rtvesec/clan/clan_main.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Clan_logo_2015.svg/600px-Clan_logo_2015.svg.png",
-                    "HD 720p", "Bob Esponja y Peppa Pig", "Patrulla Canina y Dibujos Educativos"));
-        } else if ("espana".equals(catId)) {
-            list.add(new LiveChannel("es_la1", "La 1 RTVE HD", "espana",
-                    "https://rtvelivestream.akamaized.net/rtvesec/la1/la1_main.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/La_1_logo_2008.svg/600px-La_1_logo_2008.svg.png",
-                    "HD 1080p", "Telediario 2 · Noticias de España y Europa", "Cine de La 1 en Prime Time"));
-
-            list.add(new LiveChannel("es_la2", "La 2 RTVE Documentales y Cultura", "espana",
-                    "https://rtvelivestream.akamaized.net/rtvesec/la2/la2_main.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/La_2_logo_2008.svg/600px-La_2_logo_2008.svg.png",
-                    "HD 1080p", "Grandes Documentales de la Naturaleza", "Saber y Ganar · Programa de Concurso"));
-
-            list.add(new LiveChannel("es_antena3", "Antena 3 Internacional", "espana",
-                    "https://antena3-live.akamaized.net/hls/live/572186/antena3/master.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Antena_3_logo_2017.svg/600px-Antena_3_logo_2017.svg.png",
-                    "HD 720p", "Antena 3 Noticias", "La Ruleta de la Suerte"));
-        } else if ("latam".equals(catId)) {
-            list.add(new LiveChannel("lat_telesur", "teleSUR Latino", "latam",
-                    "https://telesur.livecastv.com/telesur/telesur/playlist.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Telesur_logo.svg/600px-Telesur_logo.svg.png",
-                    "HD 720p", "Noticias de la Patria Grande", "Documentales y Análisis"));
-
-            list.add(new LiveChannel("lat_france24", "France 24 en Español", "latam",
-                    "https://f24hls-i.akamaihd.net/hls/live/221193/F24_ES_LO_HLS/master_500.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/France_24_logo_2013.svg/600px-France_24_logo_2013.svg.png",
-                    "SD 540p", "El Noticiero Internacional", "Debate Latinoamericano"));
-        } else if ("musica".equals(catId)) {
-            list.add(new LiveChannel("mus_mtv", "MTV Hits & Pop Mundial HD", "musica",
-                    "https://stream-gtlc.telecentro.net.ar/hls/mtvhls/main.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/MTV_Hits_logo.svg/600px-MTV_Hits_logo.svg.png",
-                    "HD 1080p", "Non-Stop Hits & Pop Mundial", "Top 20 Hitlist"));
-
-            list.add(new LiveChannel("mus_cm", "CM El Canal de la Música", "musica",
-                    "https://stream1.sersat.com/hls/cm.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/CM_El_Canal_de_la_M%C3%BAsica_logo.png/500px-CM_El_Canal_de_la_M%C3%BAsica_logo.png",
-                    "HD 720p", "Rock Nacional y Música Latina", "Especiales Acústicos y Recitales"));
-
-            list.add(new LiveChannel("mus_qmusica", "Quiero Música en Mi Idioma", "musica",
-                    "https://live-01-02-ar-claro.clarovideo.net/live/eds/QuieroMusica/HLS_01/QuieroMusica.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/MuchMusic_logo.svg/600px-MuchMusic_logo.svg.png",
-                    "HD 720p", "Música Latina y Entrevistas", "Lo Mejor del Pop y Rock en Español"));
-
-            list.add(new LiveChannel("mus_stingray", "Stingray CMusic Conciertos", "musica",
-                    "https://rakuten-stingraycmusic-4-es.samsung.wurl.tv/playlist.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Stingray_C_Music_TV_logo.svg/600px-Stingray_C_Music_TV_logo.svg.png",
-                    "HD 1080p", "Bandas Sonoras y Recitales Sinfónicos", "Conciertos del Mundo"));
-
-            list.add(new LiveChannel("mus_trace", "Trace Urban Hits", "musica",
-                    "https://trace-traceurban-1-eu.rakuten.wurl.tv/playlist.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Trace_Urban_logo.png/500px-Trace_Urban_logo.png",
-                    "HD 1080p", "Urban & Hip-Hop en Directo", "Ranking Semanal"));
         } else if ("adults".equals(catId)) {
-            list.add(new LiveChannel("ad_venus", "Venus Latino (+18)", "adults",
-                    "http://15.204.246.24:8080/VenusHD/index.m3u8", "",
-                    "https://i.imgur.com/8QO9n8R.png",
-                    "HD 1080p", "Estrenos Eróticos Explícitos", "Cine para Adultos 24/7"));
-
-            list.add(new LiveChannel("ad_playboy", "Playboy TV HD (+18)", "adults",
-                    "http://15.204.246.24:8080/PlayboyHD/index.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Playboy_TV_Logo.svg/600px-Playboy_TV_Logo.svg.png",
-                    "HD 1080p", "Playboy Club & Sensualidad", "Estrenos Internacionales"));
-
-            list.add(new LiveChannel("ad_hustler", "Hustler TV HD (+18)", "adults",
-                    "http://15.204.246.24:8080/HustlerHD/index.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Hustler_TV_Logo.svg/600px-Hustler_TV_Logo.svg.png",
-                    "HD 1080p", "Hustler Hardcore Exclusivo", "Producciones Premium"));
-
-            list.add(new LiveChannel("ad_private", "Private Gold TV (+18)", "adults",
-                    "http://15.204.246.24:8080/PrivateHD/index.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Private_Media_Group_logo.svg/600px-Private_Media_Group_logo.svg.png",
-                    "HD 1080p", "Private Clásicos y Superproducciones", "Cine Explícito Europeo"));
-
             list.add(new LiveChannel("ad_redtraffic", "RedTraffic Live (+18)", "adults",
                     "https://live.redtraffic.xyz/hls/stream.m3u8", "",
                     "https://i.imgur.com/Xw5N5xY.png",
                     "HD 720p", "Transmisión en Vivo Continuo +18", "Hardcore y Escenas Explícitas"));
-
-            list.add(new LiveChannel("ad_brazz", "Brazzers TV HD (+18)", "adults",
-                    "http://15.204.246.24:8080/BrazzersHD/index.m3u8", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Brazzers_Logo.svg/600px-Brazzers_Logo.svg.png",
-                    "HD 1080p", "Brazzers Originals Exclusivo", "Maratón Explícito 24 Horas"));
         }
 
         return list;
