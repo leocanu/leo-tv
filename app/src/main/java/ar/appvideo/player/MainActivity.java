@@ -953,7 +953,10 @@ public class MainActivity extends Activity {
 
         List<LiveTvEngine.LiveChannel> channels = LiveTvEngine.getChannelsForCategory(this, catId);
         if (channels.isEmpty()) {
-            TextView emptyTxt = text("No hay canales guardados en esta sección.", 14, Color.GRAY);
+            String msg = "adults".equals(catId)
+                    ? "No hay señales en vivo de adultos activas en este momento.\nPodés ver las películas completas +18 desde la 'Zona Adultos' en la barra lateral."
+                    : "No hay canales guardados en esta sección.";
+            TextView emptyTxt = text(msg, 14, Color.rgb(180, 190, 210));
             emptyTxt.setPadding(dp(12), dp(16), dp(12), dp(16));
             liveTvChannelsContainer.addView(emptyTxt);
             return;
@@ -8856,10 +8859,10 @@ public class MainActivity extends Activity {
 
         DefaultLoadControl loadControl = new DefaultLoadControl.Builder()
                 .setBufferDurationsMs(
-                        30000,  // minBufferMs: 30 segundos (evita trabas cada 10-15s)
+                        30000, // minBufferMs: 30 segundos (evita trabas cada 10-15s)
                         120000, // maxBufferMs: 2 minutos de anticipación
-                        1000,   // bufferForPlaybackMs: arranque rápido en 1s
-                        2500    // bufferForPlaybackAfterRebufferMs: 2.5s tras rebuffer
+                        1000, // bufferForPlaybackMs: arranque rápido en 1s
+                        2500 // bufferForPlaybackAfterRebufferMs: 2.5s tras rebuffer
                 )
                 .setPrioritizeTimeOverSizeThresholds(true)
                 .setBackBuffer(20000, true) // conserva 20s de búfer previo
@@ -9476,8 +9479,9 @@ public class MainActivity extends Activity {
             fullscreen = false;
 
             if ("live_tv".equals(playbackReturnPage) || "live_tv_fullscreen".equals(playbackReturnPage)
-                    || (playingChannel != null && (playingChannel.startsWith("TV") || playingChannel.contains("Deportes")
-                            || playingChannel.contains("Live") || playingChannel.contains("Tele")))) {
+                    || (playingChannel != null
+                            && (playingChannel.startsWith("TV") || playingChannel.contains("Deportes")
+                                    || playingChannel.contains("Live") || playingChannel.contains("Tele")))) {
                 playbackReturnPage = "home";
                 showLiveTvStudio();
             } else if ("m3u_list".equals(playbackReturnPage)) {

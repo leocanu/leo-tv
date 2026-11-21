@@ -345,25 +345,7 @@ public final class LiveTvEngine {
                     "https://i.imgur.com/8QO9n8R.png",
                     "HD 1080p", "Cine Familiar y Thrillers", "Películas y Estrenos Semanales"));
         } else if ("adults".equals(catId)) {
-            list.add(new LiveChannel("ad_redtraffic1", "RedTraffic Live (+18)", "adults",
-                    "https://live.redtraffic.xyz/hls/stream.m3u8", "",
-                    "https://i.imgur.com/Xw5N5xY.png",
-                    "HD 720p", "Transmisión en Vivo Continuo +18", "Hardcore y Escenas Explícitas"));
-
-            list.add(new LiveChannel("ad_redtraffic2", "RedTraffic Hardcore (+18)", "adults",
-                    "https://live.redtraffic.xyz/hls/stream2.m3u8", "",
-                    "https://i.imgur.com/Xw5N5xY.png",
-                    "HD 720p", "Acción Hardcore en Directo", "Producciones Explícitas 24/7"));
-
-            list.add(new LiveChannel("ad_redtraffic3", "RedTraffic Transmisión Continua (+18)", "adults",
-                    "https://live.redtraffic.xyz/live/live.m3u8", "",
-                    "https://i.imgur.com/Xw5N5xY.png",
-                    "HD 720p", "Señal Continua Sin Cortes", "Lo Mejor del Cine para Adultos"));
-
-            list.add(new LiveChannel("ad_redtraffic4", "RedTraffic Stars (+18)", "adults",
-                    "https://live.redtraffic.xyz/stream.m3u8", "",
-                    "https://i.imgur.com/Xw5N5xY.png",
-                    "HD 720p", "Modelos y Estrellas en Vivo", "Show Especial +18 Internacional"));
+            // Canales de adultos (se eliminaron streams caídos o recursivos para evitar errores)
         }
 
         return list;

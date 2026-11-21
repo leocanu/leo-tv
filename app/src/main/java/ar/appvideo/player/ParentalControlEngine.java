@@ -82,9 +82,10 @@ public final class ParentalControlEngine {
         String k = (kind != null ? kind.toLowerCase() : "");
         String p = (provider != null ? provider.toLowerCase() : "");
 
-        if (k.contains("xxx") || k.contains("adulto_explicito") || k.contains("hentai") || k.contains("adultos") || k.contains("adult")) return true;
+        // Solo filtrar bajo PIN las que tienen sexo explícito o pornografía
+        if (k.contains("xxx") || k.contains("adulto_explicito") || k.contains("hentai") || k.contains("hardcore")) return true;
         if (p.contains("xxx") || p.contains("adult_explicit")) return true;
-        if (t.contains("xxx") || t.contains("porn") || t.contains("porno") || t.contains("hentai")) return true;
+        if (t.contains("xxx") || t.contains("porn") || t.contains("porno") || t.contains("hentai") || t.contains("sexo explícito") || t.contains("sexo explicito")) return true;
         return false;
     }
 }
