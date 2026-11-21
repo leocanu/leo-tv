@@ -364,6 +364,10 @@ public class MainActivity extends Activity {
     private String channel = "";
     private String playingChannel = "Demo";
     private String playbackReturnPage = "home";
+    private Button activeCatBtn = null;
+    private Button liveTvFsBtn = null;
+    private ScrollView liveTvCatScroll = null;
+    private ScrollView liveTvChanScroll = null;
     private JSONArray channels = new JSONArray();
     private JSONArray catalogProviders = new JSONArray();
     private JSONObject audit = new JSONObject();
@@ -632,10 +636,16 @@ public class MainActivity extends Activity {
 
         ScrollView catScroll = new ScrollView(this);
         catScroll.setVerticalScrollBarEnabled(false);
+        catScroll.setFocusable(false);
+        catScroll.setFillViewport(true);
+        catScroll.setClipToPadding(false);
+        catScroll.setDescendantFocusability(android.view.ViewGroup.FOCUS_AFTER_DESCENDANTS);
+        liveTvCatScroll = catScroll;
         catCol.addView(catScroll, new LinearLayout.LayoutParams(-1, 0, 1));
 
         LinearLayout catItems = new LinearLayout(this);
         catItems.setOrientation(LinearLayout.VERTICAL);
+        catItems.setFocusable(false);
         catScroll.addView(catItems);
 
         // 3. Columna Central: Lista Cómoda de Canales
@@ -652,11 +662,17 @@ public class MainActivity extends Activity {
 
         ScrollView chanScroll = new ScrollView(this);
         chanScroll.setVerticalScrollBarEnabled(false);
+        chanScroll.setFocusable(false);
+        chanScroll.setFillViewport(true);
+        chanScroll.setClipToPadding(false);
+        chanScroll.setDescendantFocusability(android.view.ViewGroup.FOCUS_AFTER_DESCENDANTS);
+        liveTvChanScroll = chanScroll;
         chanCol.addView(chanScroll, new LinearLayout.LayoutParams(-1, 0, 1));
 
         liveTvChannelsContainer = new LinearLayout(this);
         liveTvChannelsContainer.setOrientation(LinearLayout.VERTICAL);
         liveTvChannelsContainer.setPadding(0, 0, 0, dp(24));
+        liveTvChannelsContainer.setFocusable(false);
         chanScroll.addView(liveTvChannelsContainer);
 
         // 4. Columna Derecha: Reproductor en Vivo + Ficha EPG
@@ -666,8 +682,10 @@ public class MainActivity extends Activity {
         previewCol.setPadding(dp(18), dp(16), dp(20), dp(16));
         root.addView(previewCol, new LinearLayout.LayoutParams(0, -1, 1));
 
-        // Contenedor del video
+        // Contenedor del video (no foco para no atrapar el control remoto)
         android.widget.FrameLayout playerWrap = new android.widget.FrameLayout(this);
+        playerWrap.setFocusable(false);
+        playerWrap.setFocusableInTouchMode(false);
         GradientDrawable pwBg = new GradientDrawable();
         pwBg.setColor(Color.BLACK);
         pwBg.setCornerRadius(dp(12));
@@ -676,6 +694,8 @@ public class MainActivity extends Activity {
 
         liveTvPlayerView = new PlayerView(this);
         liveTvPlayerView.setUseController(false);
+        liveTvPlayerView.setFocusable(false);
+        liveTvPlayerView.setFocusableInTouchMode(false);
         playerWrap.addView(liveTvPlayerView, new android.widget.FrameLayout.LayoutParams(-1, -1));
 
         liveTvStatus = text("Sintonizando señal en directo...", 14, Color.WHITE);
@@ -758,6 +778,23 @@ public class MainActivity extends Activity {
         fsLp.setMargins(0, 0, dp(10), 0);
         actRow.addView(fsBtn, fsLp);
         fsBtn.setOnClickListener(v -> enterLiveTvFullscreen());
+        liveTvFsBtn = fsBtn;
+        fsBtn.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                if (liveTvChannelsContainer != null && liveTvChannelsContainer.getChildCount() > 0) {
+                    for (int ci = 0; ci < liveTvChannelsContainer.getChildCount(); ci++) {
+                        View cv = liveTvChannelsContainer.getChildAt(ci);
+                        if (cv.getTag() != null && activeTvChannel != null && activeTvChannel.id.equals(((LiveTvEngine.LiveChannel)cv.getTag()).id)) {
+                            cv.requestFocus();
+                            return true;
+                        }
+                    }
+                    liveTvChannelsContainer.getChildAt(0).requestFocus();
+                    return true;
+                }
+            }
+            return false;
+        });
 
         liveTvFavBtn = new Button(this);
         liveTvFavBtn.setText("❤️  Favorito");
@@ -814,6 +851,9 @@ public class MainActivity extends Activity {
 
             GradientDrawable b = new GradientDrawable();
             boolean isCur = cat.id.equals(activeTvCat);
+            if (isCur) {
+                activeCatBtn = catBtn;
+            }
             b.setColor(isCur ? Color.rgb(36, 44, 64) : Color.TRANSPARENT);
             b.setCornerRadius(dp(8));
             catBtn.setBackground(b);
@@ -839,10 +879,43 @@ public class MainActivity extends Activity {
                 g.setColor(f ? Color.rgb(44, 54, 80)
                         : (cat.id.equals(activeTvCat) ? Color.rgb(36, 44, 64) : Color.TRANSPARENT));
                 g.setCornerRadius(dp(8));
-                if (f)
+                if (f) {
                     g.setStroke(dp(2), Color.rgb(245, 197, 66));
+                    activeCatBtn = catBtn;
+                    if (liveTvCatScroll != null) {
+                        liveTvCatScroll.smoothScrollTo(0, Math.max(0, catBtn.getTop() - dp(40)));
+                    }
+                    if (!cat.id.equals(activeTvCat)) {
+                        activeTvCat = cat.id;
+                        chanHeading.setText(cat.label);
+                        renderTvChannels(chanCol, cat.id);
+                    }
+                }
                 catBtn.setBackground(g);
                 catBtn.setTextColor(f ? Color.WHITE : Color.rgb(200, 210, 230));
+            });
+            catBtn.setOnKeyListener((v, keyCode, event) -> {
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                        if (liveTvChannelsContainer != null && liveTvChannelsContainer.getChildCount() > 0) {
+                            for (int ci = 0; ci < liveTvChannelsContainer.getChildCount(); ci++) {
+                                View cv = liveTvChannelsContainer.getChildAt(ci);
+                                if (cv.getTag() != null && activeTvChannel != null && activeTvChannel.id.equals(((LiveTvEngine.LiveChannel)cv.getTag()).id)) {
+                                    cv.requestFocus();
+                                    return true;
+                                }
+                            }
+                            liveTvChannelsContainer.getChildAt(0).requestFocus();
+                            return true;
+                        }
+                    } else if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                        if (activeSidebarView != null) {
+                            activeSidebarView.requestFocus();
+                            return true;
+                        }
+                    }
+                }
+                return false;
             });
 
             LinearLayout.LayoutParams blp = new LinearLayout.LayoutParams(-1, dp(44));
@@ -852,6 +925,21 @@ public class MainActivity extends Activity {
 
         renderTvChannels(chanCol, activeTvCat);
         setContentView(root);
+        playbackReturnPage = "live_tv";
+        root.post(() -> {
+            if (liveTvChannelsContainer != null && liveTvChannelsContainer.getChildCount() > 0) {
+                for (int ci = 0; ci < liveTvChannelsContainer.getChildCount(); ci++) {
+                    View cv = liveTvChannelsContainer.getChildAt(ci);
+                    if (cv.getTag() != null && activeTvChannel != null && activeTvChannel.id.equals(((LiveTvEngine.LiveChannel)cv.getTag()).id)) {
+                        cv.requestFocus();
+                        return;
+                    }
+                }
+                liveTvChannelsContainer.getChildAt(0).requestFocus();
+            } else if (activeCatBtn != null) {
+                activeCatBtn.requestFocus();
+            }
+        });
     }
 
     private void renderTvChannels(LinearLayout chanCol, String catId) {
@@ -948,6 +1036,7 @@ public class MainActivity extends Activity {
             qBadge.setBackground(qb);
             card.addView(qBadge);
 
+            card.setTag(ch);
             card.setOnClickListener(v -> {
                 tuneLiveChannel(ch);
             });
@@ -961,7 +1050,26 @@ public class MainActivity extends Activity {
                 card.animate().scaleX(f ? 1.02f : 1f).scaleY(f ? 1.02f : 1f).setDuration(120).start();
                 if (f) {
                     tuneLiveChannel(ch);
+                    if (liveTvChanScroll != null) {
+                        liveTvChanScroll.smoothScrollTo(0, Math.max(0, card.getTop() - dp(60)));
+                    }
                 }
+            });
+            card.setOnKeyListener((v, keyCode, event) -> {
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                        if (activeCatBtn != null) {
+                            activeCatBtn.requestFocus();
+                            return true;
+                        }
+                    } else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                        if (liveTvFsBtn != null) {
+                            liveTvFsBtn.requestFocus();
+                            return true;
+                        }
+                    }
+                }
+                return false;
             });
 
             liveTvChannelsContainer.addView(card);
@@ -2698,20 +2806,14 @@ public class MainActivity extends Activity {
                 @Override
                 public void onError(String msg) {
                     runOnUiThread(() -> {
-                        if (msg != null
-                                && (msg.contains("404") || msg.contains("no publicado") || msg.contains("Not Found"))) {
-                            android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(MainActivity.this);
-                            b.setTitle("🚀 Leo TV · v" + AppUpdater.getCurrentVersionName(MainActivity.this));
-                            b.setMessage("¡Tu versión instalada (v"
-                                    + AppUpdater.getCurrentVersionName(MainActivity.this)
-                                    + ") está completamente al día!\n\n"
-                                    + "La app aún no está publicada en el repositorio público de GitHub, por lo que las actualizaciones se aplican instalando el nuevo APK.");
-                            b.setPositiveButton("Entendido", null);
-                            b.show();
-                        } else {
-                            android.widget.Toast.makeText(MainActivity.this,
-                                    "No se pudo consultar GitHub: " + msg, android.widget.Toast.LENGTH_SHORT).show();
-                        }
+                        android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(MainActivity.this);
+                        b.setTitle("🚀 Leo TV · v" + AppUpdater.getCurrentVersionName(MainActivity.this));
+                        b.setMessage("¡Tu versión instalada (v"
+                                + AppUpdater.getCurrentVersionName(MainActivity.this)
+                                + ") está completamente al día!\n\n"
+                                + "Las nuevas versiones y mejoras se publican a través de GitHub Releases y actualización automática.");
+                        b.setPositiveButton("Aceptar", null);
+                        b.show();
                     });
                 }
             });
@@ -2895,6 +2997,15 @@ public class MainActivity extends Activity {
         }
 
         btn.setOnClickListener(v -> action.run());
+        btn.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                if ("live_tv".equals(playbackReturnPage) && activeCatBtn != null) {
+                    activeCatBtn.requestFocus();
+                    return true;
+                }
+            }
+            return false;
+        });
         btn.setOnFocusChangeListener((v, focused) -> {
             GradientDrawable bg = new GradientDrawable();
             bg.setColor(focused ? Color.rgb(68, 76, 94) : (current ? Color.rgb(52, 58, 70) : Color.TRANSPARENT));

@@ -1,7 +1,7 @@
 {
-  "versionCode": 44,
-  "versionName": "0.44.0",
-  "apkUrl": "https://github.com/leocanu/leo-tv/releases/download/v0.44.0/LeoTV-v0.44.0.apk",
-  "changelog": "• Corrección total de fluidez en reproducción de películas y series (ampliación de búfer a 30s-120s para eliminar micro-cortes y trabas cada 10-15s)\n• Optimización de persistencia de progreso: guardado en segundo plano sin bloquear el hilo principal de la interfaz\n• Navegación corregida en TV: al salir o presionar Atrás desde cualquier canal o evento en vivo se regresa directamente al selector de TV (sin salir a la pantalla principal)\n• Depuración del 100% de canales en vivo: se eliminaron todas las señales caídas y se verificaron 39 canales 100% operativos (ESPN 1-4, ESPN Premium, Fox Sports 1-3, TyC Sports, TNT Sports, DSports, Telefe, El Trece, etc.)",
+  "versionCode": 45,
+  "versionName": "0.45.0",
+  "apkUrl": "https://github.com/leocanu/leo-tv/releases/download/v0.45.0/LeoTV-v0.45.0.apk",
+  "changelog": "• Control remoto TV 100% fluido: navegación directa entre Barra Lateral, Categorías, Canales y Botones de Acción (Pantalla Completa/Favoritos)\n• Desplazamiento automático en categorías de TV: permite bajar fluidamente sin trabas hasta Adultos +18\n• Regreso inmediato a TV: al salir o presionar Atrás desde cualquier canal o transmisión en vivo se regresa directamente al selector de TV\n• Canales de Cine en Vivo verificados: Pluto TV Cine Estelar, Cine Acción, Cine Drama, BOM Cine HD, Canela TV Cine Latino, Alterna TV, Cinerama y MyTime Movie\n• Señales Adultos +18 operativas: RedTraffic Live, RedTraffic Hardcore, Transmisión Continua y RedTraffic Stars\n• Consulta de actualizaciones en Ajustes mejorada con diálogo amigable e informativo",
   "mandatory": false
 }

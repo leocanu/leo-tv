@@ -1,30 +1,59 @@
 @echo off
 chcp 65001 >nul
-title Sincronizar LeoTV con GitHub
-echo ====================================================
-echo          SUBIENDO PROYECTO LEOTV A GITHUB
-echo ====================================================
+title Publicar Leo TV v0.45.0 en GitHub (Downloader Direct APK)
+color 0b
+
+echo ====================================================================
+echo             PUBLICAR LEOTV v0.45.0 EN GITHUB PARA DOWNLOADER
+echo ====================================================================
 echo.
+echo Repositorio destino: https://github.com/leocanu/leo-tv
+echo Version: v0.45.0
+echo APK generado: %USERPROFILE%\Desktop\LeoTV-v0.45.0.apk
+echo.
+
 cd /d "%~dp0"
-git add .
-git commit -m "LeoTV v0.36.0: Player OSD limpio, D-Pad directo, sinopsis en espanol y filtrado latino"
+
+echo [1/3] Sincronizando codigo fuente y commits...
+git add app/src/main/java/ version.json app/build.gradle subir-a-github.bat
+git commit -m "release: LeoTV v0.45.0 - D-pad navigation fix, movie channels, verified adult streams" 2>nul
 echo.
-echo Enviando cambios a la rama principal (main)...
-git push -u origin main
+
+echo [2/3] Creando y actualizando etiqueta de version (tag v0.45.0)...
+git tag -d v0.45.0 2>nul
+git tag -a v0.45.0 -m "Leo TV v0.45.0 - Control remoto fluido, canales de cine y adultos verificados"
+echo.
+
+echo [3/3] Subiendo rama main y tag a GitHub...
+git push origin main
+git push origin v0.45.0 --force
+
 echo.
 if %ERRORLEVEL% EQU 0 (
-    echo ====================================================
-    echo   ¡PROYECTO SUBIDO EXITOSAMENTE A GITHUB!
-    echo ====================================================
-) else (
-    echo ====================================================
-    echo   Si te pide usuario y contrasenia:
-    echo   - Usuario: tu usuario de GitHub (leocanu)
-    echo   - Contrasenia: usa un Personal Access Token (PAT)
-    echo     desde https://github.com/settings/tokens
+    echo ====================================================================
+    echo   ¡CODIGO Y ETIQUETA SUBIDOS EXITOSAMENTE A GITHUB!
+    echo ====================================================================
     echo.
-    echo   Asegurate de haber creado el repositorio en GitHub:
-    echo   https://github.com/new con el nombre 'leo-tv'
-    echo ====================================================
+    echo Pasos finales para Downloader en tu TV:
+    echo.
+    echo 1. Se abrira automaticamente tu navegador en la pagina de Release:
+    echo    https://github.com/leocanu/leo-tv/releases/new?tag=v0.45.0
+    echo.
+    echo 2. En esa pagina web:
+    echo    - Titulo de la release: Leo TV v0.45.0
+    echo    - Arrastra el archivo 'LeoTV-v0.45.0.apk' que tenes en tu Escritorio:
+    echo      %USERPROFILE%\Desktop\LeoTV-v0.45.0.apk
+    echo    - Hace clic en el boton verde "Publish release".
+    echo.
+    echo 3. URL directa y permanente para poner en la app DOWNLOADER:
+    echo.
+    echo    https://github.com/leocanu/leo-tv/releases/download/v0.45.0/LeoTV-v0.45.0.apk
+    echo.
+    echo ====================================================================
+    start https://github.com/leocanu/leo-tv/releases/new?tag=v0.45.0
+) else (
+    echo [ERROR] No se pudo conectar con GitHub. Verifica tu conexion a internet o tus credenciales.
 )
+
+echo.
 pause

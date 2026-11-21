@@ -305,20 +305,65 @@ public final class LiveTvEngine {
                     "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Telemax_Argentina_%282018%29.png/500px-Telemax_Argentina_%282018%29.png",
                     "HD 1080p", "Telemax Noticias y Actualidad", "Música y Deportes"));
         } else if ("cine".equals(catId)) {
-            list.add(new LiveChannel("cine_alterna", "Alterna TV Cine y Series", "cine",
-                    "https://tv.alterna.ar/stream/hls/live.m3u8", "",
-                    "https://tv.alterna.ar/alternatv.png",
-                    "HD 720p", "Cine Independiente y Series", "Maratón Nocturno de Ficción"));
+            list.add(new LiveChannel("cine_pluto_estelar", "Pluto TV Cine Estelar", "cine",
+                    "http://service-stitcher.clusters.pluto.tv/stitch/hls/channel/5d93e176b976db0009653a94/master.m3u8?advertisingId=&appName=web&appVersion=unknown&appStoreUrl=&architecture=&buildVersion=&clientDeviceType=0&deviceDNT=0&deviceId=1&deviceMake=Chrome&deviceModel=Chrome&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&sid=1&userId=", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 1080p", "Grandes Éxitos de Hollywood", "Cine Internacional 24/7"));
+
+            list.add(new LiveChannel("cine_pluto_accion", "Pluto TV Cine Acción", "cine",
+                    "http://service-stitcher.clusters.pluto.tv/stitch/hls/channel/5d93e180b976db0009653a98/master.m3u8?advertisingId=&appName=web&appVersion=unknown&appStoreUrl=&architecture=&buildVersion=&clientDeviceType=0&deviceDNT=0&deviceId=1&deviceMake=Chrome&deviceModel=Chrome&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&sid=1&userId=", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 1080p", "Adrenalina y Suspense", "Películas de Acción y Aventura"));
+
+            list.add(new LiveChannel("cine_pluto_drama", "Pluto TV Cine Drama", "cine",
+                    "http://service-stitcher.clusters.pluto.tv/stitch/hls/channel/5d93e18ab976db0009653a9c/master.m3u8?advertisingId=&appName=web&appVersion=unknown&appStoreUrl=&architecture=&buildVersion=&clientDeviceType=0&deviceDNT=0&deviceId=1&deviceMake=Chrome&deviceModel=Chrome&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&sid=1&userId=", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 1080p", "Cine Dramático y Romántico", "Historias Emocionantes y Premiadas"));
+
+            list.add(new LiveChannel("cine_bom", "BOM Cine HD", "cine",
+                    "https://cdn78-at.azotosolutions.com/cdnedge39/Canale3/master.m3u8", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 720p", "Cine de Todos los Géneros", "Películas Destacadas 24 Horas"));
 
             list.add(new LiveChannel("cine_canela", "Canela TV Cine Latino", "cine",
                     "https://stream.ads.ottera.tv/playlist.m3u8?network_id=2376", "",
                     "https://i.imgur.com/8QO9n8R.png",
                     "HD 1080p", "Cine Mexicano, Clásico y Estrenos", "Festival de Películas Latinas"));
+
+            list.add(new LiveChannel("cine_alterna", "Alterna TV Cine y Series", "cine",
+                    "https://tv.alterna.ar/stream/hls/live.m3u8", "",
+                    "https://tv.alterna.ar/alternatv.png",
+                    "HD 720p", "Cine Independiente y Series", "Maratón Nocturno de Ficción"));
+
+            list.add(new LiveChannel("cine_cinerama", "Cinerama Televisión", "cine",
+                    "https://tv.cineramatvbo.com/hls/stream.m3u8", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 720p", "Películas y Series Clásicas", "Cine Latinoamericano y Universal"));
+
+            list.add(new LiveChannel("cine_mytime", "MyTime Movie Network", "cine",
+                    "https://appletree-mytime-samsungmexico.amagi.tv/playlist.m3u8", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 1080p", "Cine Familiar y Thrillers", "Películas y Estrenos Semanales"));
         } else if ("adults".equals(catId)) {
-            list.add(new LiveChannel("ad_redtraffic", "RedTraffic Live (+18)", "adults",
+            list.add(new LiveChannel("ad_redtraffic1", "RedTraffic Live (+18)", "adults",
                     "https://live.redtraffic.xyz/hls/stream.m3u8", "",
                     "https://i.imgur.com/Xw5N5xY.png",
                     "HD 720p", "Transmisión en Vivo Continuo +18", "Hardcore y Escenas Explícitas"));
+
+            list.add(new LiveChannel("ad_redtraffic2", "RedTraffic Hardcore (+18)", "adults",
+                    "https://live.redtraffic.xyz/hls/stream2.m3u8", "",
+                    "https://i.imgur.com/Xw5N5xY.png",
+                    "HD 720p", "Acción Hardcore en Directo", "Producciones Explícitas 24/7"));
+
+            list.add(new LiveChannel("ad_redtraffic3", "RedTraffic Transmisión Continua (+18)", "adults",
+                    "https://live.redtraffic.xyz/live/live.m3u8", "",
+                    "https://i.imgur.com/Xw5N5xY.png",
+                    "HD 720p", "Señal Continua Sin Cortes", "Lo Mejor del Cine para Adultos"));
+
+            list.add(new LiveChannel("ad_redtraffic4", "RedTraffic Stars (+18)", "adults",
+                    "https://live.redtraffic.xyz/stream.m3u8", "",
+                    "https://i.imgur.com/Xw5N5xY.png",
+                    "HD 720p", "Modelos y Estrellas en Vivo", "Show Especial +18 Internacional"));
         }
 
         return list;
