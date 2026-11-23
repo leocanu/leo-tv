@@ -1,7 +1,7 @@
 {
-  "versionCode": 48,
-  "versionName": "0.48.0",
-  "apkUrl": "https://raw.githubusercontent.com/leocanu/Chain-Reaction-Music-Updates/main/leotv/LeoTV-v0.48.0.apk",
-  "changelog": "• Sección +18 oculta por completo de la barra lateral (solo se muestra al desbloquear Control Parental con PIN en Ajustes)\n• Máxima calidad forzada por defecto (evita pixelación a 480p en Tornado y estrenos)\n• Selector de Servidores/Fuentes en el Menú y durante la Reproducción (CineHax 1080p, SoloLatino, Cuevana, CineCalidad, Pelispedia)\n• Soporte para Reproductor Externo (Abrir con VLC Player o JustPlayer en TV y Celular)\n• Ficha técnica enriquecida con calidad 1080p FHD, servidor y audio latino\n• Barra inferior OSD optimizada para control remoto Android TV",
+  "versionCode": 49,
+  "versionName": "0.49.0",
+  "apkUrl": "https://raw.githubusercontent.com/leocanu/leo-tv/main/LeoTV-v0.49.0.apk",
+  "changelog": "• Acceso rápido a Actualizaciones (icono 🚀 en la barra lateral y opción 0 en Ajustes)\n• Corrección estricta de series y capítulos (evita reproducir series equivocadas por trending/sidebar como en Abismo de pasión)\n• Sugerencia inteligente de búsqueda de capítulos completos en YouTube+ si no están en servidores web\n• Eliminación de insignia fija 1080p y visualización de la calidad y resolución real en Información del Video\n• Control parental reforzado (Zona +18 completamente oculta por defecto)\n• Soporte para Reproductor Externo (VLC o JustPlayer)",
   "mandatory": false
 }

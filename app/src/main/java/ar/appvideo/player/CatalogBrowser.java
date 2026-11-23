@@ -533,7 +533,7 @@ public final class CatalogBrowser {
             ratingBadge.setBackground(pillBg(Color.rgb(38, 44, 58), 0, 8));
         }
         if (entry.year > 0) addBadge(badgesRow, String.valueOf(entry.year), Color.rgb(34, 42, 62), Color.WHITE);
-        addBadge(badgesRow, entry.isMovie() ? "PELÍCULA 1080p FHD" : "SERIE TV HD", Color.rgb(36, 52, 84), Color.rgb(150, 205, 255));
+        addBadge(badgesRow, entry.isMovie() ? "PELÍCULA" : "SERIE TV", Color.rgb(36, 52, 84), Color.rgb(150, 205, 255));
         if (entry.runtime > 0) addBadge(badgesRow, entry.runtime + " min", Color.rgb(34, 42, 62), Color.LTGRAY);
         addBadge(badgesRow, "ESPAÑOL / LATINO", Color.rgb(20, 68, 48), Color.rgb(110, 240, 165));
         String provBadgeText = (entry.providerName != null && !entry.providerName.isEmpty()) ? entry.providerName : "CineHax HD";

@@ -74,8 +74,11 @@ public class AppUpdater {
     public static void check(final Context ctx, final CheckCallback callback) {
         new Thread(() -> {
             try {
-                URL url = new URL(GITHUB_VERSION_URL);
+                String fullUrl = GITHUB_VERSION_URL + (GITHUB_VERSION_URL.contains("?") ? "&" : "?") + "t=" + System.currentTimeMillis();
+                URL url = new URL(fullUrl);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setUseCaches(false);
+                conn.setRequestProperty("Cache-Control", "no-cache");
                 conn.setConnectTimeout(8000);
                 conn.setReadTimeout(10000);
                 conn.setRequestProperty("User-Agent", "LeoTV-Android/" + getCurrentVersionName(ctx));

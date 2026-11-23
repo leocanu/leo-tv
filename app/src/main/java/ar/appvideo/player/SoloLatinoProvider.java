@@ -130,11 +130,17 @@ final class SoloLatinoProvider implements VideoProvider {
     public VideoLink resolve(CatalogData.Entry entry, int season, int episode) throws Exception {
         String url = entry.pageUrl;
         if (!entry.directPlayback()) {
-            url = entry.pageUrl + "/temporada/" + season + "/episodio/" + episode;
+            url = entry.pageUrl + "/temporada-" + season + "/episodio-" + episode;
         }
         try {
             return MediaPageResolver.resolve(url, BASE + "/");
         } catch (Exception ignored) {}
+
+        if (!entry.directPlayback()) {
+            try {
+                return MediaPageResolver.resolve(entry.pageUrl + "/temporada/" + season + "/episodio/" + episode, BASE + "/");
+            } catch (Exception ignored) {}
+        }
 
         String html = HttpSupport.text(url, BASE + "/");
         Document doc = Jsoup.parse(html, url);

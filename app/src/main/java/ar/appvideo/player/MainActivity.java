@@ -318,10 +318,24 @@ public class MainActivity extends Activity {
             return;
         long pos = externalPlayer.getCurrentPosition();
         long dur = externalPlayer.getDuration();
+        String currentRes = "Detectando calidad...";
+        try {
+            java.util.List<PlaybackEngine.TrackInfo> vTracks = PlaybackEngine.getVideoTracks(externalPlayer);
+            if (vTracks != null) {
+                for (PlaybackEngine.TrackInfo ti : vTracks) {
+                    if (ti.isSelected) {
+                        currentRes = ti.label;
+                        break;
+                    }
+                }
+            }
+        } catch (Exception ignored) {}
+
         android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(this);
         b.setTitle("ℹ️ Información del Video");
         b.setMessage("Título: " + currentPlayingTitle + "\n"
                 + "Fuente: " + currentPlayingOrigin + "\n"
+                + "Calidad real: " + currentRes + "\n"
                 + "Posición: " + PlaybackEngine.formatTime(pos) + " / " + PlaybackEngine.formatTime(dur) + "\n"
                 + "Estado: " + (externalPlayer.isPlaying() ? "Reproduciendo" : "Pausado") + "\n\n"
                 + "Control Remoto Android TV:\n"
@@ -401,6 +415,59 @@ public class MainActivity extends Activity {
         b.show();
     }
 
+    private static String normalizeForMatch(String s) {
+        if (s == null) return "";
+        String norm = java.text.Normalizer.normalize(s.toLowerCase(java.util.Locale.ROOT), java.text.Normalizer.Form.NFD);
+        norm = norm.replaceAll("\\p{M}", "");
+        norm = norm.replaceAll("[^a-z0-9\\s]", " ");
+        return norm.replaceAll("\\s+", " ").trim();
+    }
+
+    private static boolean isTitleMatch(String target, String candidate, String alt) {
+        String t = normalizeForMatch(target);
+        String c = normalizeForMatch(candidate);
+        String a = normalizeForMatch(alt);
+        if (t.isEmpty() || c.isEmpty()) return false;
+        if (t.equals(c) || t.contains(c) || c.contains(t)) return true;
+        if (!a.isEmpty() && (a.equals(c) || a.contains(c) || c.contains(a))) return true;
+
+        String[] tWords = t.split(" ");
+        String[] cWords = c.split(" ");
+        int tMatches = 0;
+        int tTotal = 0;
+        for (String tw : tWords) {
+            if (tw.length() > 2) {
+                tTotal++;
+                for (String cw : cWords) {
+                    if (tw.equals(cw)) {
+                        tMatches++;
+                        break;
+                    }
+                }
+            }
+        }
+        if (tTotal > 0 && tMatches >= Math.max(1, tTotal / 2)) return true;
+
+        if (!a.isEmpty()) {
+            String[] aWords = a.split(" ");
+            int aMatches = 0;
+            int aTotal = 0;
+            for (String aw : aWords) {
+                if (aw.length() > 2) {
+                    aTotal++;
+                    for (String cw : cWords) {
+                        if (aw.equals(cw)) {
+                            aMatches++;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (aTotal > 0 && aMatches >= Math.max(1, aTotal / 2)) return true;
+        }
+        return false;
+    }
+
     private void switchStreamProvider(String targetProviderName) {
         if (currentPlayingEntry == null) return;
         VideoProvider vp = VideoProviders.find(targetProviderName);
@@ -432,6 +499,9 @@ public class MainActivity extends Activity {
                     CatalogData.CatalogPage cp = vp.catalog(entry.isMovie() ? "movie" : "serie", cleanTitle, 1);
                     if (cp != null && cp.entries != null) {
                         for (CatalogData.Entry cand : cp.entries) {
+                            if (!isTitleMatch(cleanTitle, cand.title, entry.originalTitle)) {
+                                continue;
+                            }
                             try {
                                 link = vp.resolve(cand, season, episode);
                                 if (link != null) break;
@@ -485,6 +555,9 @@ public class MainActivity extends Activity {
                         CatalogData.CatalogPage cp = vp.catalog(entry.isMovie() ? "movie" : "serie", cleanTitle, 1);
                         if (cp != null && cp.entries != null) {
                             for (CatalogData.Entry cand : cp.entries) {
+                                if (!isTitleMatch(cleanTitle, cand.title, entry.originalTitle)) {
+                                    continue;
+                                }
                                 try {
                                     link = vp.resolve(cand, season, episode);
                                     if (link != null) {
@@ -5925,6 +5998,7 @@ public class MainActivity extends Activity {
         builder.setTitle("⚙️  Ajustes de Leo TV");
         boolean locked = ParentalControlEngine.isParentalLocked(this);
         String[] options = new String[] {
+                "🚀  Buscar Actualizaciones de Leo TV  (v" + AppUpdater.getCurrentVersionName(this) + ")",
                 "🔄  Actualizar Catálogo y Agenda Deportiva (Fútbol Libre)",
                 "🇦🇷  Actualizar Fuente IPTV-org Argentina (URL M3U)",
                 "📺  Listas M3U / IPTV Personalizadas (TDTChannels, Free-TV, etc.)",
@@ -5937,16 +6011,18 @@ public class MainActivity extends Activity {
         };
         builder.setItems(options, (dialog, which) -> {
             if (which == 0) {
-                triggerCatalogUpdate();
+                triggerAppUpdateCheck();
             } else if (which == 1) {
-                showIptvOrgUpdateDialog();
+                triggerCatalogUpdate();
             } else if (which == 2) {
-                showCustomM3uManager();
+                showIptvOrgUpdateDialog();
             } else if (which == 3) {
-                showCarouselCustomizer();
+                showCustomM3uManager();
             } else if (which == 4) {
-                showProviderSelector();
+                showCarouselCustomizer();
             } else if (which == 5) {
+                showProviderSelector();
+            } else if (which == 6) {
                 if (ParentalControlEngine.isParentalLocked(this)) {
                     showParentalPinDialog(() -> {
                         Toast.makeText(this, "Control parental desbloqueado (+18 visible en la barra)", Toast.LENGTH_SHORT)
@@ -5961,7 +6037,7 @@ public class MainActivity extends Activity {
                     }
                     home();
                 }
-            } else if (which == 6) {
+            } else if (which == 7) {
                 showParentalChangePinDialog();
             }
         });
@@ -6334,10 +6410,46 @@ public class MainActivity extends Activity {
         android.widget.Space filler = new android.widget.Space(this);
         side.addView(filler, new LinearLayout.LayoutParams(1, 0, 1));
 
+        addSideIcon(side, "🚀", false, "Buscar Actualizaciones de Leo TV", this::triggerAppUpdateCheck);
         addSideIcon(side, "🔄", false, "Actualizar Catálogo y Deportes", this::triggerCatalogUpdate);
         addSideIcon(side, "📥", false, "Descargas", () -> LeoDownloadManager.openDownloadsFolder(this));
         addSideIcon(side, "⚙️", "sources".equals(currentSection), "Ajustes y Personalizar", this::showSettingsDialog);
         return side;
+    }
+
+    private void triggerAppUpdateCheck() {
+        Toast.makeText(this, "🚀 Comprobando actualizaciones de Leo TV...", Toast.LENGTH_SHORT).show();
+        AppUpdater.check(this, new AppUpdater.CheckCallback() {
+            @Override
+            public void onUpdateAvailable(AppUpdater.UpdateInfo info) {
+                AppUpdater.showUpdateDialog(MainActivity.this, info);
+            }
+
+            @Override
+            public void onNoUpdate() {
+                runOnUiThread(() -> {
+                    android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(MainActivity.this);
+                    b.setTitle("🚀 Leo TV · v" + AppUpdater.getCurrentVersionName(MainActivity.this));
+                    b.setMessage("¡Ya tenés instalada la versión más reciente (v"
+                            + AppUpdater.getCurrentVersionName(MainActivity.this)
+                            + ")!\n\nTu aplicación está completamente al día.");
+                    b.setPositiveButton("Aceptar", null);
+                    b.show();
+                });
+            }
+
+            @Override
+            public void onError(String msg) {
+                runOnUiThread(() -> {
+                    android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(MainActivity.this);
+                    b.setTitle("🚀 Leo TV · v" + AppUpdater.getCurrentVersionName(MainActivity.this));
+                    b.setMessage("No se pudo conectar con el servidor de actualizaciones o ya tenés la versión más reciente (v"
+                            + AppUpdater.getCurrentVersionName(MainActivity.this) + ").");
+                    b.setPositiveButton("Aceptar", null);
+                    b.show();
+                });
+            }
+        });
     }
 
     private void triggerCatalogUpdate() {
@@ -8798,6 +8910,9 @@ public class MainActivity extends Activity {
                         try {
                             CatalogData.CatalogPage cp = vp.catalog(entry.isMovie() ? "movie" : "serie", q, 1);
                             for (CatalogData.Entry cand : cp.entries) {
+                                if (!isTitleMatch(cleanTitle, cand.title, entry.originalTitle)) {
+                                    continue;
+                                }
                                 try {
                                     link = vp.resolve(cand, season, episode);
                                     if (link != null) {
@@ -8822,10 +8937,35 @@ public class MainActivity extends Activity {
                 providerLoading = false;
                 if (!page.equals("channel"))
                     return;
-                if (resolved == null)
+                if (resolved == null) {
                     showStatus("Aviso: " + message);
-                else
+                    // Si es serie y no se encontró el capítulo en los scrapers web, ofrecer buscar en YouTube+
+                    if (!entry.isMovie()) {
+                        String cleanTarget = entry.title == null ? "" : entry.title.replaceAll("\\s*\\(.*?\\)\\s*", "").trim();
+                        String epDesc = "T" + season + " E" + episode;
+                        String ytQuery = (!cleanTarget.isEmpty() ? cleanTarget : entry.title) + " " + epDesc;
+                        android.app.AlertDialog.Builder ytB = new android.app.AlertDialog.Builder(MainActivity.this);
+                        ytB.setTitle("🔍 Capítulo no encontrado en servidores");
+                        ytB.setMessage("No encontramos fuentes web activas para:\n\n"
+                                + title + "\n\n"
+                                + "¿Querés buscar este capítulo completo en YouTube+?");
+                        ytB.setPositiveButton("Buscar en YouTube+", (d, w) -> {
+                            Toast.makeText(MainActivity.this, "Buscando en YouTube+: " + ytQuery, Toast.LENGTH_SHORT).show();
+                            YouTubeEngine.searchAsync(ytQuery, results -> {
+                                if (results != null && !results.isEmpty()) {
+                                    CatalogData.Entry firstYt = results.get(0);
+                                    YouTubePlayerActivity.start(MainActivity.this, firstYt.pageUrl, firstYt.title, entry.title);
+                                } else {
+                                    Toast.makeText(MainActivity.this, "No se hallaron resultados en YouTube+", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        });
+                        ytB.setNegativeButton("Cancelar", null);
+                        ytB.show();
+                    }
+                } else {
                     playMovie(title, resolved.url, finalProv, resolved.headers);
+                }
             });
         });
     }
@@ -8870,6 +9010,9 @@ public class MainActivity extends Activity {
                         try {
                             CatalogData.CatalogPage cp = vp.catalog(entry.isMovie() ? "movie" : "serie", q, 1);
                             for (CatalogData.Entry cand : cp.entries) {
+                                if (!isTitleMatch(cleanTitle, cand.title, entry.originalTitle)) {
+                                    continue;
+                                }
                                 try {
                                     link = vp.resolve(cand, season, episode);
                                     if (link != null)
