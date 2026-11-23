@@ -29,7 +29,7 @@ import java.net.URL;
 
 public class AppUpdater {
 
-    public static final String GITHUB_VERSION_URL = "https://raw.githubusercontent.com/leocanu/leo-tv/main/version.json";
+    public static final String GITHUB_VERSION_URL = "https://raw.githubusercontent.com/leocanu/Chain-Reaction-Music-Updates/main/leotv/latest.json";
 
     public static class UpdateInfo {
         public final int versionCode;
@@ -106,8 +106,8 @@ public class AppUpdater {
 
                 int remoteCode = obj.optInt("versionCode", 0);
                 String remoteName = obj.optString("versionName", "");
-                String apkUrl = obj.optString("apkUrl", "");
-                String changelog = obj.optString("changelog", "Mejoras de rendimiento y estabilidad.");
+                String apkUrl = obj.optString("apkUrl", obj.optString("url", ""));
+                String changelog = obj.optString("changelog", obj.optString("notes", "Mejoras de rendimiento y estabilidad."));
                 boolean mandatory = obj.optBoolean("mandatory", false);
 
                 int currentCode = getCurrentVersionCode(ctx);

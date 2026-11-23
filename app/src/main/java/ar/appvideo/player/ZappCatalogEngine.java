@@ -854,6 +854,31 @@ public final class ZappCatalogEngine {
         return profile;
     }
 
+    public static long resolveTmdbMovieId(CatalogData.Entry entry) {
+        if (entry.tmdb > 0) return entry.tmdb;
+        String clean = entry.title.replaceAll("\\s*\\(.*?\\)\\s*", "").trim();
+        String apiKey = "4ef0d7355d9ffb5151e987764708ce96";
+        try {
+            String url = "https://api.themoviedb.org/3/search/movie?api_key=" + apiKey + "&query=" + URLEncoder.encode(clean, "UTF-8") + "&language=es-MX";
+            if (entry.year > 0) url += "&year=" + entry.year;
+            JSONObject resp = new JSONObject(HttpSupport.text(url, "https://www.themoviedb.org/"));
+            JSONArray res = resp.optJSONArray("results");
+            if ((res == null || res.length() == 0) && entry.year > 0) {
+                url = "https://api.themoviedb.org/3/search/movie?api_key=" + apiKey + "&query=" + URLEncoder.encode(clean, "UTF-8") + "&language=es-MX";
+                resp = new JSONObject(HttpSupport.text(url, "https://www.themoviedb.org/"));
+                res = resp.optJSONArray("results");
+            }
+            if (res != null && res.length() > 0) {
+                long tid = res.optJSONObject(0).optLong("id", 0);
+                if (tid > 0) {
+                    entry.setTmdb(tid);
+                    return tid;
+                }
+            }
+        } catch (Exception ignored) {}
+        return 0;
+    }
+
     public static long resolveTmdbTvId(CatalogData.Entry entry) {
         if (entry.tmdb > 0) return entry.tmdb;
         String clean = entry.title.replaceAll("\\s*\\(.*?\\)\\s*", "").trim();

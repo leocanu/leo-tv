@@ -8557,6 +8557,13 @@ public class MainActivity extends Activity {
             VideoProvider.VideoLink link = null;
             String error = null;
             String resolvedProviderName = provider.name();
+
+            if (entry.isMovie() && entry.tmdb <= 0) {
+                ZappCatalogEngine.resolveTmdbMovieId(entry);
+            } else if (!entry.isMovie() && entry.tmdb <= 0) {
+                ZappCatalogEngine.resolveTmdbTvId(entry);
+            }
+
             if (!"Catálogo Global TV".equals(entry.providerName)) {
                 try {
                     link = provider.resolve(entry, season, episode);
@@ -8807,8 +8814,7 @@ public class MainActivity extends Activity {
                     Gravity.TOP);
             overlay.addView(status, overlayParams);
 
-            // 1. HUD flotante central para saltos de tiempo y estado (Ej: ⏩ +10s (01:23 /
-            // 45:10))
+            // 1. HUD flotante superior para saltos de tiempo y estado (sin superponerse con controles centrales)
             playerHudView = text("", 16, Color.WHITE);
             playerHudView.setPadding(dp(20), dp(10), dp(20), dp(10));
             playerHudView.setGravity(Gravity.CENTER);
@@ -8819,15 +8825,15 @@ public class MainActivity extends Activity {
             playerHudView.setBackground(hudBg);
             playerHudView.setVisibility(android.view.View.GONE);
             android.widget.FrameLayout.LayoutParams hudLp = new android.widget.FrameLayout.LayoutParams(-2, -2,
-                    Gravity.CENTER);
+                    Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+            hudLp.setMargins(0, dp(28), 0, 0);
             overlay.addView(playerHudView, hudLp);
 
-            // 2. Barra de acciones rápidas superior (Audio, Subtítulos y Relación de
-            // Aspecto)
+            // 2. Barra de acciones rápidas inferior (Audio, Calidad, Subtítulos y Relación de Aspecto)
             LinearLayout osdBar = new LinearLayout(this);
             playerOsdBar = osdBar;
             osdBar.setOrientation(LinearLayout.HORIZONTAL);
-            osdBar.setPadding(dp(16), dp(16), dp(16), dp(8));
+            osdBar.setPadding(dp(16), dp(12), dp(16), dp(8));
             osdBar.setVisibility(android.view.View.GONE);
             osdBar.setAlpha(0.0f);
 
@@ -8846,6 +8852,11 @@ public class MainActivity extends Activity {
                 showTracksDialog();
             });
             tracksBtn.setOnFocusChangeListener((v, f) -> {
+                GradientDrawable g = new GradientDrawable();
+                g.setColor(f ? Color.rgb(65, 80, 120) : Color.argb(200, 32, 38, 54));
+                g.setCornerRadius(dp(8));
+                if (f) g.setStroke(dp(3), Color.WHITE);
+                tracksBtn.setBackground(g);
                 if (f)
                     scheduleOsdHide(5000);
             });
@@ -8866,6 +8877,11 @@ public class MainActivity extends Activity {
                 showVideoQualityPicker();
             });
             qualityBtn.setOnFocusChangeListener((v, f) -> {
+                GradientDrawable g = new GradientDrawable();
+                g.setColor(f ? Color.rgb(65, 80, 120) : Color.argb(200, 32, 38, 54));
+                g.setCornerRadius(dp(8));
+                if (f) g.setStroke(dp(3), Color.WHITE);
+                qualityBtn.setBackground(g);
                 if (f)
                     scheduleOsdHide(5000);
             });
@@ -8888,6 +8904,11 @@ public class MainActivity extends Activity {
                 cycleAspectRatio();
             });
             aspectBtn.setOnFocusChangeListener((v, f) -> {
+                GradientDrawable g = new GradientDrawable();
+                g.setColor(f ? Color.rgb(65, 80, 120) : Color.argb(200, 32, 38, 54));
+                g.setCornerRadius(dp(8));
+                if (f) g.setStroke(dp(3), Color.WHITE);
+                aspectBtn.setBackground(g);
                 if (f)
                     scheduleOsdHide(5000);
             });
@@ -8910,6 +8931,11 @@ public class MainActivity extends Activity {
                 LeoDownloadManager.download(this, currentPlayingTitle, currentPlayingUrl, headers);
             });
             downloadBtn.setOnFocusChangeListener((v, f) -> {
+                GradientDrawable g = new GradientDrawable();
+                g.setColor(f ? Color.rgb(40, 75, 120) : Color.argb(200, 28, 55, 88));
+                g.setCornerRadius(dp(8));
+                if (f) g.setStroke(dp(3), Color.WHITE);
+                downloadBtn.setBackground(g);
                 if (f)
                     scheduleOsdHide(5000);
             });
@@ -8932,6 +8958,11 @@ public class MainActivity extends Activity {
                 toggleScreenOrientation();
             });
             rotateBtn.setOnFocusChangeListener((v, f) -> {
+                GradientDrawable g = new GradientDrawable();
+                g.setColor(f ? Color.rgb(65, 80, 120) : Color.argb(200, 42, 50, 72));
+                g.setCornerRadius(dp(8));
+                if (f) g.setStroke(dp(3), Color.WHITE);
+                rotateBtn.setBackground(g);
                 if (f)
                     scheduleOsdHide(5000);
             });
@@ -8940,7 +8971,8 @@ public class MainActivity extends Activity {
             osdBar.addView(rotateBtn, rotLp);
 
             android.widget.FrameLayout.LayoutParams osdLp = new android.widget.FrameLayout.LayoutParams(-2, -2,
-                    Gravity.TOP | Gravity.END);
+                    Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+            osdLp.setMargins(0, 0, 0, dp(75));
             overlay.addView(osdBar, osdLp);
         } else {
             body.addView(status);
@@ -9003,6 +9035,17 @@ public class MainActivity extends Activity {
         externalPlayer.setPlaybackParameters(new PlaybackParameters(1.0f, 1.0f));
         view.setPlayer(externalPlayer);
         view.setControllerShowTimeoutMs(4000);
+        view.post(() -> {
+            try {
+                android.view.View exoSettings = view.findViewById(androidx.media3.ui.R.id.exo_settings);
+                if (exoSettings != null) {
+                    exoSettings.setOnClickListener(v -> {
+                        scheduleOsdHide(5000);
+                        showTracksDialog();
+                    });
+                }
+            } catch (Exception ignored) {}
+        });
         view.setControllerVisibilityListener(new PlayerView.ControllerVisibilityListener() {
             @Override
             public void onVisibilityChanged(int visibility) {
@@ -9356,6 +9399,26 @@ public class MainActivity extends Activity {
         if (externalPlayer != null && "playing".equals(page)) {
             int key = event.getKeyCode();
             if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
+                android.view.View curFocus = getCurrentFocus();
+                boolean isOsdFocused = (playerOsdBar != null && (playerOsdBar.hasFocus() || (curFocus != null && curFocus.getParent() == playerOsdBar)));
+
+                if (isOsdFocused) {
+                    scheduleOsdHide(5000);
+                    if (key == KeyEvent.KEYCODE_DPAD_CENTER || key == KeyEvent.KEYCODE_ENTER) {
+                        if (curFocus != null) {
+                            curFocus.performClick();
+                            return true;
+                        }
+                    } else if (key == KeyEvent.KEYCODE_DPAD_DOWN) {
+                        if (playbackView != null) {
+                            playbackView.requestFocus();
+                            return true;
+                        }
+                    } else if (key == KeyEvent.KEYCODE_DPAD_LEFT || key == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                        return super.dispatchKeyEvent(event);
+                    }
+                }
+
                 if (key == KeyEvent.KEYCODE_DPAD_LEFT || key == KeyEvent.KEYCODE_MEDIA_REWIND) {
                     scheduleOsdHide(4000);
                     long newPos = Math.max(0, externalPlayer.getCurrentPosition() - 10000);
@@ -9375,6 +9438,14 @@ public class MainActivity extends Activity {
                 } else if (key == KeyEvent.KEYCODE_DPAD_CENTER || key == KeyEvent.KEYCODE_ENTER
                         || key == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
                     scheduleOsdHide(4000);
+                    if (playbackView != null && !playbackView.isControllerFullyVisible()) {
+                        playbackView.showController();
+                        if (playerOsdBar != null) {
+                            playerOsdBar.setVisibility(android.view.View.VISIBLE);
+                            playerOsdBar.animate().alpha(1.0f).setDuration(180).start();
+                        }
+                        return true;
+                    }
                     if (externalPlayer.isPlaying()) {
                         externalPlayer.pause();
                         showPlayerHud("⏸  Pausado");
@@ -9384,19 +9455,18 @@ public class MainActivity extends Activity {
                     }
                     updateMediaState();
                     return true;
-                } else if (key == KeyEvent.KEYCODE_DPAD_DOWN) {
-                    if (playbackView != null && !playbackView.isControllerFullyVisible()) {
+                } else if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN) {
+                    scheduleOsdHide(5000);
+                    if (playbackView != null) {
                         playbackView.showController();
-                        return true;
                     }
-                } else if (key == KeyEvent.KEYCODE_DPAD_UP) {
-                    if (playbackView != null && !playbackView.isControllerFullyVisible()) {
-                        playbackView.showController();
-                        return true;
-                    } else if (playerOsdBar != null && playerOsdBar.getVisibility() == android.view.View.VISIBLE
-                            && playerOsdBar.getChildCount() > 0) {
-                        playerOsdBar.getChildAt(0).requestFocus();
-                        return true;
+                    if (playerOsdBar != null) {
+                        playerOsdBar.setVisibility(android.view.View.VISIBLE);
+                        playerOsdBar.animate().alpha(1.0f).setDuration(180).start();
+                        if (playerOsdBar.getChildCount() > 0) {
+                            playerOsdBar.getChildAt(0).requestFocus();
+                            return true;
+                        }
                     }
                 } else if (key == KeyEvent.KEYCODE_MEDIA_PLAY) {
                     scheduleOsdHide(4000);
