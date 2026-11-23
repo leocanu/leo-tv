@@ -1,0 +1,7 @@
+{
+  "versionCode": 48,
+  "versionName": "0.48.0",
+  "apkUrl": "https://raw.githubusercontent.com/leocanu/Chain-Reaction-Music-Updates/main/leotv/LeoTV-v0.48.0.apk",
+  "changelog": "• Sección +18 oculta por completo de la barra lateral (solo se muestra al desbloquear Control Parental con PIN en Ajustes)\n• Máxima calidad forzada por defecto (evita pixelación a 480p en Tornado y estrenos)\n• Selector de Servidores/Fuentes en el Menú y durante la Reproducción (CineHax 1080p, SoloLatino, Cuevana, CineCalidad, Pelispedia)\n• Soporte para Reproductor Externo (Abrir con VLC Player o JustPlayer en TV y Celular)\n• Ficha técnica enriquecida con calidad 1080p FHD, servidor y audio latino\n• Barra inferior OSD optimizada para control remoto Android TV",
+  "mandatory": false
+}
