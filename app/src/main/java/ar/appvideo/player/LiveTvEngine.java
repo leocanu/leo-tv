@@ -206,62 +206,37 @@ public final class LiveTvEngine {
                     "https://i.imgur.com/xFgJawa.png",
                     "SD 540p", "Tradición y Música Argentina", "Folklore y Paisajes"));
         } else if ("deportes".equals(catId)) {
-            list.add(new LiveChannel("dep_espn", "ESPN HD Argentina", "deportes",
-                    "https://tvf90.com/1.php?stream=espn", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/ESPN_wordmark.svg/500px-ESPN_wordmark.svg.png",
-                    "HD 1080p", "SportsCenter en Directo", "Fútbol Internacional & Polideportivo"));
-
-            list.add(new LiveChannel("dep_espn2", "ESPN 2 HD", "deportes",
-                    "https://tvf90.com/1.php?stream=espn2", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/ESPN_wordmark.svg/500px-ESPN_wordmark.svg.png",
-                    "HD 1080p", "UEFA Champions League & Tenis ATP", "Fútbol Europeo en Vivo"));
-
-            list.add(new LiveChannel("dep_espn3", "ESPN 3 HD", "deportes",
-                    "https://tvf90.com/1.php?stream=espn3", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/ESPN_wordmark.svg/500px-ESPN_wordmark.svg.png",
-                    "HD 1080p", "Rugby, Ciclismo & Deportes Alternativos", "Programación Polideportiva"));
-
-            list.add(new LiveChannel("dep_espn4", "ESPN 4 HD", "deportes",
-                    "https://tvf90.com/1.php?stream=espn4", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/ESPN_wordmark.svg/500px-ESPN_wordmark.svg.png",
-                    "HD 1080p", "Ligas Internacionales & Motores", "Fútbol en Directo"));
+            list.add(new LiveChannel("dep_tyc", "TyC Sports HD", "deportes",
+                    "https://live-04-11-tyc-app-web.vodgc.net/tyc24/index.m3u8",
+                    "http://45.170.130.224:8000/play/a020/index.m3u8",
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/TyC_Sports_logo.svg/500px-TyC_Sports_logo.svg.png",
+                    "HD 1080p", "Sportia Noticiero & Fútbol de Primera", "Copa Argentina y Polideportivo"));
 
             list.add(new LiveChannel("dep_espnpremium", "ESPN Premium (Fútbol Argentino)", "deportes",
-                    "https://tvf90.com/1.php?stream=espnpremium", "",
+                    "http://45.134.141.161:2200/ARG/ESPN_Premium_Argentina_HD/tracks-v1a1/mono.m3u8", "",
                     "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/ESPN_wordmark.svg/500px-ESPN_wordmark.svg.png",
                     "HD 1080p", "Liga Profesional de Fútbol AFA", "Partidos en Directo & Pasión"));
 
             list.add(new LiveChannel("dep_foxsports", "Fox Sports Argentina HD", "deportes",
-                    "https://tvf90.com/1.php?stream=foxsports", "",
+                    "http://138.59.227.20:8000/play/a085/index.m3u8", "",
                     "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Fox_Sports_logo_2020.svg/500px-Fox_Sports_logo_2020.svg.png",
                     "HD 1080p", "Fórmula 1 & Copa Libertadores", "La Tarde de Fox Sports"));
 
-            list.add(new LiveChannel("dep_foxsports2", "Fox Sports 2 HD", "deportes",
-                    "https://tvf90.com/1.php?stream=foxsports2", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Fox_Sports_logo_2020.svg/500px-Fox_Sports_logo_2020.svg.png",
-                    "HD 1080p", "WWE, Béisbol MLB & Copa Libertadores", "Deportes en Directo"));
-
-            list.add(new LiveChannel("dep_foxsports3", "Fox Sports 3 HD", "deportes",
-                    "https://tvf90.com/1.php?stream=foxsports3", "",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Fox_Sports_logo_2020.svg/500px-Fox_Sports_logo_2020.svg.png",
-                    "HD 1080p", "MotoGP, Automovilismo & Deportes Extremos", "Velocidad Total"));
-
-            list.add(new LiveChannel("dep_tyc", "TyC Sports HD", "deportes",
-                    "https://tvf90.com/1.php?stream=tycsports",
-                    "https://amg26268-amg26268c14-freelivesports-emea-10267.playouts.now.amagi.tv/ts-us-e2-n2/playlist/amg26268-sportsstudio-tycsports-freelivesportsemea/playlist.m3u8",
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/TyC_Sports_logo.svg/500px-TyC_Sports_logo.svg.png",
-                    "HD 1080p", "Sportia Noticiero & Fútbol de Primera", "Copa Argentina y Polideportivo"));
-
             list.add(new LiveChannel("dep_tntsports", "TNT Sports Argentina", "deportes",
-                    "https://tvf90.com/1.php?stream=tntsports",
                     "http://45.184.109.10/live/69393EAE6ADBC65A68F942022362A202/86.m3u8",
+                    "http://205.235.6.29:8000/play/a0xa/index.m3u8",
                     "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/TNT_Sports_2021_logo.svg/500px-TNT_Sports_2021_logo.svg.png",
                     "HD 1080p", "Liga Profesional & Todos Al Gol", "Fútbol en Directo"));
 
-            list.add(new LiveChannel("dep_dsports", "DSports HD (DirecTV)", "deportes",
-                    "https://tvf90.com/1.php?stream=dsports", "",
+            list.add(new LiveChannel("dep_clarosports", "Claro Sports HD", "deportes",
+                    "https://jmp2.uk/plu-6320d2755e54db000783fd87.m3u8", "",
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Claro_Sports_logo.svg/500px-Claro_Sports_logo.svg.png",
+                    "HD 1080p", "Juegos Olímpicos & Polideportivo", "Emisión Internacional"));
+
+            list.add(new LiveChannel("dep_winsports", "Win Sports HD", "deportes",
+                    "http://138.121.15.230:9002/WIN-SPORT/index.m3u8", "",
                     "https://i.imgur.com/iyYLNRt.png",
-                    "HD 1080p", "Copa Sudamericana & Fútbol Exclusivo", "Debate Fútbol"));
+                    "HD 1080p", "Fútbol Profesional & Noticias", "Transmisión en Vivo"));
 
             list.add(new LiveChannel("dep_rmtv", "Real Madrid TV HD (Español)", "deportes",
                     "https://rmtv.akamaized.net/hls/live/2043153/rmtv-es-web/master.m3u8", "",
@@ -272,6 +247,16 @@ public final class LiveTvEngine {
                     "http://158.172.155.130:8000/play/a09y/index.m3u8", "",
                     "https://i.imgur.com/iyYLNRt.png",
                     "HD 720p", "Deporte Inclusivo y Federal", "Torneos y Magazine"));
+
+            list.add(new LiveChannel("dep_foxcentral", "Fox Sports Central", "deportes",
+                    "http://181.78.106.127:5000/play/a009/index.m3u8", "",
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Fox_Sports_logo_2020.svg/500px-Fox_Sports_logo_2020.svg.png",
+                    "HD 720p", "Cobertura y Magazine Deportivo", "Noticiero Continental"));
+
+            list.add(new LiveChannel("dep_marcatv", "Marca TV", "deportes",
+                    "http://200.7.219.221:8088/live/livetv/index.m3u8", "",
+                    "https://i.imgur.com/iyYLNRt.png",
+                    "HD 720p", "Información y Actualidad Deportiva", "Debates y Resúmenes"));
 
             list.add(new LiveChannel("dep_redbull", "Red Bull TV Deportes Extremos", "deportes",
                     "https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8", "",
@@ -344,8 +329,106 @@ public final class LiveTvEngine {
                     "https://appletree-mytime-samsungmexico.amagi.tv/playlist.m3u8", "",
                     "https://i.imgur.com/8QO9n8R.png",
                     "HD 1080p", "Cine Familiar y Thrillers", "Películas y Estrenos Semanales"));
+
+            list.add(new LiveChannel("cine_megacine", "Mega Cine TV", "cine",
+                    "https://cnn.hostlagarto.com/megacinetv/playlist.m3u8", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 720p", "Grandes Éxitos y Estrenos", "Cine en Español 24 Horas"));
+
+            list.add(new LiveChannel("cine_xtrema_accion", "Xtrema Acción", "cine",
+                    "https://stmv6.voxtvhd.com.br/cineaccion/cineaccion/playlist.m3u8", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 720p", "Películas de Acción y Explosión", "Adrenalina Pura"));
+
+            list.add(new LiveChannel("cine_xtrema_terror", "Xtrema Terror", "cine",
+                    "https://stmv6.voxtvhd.com.br/cineterror/cineterror/playlist.m3u8", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 720p", "Terror, Suspenso y Gore", "Noches de Pesadilla"));
+
+            list.add(new LiveChannel("cine_xtrema_clasico", "Xtrema Cine Clásico", "cine",
+                    "https://stmv6.voxtvhd.com.br/cineclasico/cineclasico/playlist.m3u8", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 720p", "Grandes Clásicos del Cine", "Joyas del Séptimo Arte"));
+
+            list.add(new LiveChannel("cine_zylo_friki", "Zylo Cine Friki", "cine",
+                    "https://d2mr4fu91mjx9m.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-rb0tx75ojbc5u/CineFriki_ES.m3u8", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 1080p", "Ciencia Ficción, Culto y Anime", "Cine Friki en Español"));
+
+            list.add(new LiveChannel("cine_zylo_western", "Zylo Cine Western", "cine",
+                    "https://d2nq34q0i1r3la.cloudfront.net/v1/master/3722c60a815c199d9c0ef36c5b73da68a62b09d1/cc-awohw8g217ho8/CineWestern_ES.m3u8", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 1080p", "Clásicos del Viejo Oeste", "Westerns y Forajidos"));
+
+            list.add(new LiveChannel("cine_cinevision", "Cinevisión Canal 19", "cine",
+                    "https://5790d294af2dc.streamlock.net/tvhdlive/tvhdlive/playlist.m3u8", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 720p", "Películas y Miniseries", "Cine Internacional"));
         } else if ("adults".equals(catId)) {
-            // Canales de adultos (se eliminaron streams caídos o recursivos para evitar errores)
+            list.add(new LiveChannel("xxx_latina", "Latina Live (+18)", "adults",
+                    "https://cdn.adultiptv.net/latina.m3u8", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 720p", "Producciones Latinas Exclusivas", "Transmisión Continua +18"));
+
+            list.add(new LiveChannel("xxx_hardcore", "Hardcore TV (+18)", "adults",
+                    "https://cdn.adultiptv.net/hardcore.m3u8", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 720p", "Contenido Explícito sin Censura", "Hardcore Internacional"));
+
+            list.add(new LiveChannel("xxx_milf", "MILF TV (+18)", "adults",
+                    "https://cdn.adultiptv.net/milf.m3u8", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 720p", "Categoría Especial MILF", "Transmisión 24/7"));
+
+            list.add(new LiveChannel("xxx_bigtits", "Big Tits TV (+18)", "adults",
+                    "https://cdn.adultiptv.net/bigtits.m3u8", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 720p", "Colección Big Tits", "Estrenos Continuos"));
+
+            list.add(new LiveChannel("xxx_bigass", "Big Ass TV (+18)", "adults",
+                    "https://cdn.adultiptv.net/bigass.m3u8", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 720p", "Grandes Curvas y Pasión", "Transmisión Continua"));
+
+            list.add(new LiveChannel("xxx_lesbian", "Lesbian TV (+18)", "adults",
+                    "https://cdn.adultiptv.net/lesbian.m3u8", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 720p", "Pasión y Sensualidad Lésbica", "Cine Erótico Lésbico"));
+
+            list.add(new LiveChannel("xxx_brunette", "Brunette Live (+18)", "adults",
+                    "https://cdn.adultiptv.net/brunette.m3u8", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 720p", "Morochas y Latinas", "Transmisión en Vivo"));
+
+            list.add(new LiveChannel("xxx_blowjob", "Blowjob TV (+18)", "adults",
+                    "https://cdn.adultiptv.net/blowjob.m3u8", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 720p", "Oral y Primer Plano", "Contenido Explícito"));
+
+            list.add(new LiveChannel("xxx_anal", "Anal TV (+18)", "adults",
+                    "https://cdn.adultiptv.net/anal.m3u8", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 720p", "Especialidad Anal", "Transmisión Continua"));
+
+            list.add(new LiveChannel("xxx_teen", "Teen Live (+18)", "adults",
+                    "https://cdn.adultiptv.net/teen.m3u8", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 720p", "Juventud y Frescura Legal 18+", "Colección Juvenil"));
+
+            list.add(new LiveChannel("xxx_asian", "Asian TV (+18)", "adults",
+                    "https://cdn.adultiptv.net/asian.m3u8", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 720p", "Estrellas Orientales", "Cine para Adultos"));
+
+            list.add(new LiveChannel("xxx_threesome", "Threesome TV (+18)", "adults",
+                    "https://cdn.adultiptv.net/threesome.m3u8", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 720p", "Tríos y Fiestas Privadas", "Transmisión Continua"));
+
+            list.add(new LiveChannel("xxx_russian", "Russian Live (+18)", "adults",
+                    "https://cdn.adultiptv.net/russian.m3u8", "",
+                    "https://i.imgur.com/8QO9n8R.png",
+                    "HD 720p", "Bellezas Europeas y Rusas", "Estrenos Exclusivos"));
         }
 
         return list;

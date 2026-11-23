@@ -61,10 +61,12 @@ public final class HtmlCatalogProvider implements VideoProvider {
     private boolean isProvisionalStructure() {
         return Arrays.asList("pelisplus.to","pelisflix1.link","pelisflix1.guru","cinecalidad.am","pelisplushd.bz",
             "pelisflixhd.love","areshd.com","cinehaxplus.com","cinehdplus.org","detodopeliculas.nu",
-            "jkanime.net","monoschinos2.net","sololatino.net").contains(rootDomain);
+            "jkanime.net","monoschinos2.net","sololatino.net","latanime.org","tioanime.com").contains(rootDomain);
     }
     private void discoverListings(Document doc) {
         if(rootDomain.equals("jkanime.net")){searchTarget=base+"/buscar";searchParam="q";}
+        else if(rootDomain.equals("latanime.org")){searchTarget=base+"/buscar";searchParam="q";}
+        else if(rootDomain.equals("tioanime.com")){searchTarget=base+"/directorio";searchParam="q";}
         else if(rootDomain.equals("pelisplus.to")){searchTarget=base+"/search";searchParam="s";}
         else if(rootDomain.equals("cinecalidad.am")){searchTarget=base+"/";searchParam="s";}
         else if(rootDomain.equals("pelisflix1.link")||rootDomain.equals("pelisflix1.guru")){searchTarget=base+"/";searchParam="s";}
@@ -211,13 +213,16 @@ public final class HtmlCatalogProvider implements VideoProvider {
                 int number=Integer.parseInt(epNumber.group(1));
                 String stem=slug.replaceAll("(?:-episodio-|-capitulo-|-)(\\d+)$","");
                 boolean media=path.contains("/media/")&&path.contains("/"+index.episodePrefix+"/");
-                if(!media&&!stem.equals(index.episodePrefix))continue;
-                if(!path.contains("/ver/")&&!media)continue;
+                boolean prefixMatch = media || stem.equals(index.episodePrefix) || path.contains("/"+index.episodePrefix+"/") || path.contains("/"+index.episodePrefix+"-");
+                if(!prefixMatch)continue;
+                if(!path.contains("/ver/")&&!media&&!path.matches(".*/\\d+/?$"))continue;
                 index.seasons.add(1);
                 List<EpisodeRef> list=index.episodes.get(1);
                 if(list==null){list=new ArrayList<>();index.episodes.put(1,list);}
                 boolean duplicate=false;for(EpisodeRef existing:list)if(existing.number==number)duplicate=true;
-                if(!duplicate)list.add(new EpisodeRef(1,number,anchor.text(),address));
+                String epTitle=anchor.text().trim();
+                if(epTitle.isEmpty()||epTitle.length()>45)epTitle="Episodio "+number;
+                if(!duplicate)list.add(new EpisodeRef(1,number,epTitle,address));
                 continue;
             }
             if(!path.contains("/capitulo/")&&!path.contains("/episodio/")&&!path.contains("/episodes/"))continue;

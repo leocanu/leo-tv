@@ -5,7 +5,7 @@ public final class CatalogData {
     }
 
     public static final class Entry {
-        public final long id, tmdb, tvmazeId;
+        public long id, tmdb, tvmazeId;
         public final String title, originalTitle, kind, poster, backdrop, slug, pageUrl, castUrl,
                 providerName;
         public String overview;
@@ -16,6 +16,12 @@ public final class CatalogData {
             if (ov != null && !ov.trim().isEmpty()) {
                 this.overview = ov.trim();
             }
+        }
+        public void setTmdb(long tid) {
+            if (tid > 0) this.tmdb = tid;
+        }
+        public void setTvmazeId(long tvid) {
+            if (tvid > 0) this.tvmazeId = tvid;
         }
 
         public Entry(org.json.JSONObject json) {

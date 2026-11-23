@@ -9,17 +9,19 @@ import org.jsoup.nodes.*;
 
 /** Sigue reproductores publicos conocidos, sin ejecutar sus scripts ni descargar videos completos. */
 final class MediaPageResolver {
-    private static final String[] HOSTS={"fastream.to","goodstream.one","hlswish.com","streamwish.com",
+    private static final String[] HOSTS={"fastream.to","fastream.net","goodstream.one","hlswish.com","streamwish.com",
         "streamwish.to","strwish.com","voe.sx","filemoon.sx","filemoon.to","streamtape.com","streamtape.to",
-        "streamtape.net","streamtape.cc","uqload.com","uqload.net","mixdrop.co","mixdrop.ag","mp4upload.com",
+        "streamtape.net","streamtape.cc","streamtape.xyz","uqload.com","uqload.net","uqload.bz","uqload.io","uqload.to",
+        "mixdrop.co","mixdrop.ag","mixdrop.to","mxdrop.to","mixdrop.bz","mp4upload.com",
         "yourupload.com","ok.ru","v.tioanime.com","megacloud.tv","rabbitstream.net","streamruby.com",
         "vidplay.site","vidplay.online","playnixes.com","player.zilla-networks.com","cubeembed.rpmvid.com",
         "moflix.rpmplay.xyz","moflix-stream.xyz","moflix-stream.fans","streamtpcloud.com","streamtp3.com",
         "hgplaycdn.com","anibum.playerp2p.online","doremifasol.ezplayer.me","nupload.my","filelions.to",
-        "filelions.online","streamvid.net","luluvdo.com"};
+        "filelions.online","streamvid.net","luluvdo.com","luluvid.com","luluvdo.net","hexload.com",
+        "savefiles.com","dsvplay.com"};
     private static final Pattern PLAYER_URL=Pattern.compile("https://[^\"'\\s<>\\\\]+",Pattern.CASE_INSENSITIVE);
-    private static final Pattern HLS=Pattern.compile("https://[^\"'\\s<>\\\\]+\\.m3u8[^\"'\\s<>\\\\]*",Pattern.CASE_INSENSITIVE);
-    private static final Pattern MP4=Pattern.compile("https://[^\"'\\s<>\\\\]+\\.mp4[^\"'\\s<>\\\\]*",Pattern.CASE_INSENSITIVE);
+    private static final Pattern HLS=Pattern.compile("https://[^\"'\\s<>\\\\]+/[^\"'\\s<>\\\\]*?\\.m3u8(?:[?#][^\"'\\s<>\\\\]*)?",Pattern.CASE_INSENSITIVE);
+    private static final Pattern MP4=Pattern.compile("https://[^\"'\\s<>\\\\]+/[^\"'\\s<>\\\\]*?\\.mp4(?:[?#][^\"'\\s<>\\\\]*)?",Pattern.CASE_INSENSITIVE);
     private MediaPageResolver(){}
     private static final class AttemptStats {
         int http404, timeout, connection, other;
@@ -136,16 +138,43 @@ final class MediaPageResolver {
             try{return walk(next,address,visited,depth+1);}catch(Exception error){diag("player_candidate",next,error);}
         }
         if(!supported(address))throw new IOException("El titulo no ofrece un reproductor compatible.");
+
+        // Extractor directo para servidores de video conocidos
+        if(address.contains("mp4upload.com")){
+            Matcher m=Pattern.compile("(?:player\\.src\\s*\\(\\s*\\{[^}]*src:\\s*[\"']|src:\\s*[\"']|file:\\s*[\"'])(https://[^\"']+\\.mp4[^\"']*)[\"']",Pattern.CASE_INSENSITIVE).matcher(decoded);
+            while(m.find()){
+                String cand=m.group(1);
+                if(publicHttps(cand)&&mp4(cand,address))return link(cand,address);
+            }
+        }
+        if(address.contains("streamtape.")){
+            Matcher m=Pattern.compile("(?:robotlink|videolink)['\"]\\)\\.innerHTML\\s*=\\s*['\"]([^'\"]+)['\"]",Pattern.CASE_INSENSITIVE).matcher(decoded);
+            if(m.find()){
+                String stream=m.group(1);
+                if(stream.startsWith("//"))stream="https:"+stream;
+                if(publicHttps(stream))return link(stream,address);
+            }
+        }
+        if(address.contains("voe.sx")){
+            Matcher m=Pattern.compile("['\"]hls['\"]\\s*:\\s*['\"](https://[^'\"]+\\.m3u8[^'\"]*)['\"]",Pattern.CASE_INSENSITIVE).matcher(decoded);
+            if(m.find()&&publicHttps(m.group(1)))return link(m.group(1),address);
+        }
+        if(address.contains("uqload.")){
+            Matcher m=Pattern.compile("sources:\\s*\\[[\"'](https://[^'\"]+\\.mp4[^'\"]*)[\"']\\]",Pattern.CASE_INSENSITIVE).matcher(decoded);
+            if(m.find()&&publicHttps(m.group(1))&&mp4(m.group(1),address))return link(m.group(1),address);
+        }
+
         Matcher hls=HLS.matcher(decoded);int candidates=0;
-        while(hls.find()&&candidates++<5){
+        while(hls.find()&&candidates++<8){
             String stream=hls.group();
-            if(!publicHttps(stream))continue;
+            if(!publicHttps(stream)||stream.endsWith(".js")||stream.endsWith(".css"))continue;
             try{if(HttpSupport.text(stream,base).trim().startsWith("#EXTM3U"))return link(stream,base);}
             catch(IOException error){diag("hls_candidate",stream,error);}
         }
         Matcher files=MP4.matcher(decoded);candidates=0;
-        while(files.find()&&candidates++<3){
-            String stream=files.group();if(!publicHttps(stream))continue;
+        while(files.find()&&candidates++<10){
+            String stream=files.group();
+            if(!publicHttps(stream)||stream.endsWith(".js")||stream.endsWith(".css")||stream.endsWith(".jpg")||stream.endsWith(".png"))continue;
             try{if(mp4(stream,base))return link(stream,base);}catch(Exception error){diag("mp4_candidate",stream,error);}
         }
         throw new IOException("No se encontro un video compatible en los servidores disponibles.");

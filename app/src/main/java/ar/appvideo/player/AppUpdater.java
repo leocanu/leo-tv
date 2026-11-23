@@ -83,9 +83,10 @@ public class AppUpdater {
                 if (conn.getResponseCode() != 200) {
                     if (callback != null) {
                         if (conn.getResponseCode() == 404) {
-                            callback.onError("HTTP 404 (Repositorio no publicado en GitHub)");
+                            // Si aún no se publicó release en GitHub, la versión instalada es la más reciente
+                            callback.onNoUpdate();
                         } else {
-                            callback.onError("HTTP " + conn.getResponseCode());
+                            callback.onError("Servidor de actualización no disponible (Código " + conn.getResponseCode() + ")");
                         }
                     }
                     return;

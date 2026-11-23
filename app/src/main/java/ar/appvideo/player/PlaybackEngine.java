@@ -185,6 +185,64 @@ public final class PlaybackEngine {
         return list;
     }
 
+    /** Obtiene pistas de video (calidades y resoluciones) disponibles en el ExoPlayer */
+    public static List<TrackInfo> getVideoTracks(ExoPlayer player) {
+        List<TrackInfo> tracks = new ArrayList<>();
+        if (player == null) return tracks;
+        Tracks currentTracks = player.getCurrentTracks();
+
+        int groupIndex = 0;
+        for (Tracks.Group group : currentTracks.getGroups()) {
+            if (group.getType() == C.TRACK_TYPE_VIDEO) {
+                for (int trackIndex = 0; trackIndex < group.length; trackIndex++) {
+                    Format format = group.getTrackFormat(trackIndex);
+                    boolean isSelected = group.isTrackSelected(trackIndex);
+
+                    int h = format.height;
+                    int w = format.width;
+                    int bitrate = format.bitrate;
+
+                    String resLabel;
+                    if (h >= 2160 || w >= 3840) resLabel = "4K Ultra HD (2160p)";
+                    else if (h >= 1440 || w >= 2560) resLabel = "2K Quad HD (1440p)";
+                    else if (h >= 1080 || w >= 1920) resLabel = "Full HD (1080p)";
+                    else if (h >= 720 || w >= 1280) resLabel = "HD (720p)";
+                    else if (h >= 480 || w >= 840) resLabel = "SD (480p)";
+                    else if (h >= 360) resLabel = "Baja (360p)";
+                    else if (h > 0) resLabel = h + "p";
+                    else resLabel = "Resolución estándar";
+
+                    if (bitrate > 0) {
+                        double mbps = (double) bitrate / 1_000_000.0;
+                        if (mbps >= 1.0) {
+                            resLabel += String.format(Locale.ROOT, " · %.1f Mbps", mbps);
+                        } else {
+                            resLabel += String.format(Locale.ROOT, " · %d Kbps", bitrate / 1000);
+                        }
+                    }
+                    if (format.frameRate > 0) {
+                        resLabel += " (" + Math.round(format.frameRate) + "fps)";
+                    }
+
+                    tracks.add(new TrackInfo(groupIndex, trackIndex, resLabel, "", isSelected, group));
+                }
+            }
+            groupIndex++;
+        }
+        return tracks;
+    }
+
+    /** Selecciona una resolución/calidad de video específica o modo automático (null) */
+    public static void selectVideoTrack(ExoPlayer player, TrackInfo track) {
+        if (player == null) return;
+        TrackSelectionParameters.Builder builder = player.getTrackSelectionParameters().buildUpon();
+        builder.clearOverridesOfType(C.TRACK_TYPE_VIDEO);
+        if (track != null && track.group != null) {
+            builder.setOverrideForType(new TrackSelectionOverride(track.group.getMediaTrackGroup(), track.trackIndex));
+        }
+        player.setTrackSelectionParameters(builder.build());
+    }
+
     /** Obtiene pistas de audio disponibles en el ExoPlayer */
     public static List<TrackInfo> getAudioTracks(ExoPlayer player) {
         List<TrackInfo> tracks = new ArrayList<>();

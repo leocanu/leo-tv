@@ -854,10 +854,29 @@ public final class ZappCatalogEngine {
         return profile;
     }
 
+    public static long resolveTmdbTvId(CatalogData.Entry entry) {
+        if (entry.tmdb > 0) return entry.tmdb;
+        String clean = entry.title.replaceAll("\\s*\\(.*?\\)\\s*", "").trim();
+        String apiKey = "4ef0d7355d9ffb5151e987764708ce96";
+        try {
+            String url = "https://api.themoviedb.org/3/search/tv?api_key=" + apiKey + "&query=" + URLEncoder.encode(clean, "UTF-8") + "&language=es-MX";
+            JSONObject resp = new JSONObject(HttpSupport.text(url, "https://www.themoviedb.org/"));
+            JSONArray res = resp.optJSONArray("results");
+            if (res != null && res.length() > 0) {
+                long tid = res.optJSONObject(0).optLong("id", 0);
+                if (tid > 0) {
+                    entry.setTmdb(tid);
+                    return tid;
+                }
+            }
+        } catch (Exception ignored) {}
+        return 0;
+    }
+
     public static List<EpisodeCard> fetchRichEpisodes(CatalogData.Entry entry, VideoProvider provider, int season, int page) {
         List<EpisodeCard> list = new ArrayList<>();
-        // 1. Si proviene de un VideoProvider con episodios propios (CineHax, LaMovie, SeriesMetro, LatAnime...)
-        if (provider != null && !"Catálogo Global TV".equals(entry.providerName)) {
+        // 1. Si proviene de un VideoProvider con episodios propios (SeriesMetro, LatAnime, JKAnime, TioAnime...)
+        if (provider != null && !"Catálogo Global TV".equals(entry.providerName) && !"CineHax".equals(entry.providerName)) {
             try {
                 JSONObject resp = provider.episodes(entry, season, page);
                 JSONArray arr = resp.optJSONArray("episodes");
@@ -881,12 +900,71 @@ public final class ZappCatalogEngine {
             } catch (Exception ignored) {}
         }
 
-        // 2. Respaldo o serie de TVMaze (como Erkenci Kuş / Pájaro Soñador)
+        // Si es CineHax con item_id válido (> 0)
+        if ("CineHax".equals(entry.providerName) && entry.id > 0) {
+            try {
+                JSONObject resp = provider.episodes(entry, season, page);
+                JSONArray arr = resp.optJSONArray("episodes");
+                if (arr != null && arr.length() > 0) {
+                    for (int i = 0; i < arr.length(); i++) {
+                        JSONObject ep = arr.optJSONObject(i);
+                        if (ep == null) continue;
+                        int num = ep.optInt("episode", i + 1);
+                        String title = ep.optString("title", "Episodio " + num);
+                        String ov = ep.isNull("overview") ? "" : ep.optString("overview", "");
+                        String still = ep.isNull("still_path") ? "" : ep.optString("still_path", "");
+                        String thumb = still.startsWith("/") ? ("https://image.tmdb.org/t/p/w300" + still)
+                            : (still.startsWith("https://") ? still : entry.backdrop);
+                        String air = ep.isNull("air_date") ? "" : ep.optString("air_date", "");
+                        int rt = ep.optInt("runtime", entry.runtime);
+                        boolean play = ep.optBoolean("playable", true);
+                        list.add(new EpisodeCard(season, num, title, ov, thumb, air, rt, play));
+                    }
+                    return list;
+                }
+            } catch (Exception ignored) {}
+        }
+
+        // 2. Consulta a TMDB oficial por temporada (Dragon Ball, Anime, series TMDB)
+        long tmdbId = resolveTmdbTvId(entry);
+        if (tmdbId > 0) {
+            try {
+                String apiKey = "4ef0d7355d9ffb5151e987764708ce96";
+                String url = "https://api.themoviedb.org/3/tv/" + tmdbId + "/season/" + season + "?api_key=" + apiKey + "&language=es-MX";
+                JSONObject sObj = new JSONObject(HttpSupport.text(url, "https://www.themoviedb.org/"));
+                JSONArray epArr = sObj.optJSONArray("episodes");
+                if (epArr != null && epArr.length() > 0) {
+                    for (int i = 0; i < epArr.length(); i++) {
+                        JSONObject ep = epArr.optJSONObject(i);
+                        if (ep == null) continue;
+                        int num = ep.optInt("episode_number", i + 1);
+                        String title = ep.optString("name", "Capítulo " + num);
+                        String ov = ep.optString("overview", "");
+                        if (ov.isEmpty()) {
+                            ov = "Capítulo " + num + " de la temporada " + season + " de " + entry.title + ".";
+                        }
+                        String still = ep.optString("still_path", "");
+                        String thumb = (!still.isEmpty() && still.startsWith("/"))
+                            ? ("https://image.tmdb.org/t/p/w300" + still)
+                            : entry.backdrop;
+                        String air = ep.optString("air_date", "");
+                        int rt = ep.optInt("runtime", entry.runtime > 0 ? entry.runtime : 24);
+                        list.add(new EpisodeCard(season, num, title, ov, thumb, air, rt, true));
+                    }
+                    if (!list.isEmpty()) return list;
+                }
+            } catch (Exception ignored) {}
+        }
+
+        // 3. Respaldo o serie de TVMaze (como Erkenci Kuş / Pájaro Soñador)
         long tvId = entry.tvmazeId;
         if (tvId <= 0) {
             String clean = entry.title.replaceAll("\\s*\\(.*?\\)\\s*", "").trim();
             List<CatalogData.Entry> m = searchTvMazeShows(clean);
-            if (!m.isEmpty()) tvId = m.get(0).tvmazeId;
+            if (!m.isEmpty()) {
+                tvId = m.get(0).tvmazeId;
+                entry.setTvmazeId(tvId);
+            }
         }
         if (tvId > 0) {
             try {
@@ -917,17 +995,54 @@ public final class ZappCatalogEngine {
     }
 
     public static JSONArray fetchSeasonsWithFallback(CatalogData.Entry entry, VideoProvider provider) {
-        if (provider != null && !"Catálogo Global TV".equals(entry.providerName)) {
+        if (provider != null && !"Catálogo Global TV".equals(entry.providerName) && !"CineHax".equals(entry.providerName)) {
             try {
                 JSONArray s = provider.seasons(entry);
                 if (s != null && s.length() > 0) return s;
             } catch (Exception ignored) {}
         }
+        if ("CineHax".equals(entry.providerName) && entry.id > 0) {
+            try {
+                JSONArray s = provider.seasons(entry);
+                if (s != null && s.length() > 0) return s;
+            } catch (Exception ignored) {}
+        }
+
+        // 1. Intentar con TMDB oficial (ideal para Anime, Dragon Ball, Doramas, Series globales)
+        long tmdbId = resolveTmdbTvId(entry);
+        if (tmdbId > 0) {
+            try {
+                String apiKey = "4ef0d7355d9ffb5151e987764708ce96";
+                String url = "https://api.themoviedb.org/3/tv/" + tmdbId + "?api_key=" + apiKey + "&language=es-MX";
+                JSONObject tObj = new JSONObject(HttpSupport.text(url, "https://www.themoviedb.org/"));
+                JSONArray sArr = tObj.optJSONArray("seasons");
+                if (sArr != null && sArr.length() > 0) {
+                    JSONArray outTmdb = new JSONArray();
+                    for (int i = 0; i < sArr.length(); i++) {
+                        JSONObject row = sArr.optJSONObject(i);
+                        if (row == null) continue;
+                        int sNum = row.optInt("season_number", -1);
+                        if (sNum <= 0) continue;
+                        int count = row.optInt("episode_count", 0);
+                        String sName = row.optString("name", "Temporada " + sNum);
+                        JSONObject sObj = new JSONObject().put("season", sNum).put("name", sName);
+                        if (count > 0) sObj.put("count", count);
+                        outTmdb.put(sObj);
+                    }
+                    if (outTmdb.length() > 0) return outTmdb;
+                }
+            } catch (Exception ignored) {}
+        }
+
+        // 2. Respaldo TVMaze
         long tvId = entry.tvmazeId;
         if (tvId <= 0) {
             String clean = entry.title.replaceAll("\\s*\\(.*?\\)\\s*", "").trim();
             List<CatalogData.Entry> m = searchTvMazeShows(clean);
-            if (!m.isEmpty()) tvId = m.get(0).tvmazeId;
+            if (!m.isEmpty()) {
+                tvId = m.get(0).tvmazeId;
+                entry.setTvmazeId(tvId);
+            }
         }
         JSONArray out = new JSONArray();
         if (tvId > 0) {

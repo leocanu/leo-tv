@@ -1,7 +1,7 @@
 {
-  "versionCode": 45,
-  "versionName": "0.45.0",
-  "apkUrl": "https://github.com/leocanu/leo-tv/releases/download/v0.45.0/LeoTV-v0.45.0.apk",
-  "changelog": "• Control remoto TV 100% fluido: navegación directa entre Barra Lateral, Categorías, Canales y Botones de Acción (Pantalla Completa/Favoritos)\n• Desplazamiento automático en categorías de TV: permite bajar fluidamente sin trabas hasta Adultos +18\n• Regreso inmediato a TV: al salir o presionar Atrás desde cualquier canal o transmisión en vivo se regresa directamente al selector de TV\n• Canales de Cine en Vivo verificados: Pluto TV Cine Estelar, Cine Acción, Cine Drama, BOM Cine HD, Canela TV Cine Latino, Alterna TV, Cinerama y MyTime Movie\n• Señales Adultos +18 operativas: RedTraffic Live, RedTraffic Hardcore, Transmisión Continua y RedTraffic Stars\n• Consulta de actualizaciones en Ajustes mejorada con diálogo amigable e informativo",
+  "versionCode": 47,
+  "versionName": "0.47.0",
+  "apkUrl": "https://github.com/leocanu/leo-tv/releases/download/v0.47.0/LeoTV-v0.47.0.apk",
+  "changelog": "• Selector de Calidad y Resolución en Reproductor (Botón directo 🎬 Calidad: 1080p, 720p, 480p y Automático)\n• Corrección de pixelación y macrobloques en películas y series HLS adaptativas\n• Filtro estricto en Estrenos 2026: eliminados clásicos antiguos y contenido fuera de año\n• Soporte enriquecido TMDB para series y anime (Dragon Ball, Dragon Ball Z con temporadas completas y episodios en español)\n• Extractores de video corregidos para mp4upload, streamtape, voe y uqload",
   "mandatory": false
 }

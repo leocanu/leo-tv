@@ -161,6 +161,7 @@ public class MainActivity extends Activity {
         b.setTitle("⚙️ Ajustes del Reproductor");
 
         String[] options = new String[] {
+                "🎬  Calidad y Resolución de Video",
                 "🔊  Pistas de Audio (Idiomas)",
                 "💬  Subtítulos",
                 "⛶  Relación de Aspecto (Ajustar / Zoom / Estirar)",
@@ -169,16 +170,61 @@ public class MainActivity extends Activity {
 
         b.setItems(options, (dialog, which) -> {
             if (which == 0) {
-                showAudioTracksPicker();
+                showVideoQualityPicker();
             } else if (which == 1) {
-                showSubtitleTracksPicker();
+                showAudioTracksPicker();
             } else if (which == 2) {
-                cycleAspectRatio();
+                showSubtitleTracksPicker();
             } else if (which == 3) {
+                cycleAspectRatio();
+            } else if (which == 4) {
                 showVideoInfoDialog();
             }
         });
         b.setNegativeButton("Volver", null);
+        b.show();
+    }
+
+    private void showVideoQualityPicker() {
+        if (externalPlayer == null)
+            return;
+        final java.util.List<PlaybackEngine.TrackInfo> videoTracks = PlaybackEngine.getVideoTracks(externalPlayer);
+        if (videoTracks.isEmpty()) {
+            Toast.makeText(this, "Este video cuenta con una sola calidad fija directa.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        java.util.List<String> labels = new java.util.ArrayList<>();
+        boolean anySelected = false;
+        int selected = 0; // 0 = Auto
+
+        labels.add("⚡ Automático (Adaptativo según conexión)");
+        for (int i = 0; i < videoTracks.size(); i++) {
+            PlaybackEngine.TrackInfo t = videoTracks.get(i);
+            labels.add("🎬 " + t.label + (t.isSelected ? "  ✓" : ""));
+            if (t.isSelected) {
+                selected = i + 1;
+                anySelected = true;
+            }
+        }
+        if (!anySelected) {
+            labels.set(0, "⚡ Automático (Adaptativo según conexión)  ✓");
+        }
+
+        android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(this);
+        b.setTitle("🎬 Calidad y Resolución de Video");
+        b.setSingleChoiceItems(labels.toArray(new String[0]), selected, (dialog, which) -> {
+            if (which == 0) {
+                PlaybackEngine.selectVideoTrack(externalPlayer, null);
+                showPlayerHud("🎬 Calidad: Automática (Adaptativa)");
+            } else {
+                PlaybackEngine.TrackInfo chosen = videoTracks.get(which - 1);
+                PlaybackEngine.selectVideoTrack(externalPlayer, chosen);
+                showPlayerHud("🎬 Calidad fijada: " + chosen.label);
+            }
+            dialog.dismiss();
+        });
+        b.setNegativeButton("Cancelar", null);
         b.show();
     }
 
@@ -784,7 +830,8 @@ public class MainActivity extends Activity {
                 if (liveTvChannelsContainer != null && liveTvChannelsContainer.getChildCount() > 0) {
                     for (int ci = 0; ci < liveTvChannelsContainer.getChildCount(); ci++) {
                         View cv = liveTvChannelsContainer.getChildAt(ci);
-                        if (cv.getTag() != null && activeTvChannel != null && activeTvChannel.id.equals(((LiveTvEngine.LiveChannel)cv.getTag()).id)) {
+                        if (cv.getTag() != null && activeTvChannel != null
+                                && activeTvChannel.id.equals(((LiveTvEngine.LiveChannel) cv.getTag()).id)) {
                             cv.requestFocus();
                             return true;
                         }
@@ -900,7 +947,8 @@ public class MainActivity extends Activity {
                         if (liveTvChannelsContainer != null && liveTvChannelsContainer.getChildCount() > 0) {
                             for (int ci = 0; ci < liveTvChannelsContainer.getChildCount(); ci++) {
                                 View cv = liveTvChannelsContainer.getChildAt(ci);
-                                if (cv.getTag() != null && activeTvChannel != null && activeTvChannel.id.equals(((LiveTvEngine.LiveChannel)cv.getTag()).id)) {
+                                if (cv.getTag() != null && activeTvChannel != null
+                                        && activeTvChannel.id.equals(((LiveTvEngine.LiveChannel) cv.getTag()).id)) {
                                     cv.requestFocus();
                                     return true;
                                 }
@@ -930,7 +978,8 @@ public class MainActivity extends Activity {
             if (liveTvChannelsContainer != null && liveTvChannelsContainer.getChildCount() > 0) {
                 for (int ci = 0; ci < liveTvChannelsContainer.getChildCount(); ci++) {
                     View cv = liveTvChannelsContainer.getChildAt(ci);
-                    if (cv.getTag() != null && activeTvChannel != null && activeTvChannel.id.equals(((LiveTvEngine.LiveChannel)cv.getTag()).id)) {
+                    if (cv.getTag() != null && activeTvChannel != null
+                            && activeTvChannel.id.equals(((LiveTvEngine.LiveChannel) cv.getTag()).id)) {
                         cv.requestFocus();
                         return;
                     }
@@ -953,10 +1002,7 @@ public class MainActivity extends Activity {
 
         List<LiveTvEngine.LiveChannel> channels = LiveTvEngine.getChannelsForCategory(this, catId);
         if (channels.isEmpty()) {
-            String msg = "adults".equals(catId)
-                    ? "No hay señales en vivo de adultos activas en este momento.\nPodés ver las películas completas +18 desde la 'Zona Adultos' en la barra lateral."
-                    : "No hay canales guardados en esta sección.";
-            TextView emptyTxt = text(msg, 14, Color.rgb(180, 190, 210));
+            TextView emptyTxt = text("No hay canales guardados en esta sección.", 14, Color.GRAY);
             emptyTxt.setPadding(dp(12), dp(16), dp(12), dp(16));
             liveTvChannelsContainer.addView(emptyTxt);
             return;
@@ -1076,12 +1122,6 @@ public class MainActivity extends Activity {
             });
 
             liveTvChannelsContainer.addView(card);
-        }
-        if (liveTvChannelsContainer.getChildCount() > 0) {
-            android.view.View firstCard = liveTvChannelsContainer.getChildAt(0);
-            if (firstCard != null) {
-                firstCard.post(() -> firstCard.requestFocus());
-            }
         }
     }
 
@@ -3002,7 +3042,7 @@ public class MainActivity extends Activity {
         btn.setOnClickListener(v -> action.run());
         btn.setOnKeyListener((v, keyCode, event) -> {
             if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                if ("live_tv".equals(playbackReturnPage) && activeCatBtn != null) {
+                if (("live_tv".equals(page) || "live_tv".equals(playbackReturnPage)) && activeCatBtn != null) {
                     activeCatBtn.requestFocus();
                     return true;
                 }
@@ -3944,13 +3984,25 @@ public class MainActivity extends Activity {
                 java.util.List<PosterItem> live = new java.util.ArrayList<>();
                 for (int i = offset; i < res.entries.size() && live.size() < 14; i++) {
                     CatalogData.Entry e = res.entries.get(i);
+                    if ("movie".equals(kind) && !e.isMovie()) {
+                        continue;
+                    }
+                    if ("serie".equals(kind) && e.isMovie()) {
+                        continue;
+                    }
+                    boolean is2026Rail = "movies2026".equals(carouselId) || "series2026".equals(carouselId)
+                            || (categoryTitle != null && (categoryTitle.contains("2026") || categoryTitle.contains("Estrenos")));
+                    if (is2026Rail && e.year > 0 && e.year < 2025) {
+                        continue;
+                    }
                     if ("latin".equals(carouselId)) {
                         if (e.isMovie() || isNonLatinMovie(e.title))
                             continue;
                     }
+                    int itemYear = e.year > 0 ? e.year : (is2026Rail ? 2026 : 0);
                     live.add(new PosterItem(
                             e.title,
-                            e.year > 0 ? e.year : 2026,
+                            itemYear,
                             !e.isMovie(),
                             e.poster,
                             providerName,
@@ -8515,8 +8567,17 @@ public class MainActivity extends Activity {
             // Si proviene del Catálogo Global TV (TVMaze) o falló el proveedor primario,
             // buscar en proveedores activos
             if (link == null) {
-                String[] fallbackProviders = new String[] { "CineHax", "SoloLatino", "CineCalidad", "Seriesflix",
-                        "SeriesMetro", "Pelispedia", "FlixLatam", "HenaoJara" };
+                boolean isAnime = entry.title != null && (
+                    entry.title.toLowerCase().contains("dragon ball") ||
+                    entry.title.toLowerCase().contains("naruto") ||
+                    entry.title.toLowerCase().contains("one piece") ||
+                    entry.title.toLowerCase().contains("bleach") ||
+                    entry.title.toLowerCase().contains("anime") ||
+                    "anime".equalsIgnoreCase(entry.kind)
+                );
+                String[] fallbackProviders = isAnime
+                        ? new String[] { "LatAnime", "TioAnime", "JKAnime", "CineHax", "SoloLatino", "Seriesflix", "Cuevana" }
+                        : new String[] { "CineHax", "SoloLatino", "CineCalidad", "Seriesflix", "Cuevana", "LatAnime", "TioAnime", "SeriesMetro", "Pelispedia", "FlixLatam", "HenaoJara" };
                 String cleanTitle = entry.title == null ? "" : entry.title.replaceAll("\\s*\\(.*?\\)\\s*", "").trim();
                 String altTitle = entry.originalTitle == null ? "" : entry.originalTitle.trim();
                 String[] queries = altTitle.isEmpty() ? new String[] { cleanTitle }
@@ -8578,8 +8639,17 @@ public class MainActivity extends Activity {
                 }
             }
             if (link == null) {
-                String[] fallbackProviders = new String[] { "CineHax", "SoloLatino", "CineCalidad", "Seriesflix",
-                        "SeriesMetro", "Pelispedia", "FlixLatam", "HenaoJara" };
+                boolean isAnime = entry.title != null && (
+                    entry.title.toLowerCase().contains("dragon ball") ||
+                    entry.title.toLowerCase().contains("naruto") ||
+                    entry.title.toLowerCase().contains("one piece") ||
+                    entry.title.toLowerCase().contains("bleach") ||
+                    entry.title.toLowerCase().contains("anime") ||
+                    "anime".equalsIgnoreCase(entry.kind)
+                );
+                String[] fallbackProviders = isAnime
+                        ? new String[] { "LatAnime", "TioAnime", "JKAnime", "CineHax", "SoloLatino", "Seriesflix", "Cuevana" }
+                        : new String[] { "CineHax", "SoloLatino", "CineCalidad", "Seriesflix", "Cuevana", "LatAnime", "TioAnime", "SeriesMetro", "Pelispedia", "FlixLatam", "HenaoJara" };
                 String cleanTitle = entry.title == null ? "" : entry.title.replaceAll("\\s*\\(.*?\\)\\s*", "").trim();
                 String altTitle = entry.originalTitle == null ? "" : entry.originalTitle.trim();
                 String[] queries = altTitle.isEmpty() ? new String[] { cleanTitle }
@@ -8780,6 +8850,28 @@ public class MainActivity extends Activity {
                     scheduleOsdHide(5000);
             });
             osdBar.addView(tracksBtn, new LinearLayout.LayoutParams(-2, dp(38)));
+
+            Button qualityBtn = new Button(this);
+            qualityBtn.setText("🎬 Calidad");
+            qualityBtn.setTextColor(Color.WHITE);
+            qualityBtn.setTextSize(12);
+            qualityBtn.setAllCaps(false);
+            qualityBtn.setFocusable(true);
+            GradientDrawable qbBg = new GradientDrawable();
+            qbBg.setColor(Color.argb(200, 32, 38, 54));
+            qbBg.setCornerRadius(dp(8));
+            qualityBtn.setBackground(qbBg);
+            qualityBtn.setOnClickListener(v -> {
+                scheduleOsdHide(4000);
+                showVideoQualityPicker();
+            });
+            qualityBtn.setOnFocusChangeListener((v, f) -> {
+                if (f)
+                    scheduleOsdHide(5000);
+            });
+            LinearLayout.LayoutParams qbLp = new LinearLayout.LayoutParams(-2, dp(38));
+            qbLp.setMargins(dp(8), 0, 0, 0);
+            osdBar.addView(qualityBtn, qbLp);
 
             Button aspectBtn = new Button(this);
             aspectBtn.setText("⛶ Aspecto");
@@ -9322,7 +9414,7 @@ public class MainActivity extends Activity {
             }
         }
         if (event.getAction() == KeyEvent.ACTION_DOWN && !"playing".equals(page)
-                && !"live_tv_fullscreen".equals(page)) {
+                && !"live_tv_fullscreen".equals(page) && !"live_tv".equals(page)) {
             int key = event.getKeyCode();
             android.view.View curFocus = getCurrentFocus();
             if (key == KeyEvent.KEYCODE_DPAD_LEFT && curFocus != null && !sideNavButtons.contains(curFocus)) {
