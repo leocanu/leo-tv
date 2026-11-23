@@ -75,6 +75,10 @@ public class MainActivity extends Activity {
     private String currentPlayingPoster = "";
     private String currentPlayingKind = "movie";
     private String currentPlayingUrl = "";
+    private java.util.Map<String, String> currentPlayingHeaders = null;
+    private CatalogData.Entry currentPlayingEntry = null;
+    private int currentPlayingSeason = 0;
+    private int currentPlayingEpisode = 0;
     private TextView playerHudView = null;
     private LinearLayout playerOsdBar = null;
     private int currentResizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT;
@@ -164,6 +168,8 @@ public class MainActivity extends Activity {
                 "🎬  Calidad y Resolución de Video",
                 "🔊  Pistas de Audio (Idiomas)",
                 "💬  Subtítulos",
+                "🌐  Cambiar Fuente / Servidor",
+                "📺  Reproducir en Reproductor Externo (VLC / JustPlayer)",
                 "⛶  Relación de Aspecto (Ajustar / Zoom / Estirar)",
                 "ℹ️  Información del Video"
         };
@@ -176,8 +182,12 @@ public class MainActivity extends Activity {
             } else if (which == 2) {
                 showSubtitleTracksPicker();
             } else if (which == 3) {
-                cycleAspectRatio();
+                showSourceSelectionDialog();
             } else if (which == 4) {
+                launchExternalPlayer(currentPlayingTitle, currentPlayingUrl, currentPlayingHeaders);
+            } else if (which == 5) {
+                cycleAspectRatio();
+            } else if (which == 6) {
                 showVideoInfoDialog();
             }
         });
@@ -322,6 +332,181 @@ public class MainActivity extends Activity {
                 + "• Botón Atrás: Guardar progreso y volver");
         b.setPositiveButton("Aceptar", null);
         b.show();
+    }
+
+    private void launchExternalPlayer(String title, String url, java.util.Map<String, String> headers) {
+        if (url == null || url.trim().isEmpty()) {
+            Toast.makeText(this, "No hay URL de video disponible para reproductor externo", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        try {
+            if (externalPlayer != null && externalPlayer.isPlaying()) {
+                externalPlayer.pause();
+            }
+            android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_VIEW);
+            intent.setDataAndType(android.net.Uri.parse(url), "video/*");
+            intent.putExtra("title", title);
+            intent.putExtra("android.media.intent.extra.TITLE", title);
+            if (headers != null && !headers.isEmpty()) {
+                java.util.ArrayList<String> headerList = new java.util.ArrayList<>();
+                for (java.util.Map.Entry<String, String> entry : headers.entrySet()) {
+                    headerList.add(entry.getKey() + ": " + entry.getValue());
+                }
+                intent.putExtra("headers", headerList.toArray(new String[0]));
+            }
+            intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(android.content.Intent.createChooser(intent, "Reproducir con reproductor externo..."));
+        } catch (Exception e) {
+            Toast.makeText(this, "No se encontró ningún reproductor de video externo (ej. VLC o JustPlayer)", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void showSourceSelectionDialog() {
+        if (currentPlayingEntry == null) {
+            Toast.makeText(this, "No se puede cambiar fuente para esta transmisión directa", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        final String[] providers = currentPlayingEntry.isMovie()
+                ? new String[] { "CineHax", "SoloLatino", "Cuevana", "CineCalidad", "Pelispedia" }
+                : new String[] { "CineHax", "SoloLatino", "Cuevana", "Seriesflix", "Pelispedia", "LatAnime", "TioAnime" };
+
+        String[] displayNames = new String[providers.length];
+        int selected = -1;
+        for (int i = 0; i < providers.length; i++) {
+            String p = providers[i];
+            String label = p;
+            if ("CineHax".equals(p)) label = "🌟 CineHax (Vimeos Full HD)";
+            else if ("SoloLatino".equals(p)) label = "🌐 SoloLatino (Multi-calidad)";
+            else if ("Cuevana".equals(p)) label = "🌐 Cuevana (Servidores rápidos)";
+            else if ("CineCalidad".equals(p)) label = "🌐 CineCalidad (Audio Latino HD)";
+            else if ("Pelispedia".equals(p)) label = "🌐 Pelispedia";
+            else if ("Seriesflix".equals(p)) label = "🌐 Seriesflix";
+            else if ("LatAnime".equals(p) || "TioAnime".equals(p)) label = "⛩️ " + p + " (Anime HD)";
+
+            if (p.equalsIgnoreCase(currentPlayingOrigin) || (currentPlayingOrigin != null && currentPlayingOrigin.contains(p))) {
+                label += " (Actual) ✓";
+                selected = i;
+            }
+            displayNames[i] = label;
+        }
+
+        android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(this);
+        b.setTitle("🌐 Cambiar Fuente / Servidor de Video");
+        b.setSingleChoiceItems(displayNames, selected, (dialog, which) -> {
+            dialog.dismiss();
+            String chosen = providers[which];
+            switchStreamProvider(chosen);
+        });
+        b.setNegativeButton("Cancelar", null);
+        b.show();
+    }
+
+    private void switchStreamProvider(String targetProviderName) {
+        if (currentPlayingEntry == null) return;
+        VideoProvider vp = VideoProviders.find(targetProviderName);
+        if (vp == null) {
+            Toast.makeText(this, "Servidor no disponible", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        showPlayerHud("🌐 Conectando con servidor " + targetProviderName + "...");
+        final long resumePos = externalPlayer != null ? externalPlayer.getCurrentPosition() : 0;
+        final CatalogData.Entry entry = currentPlayingEntry;
+        final int season = currentPlayingSeason;
+        final int episode = currentPlayingEpisode;
+        final String title = currentPlayingTitle;
+
+        videoResolvers.submit(() -> {
+            VideoProvider.VideoLink link = null;
+            try {
+                if (entry.isMovie() && entry.tmdb <= 0) {
+                    ZappCatalogEngine.resolveTmdbMovieId(entry);
+                } else if (!entry.isMovie() && entry.tmdb <= 0) {
+                    ZappCatalogEngine.resolveTmdbTvId(entry);
+                }
+                link = vp.resolve(entry, season, episode);
+            } catch (Exception ignored) {}
+
+            if (link == null) {
+                try {
+                    String cleanTitle = entry.title == null ? "" : entry.title.replaceAll("\\s*\\(.*?\\)\\s*", "").trim();
+                    CatalogData.CatalogPage cp = vp.catalog(entry.isMovie() ? "movie" : "serie", cleanTitle, 1);
+                    if (cp != null && cp.entries != null) {
+                        for (CatalogData.Entry cand : cp.entries) {
+                            try {
+                                link = vp.resolve(cand, season, episode);
+                                if (link != null) break;
+                            } catch (Exception ignored) {}
+                        }
+                    }
+                } catch (Exception ignored) {}
+            }
+
+            final VideoProvider.VideoLink finalLink = link;
+            runOnUiThread(() -> {
+                if (finalLink != null && finalLink.url != null && !finalLink.url.isEmpty()) {
+                    showPlayerHud("✓ Conectado a " + targetProviderName);
+                    playMovie(title, finalLink.url, targetProviderName, finalLink.headers);
+                    if (externalPlayer != null && resumePos > 1000) {
+                        externalPlayer.seekTo(resumePos);
+                    }
+                } else {
+                    Toast.makeText(MainActivity.this, "No se encontró enlace en " + targetProviderName + ". Manteniendo fuente actual.", Toast.LENGTH_LONG).show();
+                }
+            });
+        });
+    }
+
+    private void resolveAndLaunchExternal(VideoProvider provider, CatalogData.Entry entry, int season, int episode,
+            String title) {
+        if (providerLoading)
+            return;
+        providerLoading = true;
+        showStatus("Buscando enlace para reproductor externo...");
+        videoResolvers.submit(() -> {
+            VideoProvider.VideoLink link = null;
+            String resolvedProviderName = provider != null ? provider.name() : "CineHax";
+            if (entry.isMovie() && entry.tmdb <= 0) {
+                ZappCatalogEngine.resolveTmdbMovieId(entry);
+            } else if (!entry.isMovie() && entry.tmdb <= 0) {
+                ZappCatalogEngine.resolveTmdbTvId(entry);
+            }
+            if (provider != null && !"Catálogo Global TV".equals(entry.providerName)) {
+                try {
+                    link = provider.resolve(entry, season, episode);
+                } catch (Exception ignored) {}
+            }
+            if (link == null) {
+                String[] fallbackProviders = new String[] { "CineHax", "SoloLatino", "Cuevana", "CineCalidad", "Pelispedia" };
+                String cleanTitle = entry.title == null ? "" : entry.title.replaceAll("\\s*\\(.*?\\)\\s*", "").trim();
+                outer: for (String pName : fallbackProviders) {
+                    VideoProvider vp = VideoProviders.find(pName);
+                    if (vp == null) continue;
+                    try {
+                        CatalogData.CatalogPage cp = vp.catalog(entry.isMovie() ? "movie" : "serie", cleanTitle, 1);
+                        if (cp != null && cp.entries != null) {
+                            for (CatalogData.Entry cand : cp.entries) {
+                                try {
+                                    link = vp.resolve(cand, season, episode);
+                                    if (link != null) {
+                                        resolvedProviderName = vp.name();
+                                        break outer;
+                                    }
+                                } catch (Exception ignored) {}
+                            }
+                        }
+                    } catch (Exception ignored) {}
+                }
+            }
+            final VideoProvider.VideoLink resolved = link;
+            runOnUiThread(() -> {
+                providerLoading = false;
+                if (resolved == null || resolved.url == null || resolved.url.isEmpty()) {
+                    Toast.makeText(MainActivity.this, "No se pudo obtener enlace para reproductor externo", Toast.LENGTH_LONG).show();
+                } else {
+                    launchExternalPlayer(title, resolved.url, resolved.headers);
+                }
+            });
+        });
     }
 
     private void updateMediaState() {
@@ -887,6 +1072,9 @@ public class MainActivity extends Activity {
         // Población de Categorías en el Menú Lateral
         List<LiveTvEngine.TvCategory> categories = LiveTvEngine.getCategories();
         for (LiveTvEngine.TvCategory cat : categories) {
+            if ("adults".equals(cat.id) && ParentalControlEngine.isParentalLocked(this)) {
+                continue;
+            }
             Button catBtn = new Button(this);
             catBtn.setText(cat.label);
             catBtn.setTextColor(Color.rgb(200, 210, 230));
@@ -5761,16 +5949,17 @@ public class MainActivity extends Activity {
             } else if (which == 5) {
                 if (ParentalControlEngine.isParentalLocked(this)) {
                     showParentalPinDialog(() -> {
-                        Toast.makeText(this, "Control parental desbloqueado para esta sesión", Toast.LENGTH_SHORT)
+                        Toast.makeText(this, "Control parental desbloqueado (+18 visible en la barra)", Toast.LENGTH_SHORT)
                                 .show();
+                        home();
                     });
                 } else {
                     ParentalControlEngine.lockSession();
-                    Toast.makeText(this, "Control parental bloqueado nuevamente", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Control parental bloqueado (+18 ocultado de la barra)", Toast.LENGTH_SHORT).show();
                     if ("adults".equals(activeTab)) {
                         activeTab = "all";
-                        home();
                     }
+                    home();
                 }
             } else if (which == 6) {
                 showParentalChangePinDialog();
@@ -6135,17 +6324,12 @@ public class MainActivity extends Activity {
         addSideIcon(side, "📺", "tv".equals(currentSection), "TV en vivo", this::showLiveTvStudio);
         addSideIcon(side, "❤️", "favorites".equals(currentSection), "Favoritos", this::showFavoritesPage);
         addSideIcon(side, "🔖", "watch_later".equals(currentSection), "Ver más tarde", this::showWatchLaterPage);
-        addSideIcon(side, "🔞", "adults".equals(currentSection), "Zona Adultos (+18)", () -> {
-            if (ParentalControlEngine.isParentalLocked(this)) {
-                showParentalPinDialog(() -> {
-                    activeTab = "adults";
-                    home();
-                });
-            } else {
+        if (!ParentalControlEngine.isParentalLocked(this)) {
+            addSideIcon(side, "🔞", "adults".equals(currentSection), "Zona Adultos (+18)", () -> {
                 activeTab = "adults";
                 home();
-            }
-        });
+            });
+        }
 
         android.widget.Space filler = new android.widget.Space(this);
         side.addView(filler, new LinearLayout.LayoutParams(1, 0, 1));
@@ -8067,6 +8251,18 @@ public class MainActivity extends Activity {
                 public void download(CatalogData.Entry entry, int season, int episode, String title) {
                     downloadProviderTitle(provider, entry, season, episode, title);
                 }
+
+                @Override
+                public void playWithProvider(CatalogData.Entry entry, int season, int episode, String title, String providerName) {
+                    VideoProvider vp = VideoProviders.find(providerName);
+                    if (vp == null) vp = provider;
+                    playProviderTitle(vp, entry, season, episode, title);
+                }
+
+                @Override
+                public void playExternal(CatalogData.Entry entry, int season, int episode, String title) {
+                    resolveAndLaunchExternal(provider, entry, season, episode, title);
+                }
             });
         }
         if (name.equals("Internet Archive"))
@@ -8552,6 +8748,9 @@ public class MainActivity extends Activity {
             return;
         final long request = ++providerPlayRequest;
         providerLoading = true;
+        currentPlayingEntry = entry;
+        currentPlayingSeason = season;
+        currentPlayingEpisode = episode;
         showStatus("Buscando servidor de video para " + title + "...");
         resolutionTask = videoResolvers.submit(() -> {
             VideoProvider.VideoLink link = null;
@@ -8790,6 +8989,7 @@ public class MainActivity extends Activity {
         currentPlayingTitle = title;
         currentPlayingOrigin = origin;
         currentPlayingUrl = url;
+        currentPlayingHeaders = headers;
 
         LinearLayout body = newPage(origin, title,
                 "Reproducción directa · Usá OK para mostrar controles.");
@@ -8888,6 +9088,60 @@ public class MainActivity extends Activity {
             LinearLayout.LayoutParams qbLp = new LinearLayout.LayoutParams(-2, dp(38));
             qbLp.setMargins(dp(8), 0, 0, 0);
             osdBar.addView(qualityBtn, qbLp);
+
+            Button serverBtn = new Button(this);
+            serverBtn.setText("🌐 Servidor");
+            serverBtn.setTextColor(Color.WHITE);
+            serverBtn.setTextSize(12);
+            serverBtn.setAllCaps(false);
+            serverBtn.setFocusable(true);
+            GradientDrawable sbBg = new GradientDrawable();
+            sbBg.setColor(Color.argb(200, 32, 38, 54));
+            sbBg.setCornerRadius(dp(8));
+            serverBtn.setBackground(sbBg);
+            serverBtn.setOnClickListener(v -> {
+                scheduleOsdHide(5000);
+                showSourceSelectionDialog();
+            });
+            serverBtn.setOnFocusChangeListener((v, f) -> {
+                GradientDrawable g = new GradientDrawable();
+                g.setColor(f ? Color.rgb(65, 80, 120) : Color.argb(200, 32, 38, 54));
+                g.setCornerRadius(dp(8));
+                if (f) g.setStroke(dp(3), Color.WHITE);
+                serverBtn.setBackground(g);
+                if (f)
+                    scheduleOsdHide(5000);
+            });
+            LinearLayout.LayoutParams sbLp = new LinearLayout.LayoutParams(-2, dp(38));
+            sbLp.setMargins(dp(8), 0, 0, 0);
+            osdBar.addView(serverBtn, sbLp);
+
+            Button extPlayerBtn = new Button(this);
+            extPlayerBtn.setText("📺 Abrir en VLC");
+            extPlayerBtn.setTextColor(Color.WHITE);
+            extPlayerBtn.setTextSize(12);
+            extPlayerBtn.setAllCaps(false);
+            extPlayerBtn.setFocusable(true);
+            GradientDrawable epBg = new GradientDrawable();
+            epBg.setColor(Color.argb(200, 32, 38, 54));
+            epBg.setCornerRadius(dp(8));
+            extPlayerBtn.setBackground(epBg);
+            extPlayerBtn.setOnClickListener(v -> {
+                scheduleOsdHide(4000);
+                launchExternalPlayer(currentPlayingTitle, currentPlayingUrl, currentPlayingHeaders);
+            });
+            extPlayerBtn.setOnFocusChangeListener((v, f) -> {
+                GradientDrawable g = new GradientDrawable();
+                g.setColor(f ? Color.rgb(65, 80, 120) : Color.argb(200, 32, 38, 54));
+                g.setCornerRadius(dp(8));
+                if (f) g.setStroke(dp(3), Color.WHITE);
+                extPlayerBtn.setBackground(g);
+                if (f)
+                    scheduleOsdHide(5000);
+            });
+            LinearLayout.LayoutParams epLp = new LinearLayout.LayoutParams(-2, dp(38));
+            epLp.setMargins(dp(8), 0, 0, 0);
+            osdBar.addView(extPlayerBtn, epLp);
 
             Button aspectBtn = new Button(this);
             aspectBtn.setText("⛶ Aspecto");
@@ -9030,6 +9284,7 @@ public class MainActivity extends Activity {
         TrackSelectionParameters trackParams = externalPlayer.getTrackSelectionParameters()
                 .buildUpon()
                 .setMaxVideoSize(1920, 1080)
+                .setForceHighestSupportedBitrate(true)
                 .build();
         externalPlayer.setTrackSelectionParameters(trackParams);
         externalPlayer.setPlaybackParameters(new PlaybackParameters(1.0f, 1.0f));

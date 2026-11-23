@@ -42,6 +42,8 @@ public final class CatalogBrowser {
         boolean active();
         void play(CatalogData.Entry entry, int season, int episode, String title);
         default void download(CatalogData.Entry entry, int season, int episode, String title) {}
+        default void playWithProvider(CatalogData.Entry entry, int season, int episode, String title, String providerName) {}
+        default void playExternal(CatalogData.Entry entry, int season, int episode, String title) {}
     }
 
     private int dp(int dps) {
@@ -531,9 +533,11 @@ public final class CatalogBrowser {
             ratingBadge.setBackground(pillBg(Color.rgb(38, 44, 58), 0, 8));
         }
         if (entry.year > 0) addBadge(badgesRow, String.valueOf(entry.year), Color.rgb(34, 42, 62), Color.WHITE);
-        addBadge(badgesRow, entry.isMovie() ? "PELÍCULA HD" : "SERIE TV", Color.rgb(36, 52, 84), Color.rgb(150, 205, 255));
+        addBadge(badgesRow, entry.isMovie() ? "PELÍCULA 1080p FHD" : "SERIE TV HD", Color.rgb(36, 52, 84), Color.rgb(150, 205, 255));
         if (entry.runtime > 0) addBadge(badgesRow, entry.runtime + " min", Color.rgb(34, 42, 62), Color.LTGRAY);
         addBadge(badgesRow, "ESPAÑOL / LATINO", Color.rgb(20, 68, 48), Color.rgb(110, 240, 165));
+        String provBadgeText = (entry.providerName != null && !entry.providerName.isEmpty()) ? entry.providerName : "CineHax HD";
+        addBadge(badgesRow, "🌐 " + provBadgeText, Color.rgb(45, 36, 68), Color.rgb(215, 175, 255));
 
         final TextView synopsisView = new TextView(activity);
         String initialOverview = (entry.overview != null && entry.overview.trim().length() >= 15)
@@ -548,6 +552,13 @@ public final class CatalogBrowser {
         synopsisView.setMaxLines(10);
         synopsisView.setEllipsize(TextUtils.TruncateAt.END);
         infoCol.addView(synopsisView, new LinearLayout.LayoutParams(-1, -2));
+
+        TextView tipView = new TextView(activity);
+        tipView.setText("💡 Si el video se ve pixelado o anda lento, tocá '🌐 Elegir servidor' para probar otras fuentes o '📺 Reproductor externo' para abrir con VLC / JustPlayer.");
+        tipView.setTextSize(12);
+        tipView.setTextColor(Color.rgb(160, 180, 215));
+        tipView.setPadding(0, 8, 0, 4);
+        infoCol.addView(tipView);
 
         boolean needsScore = !detailRating.hasScore();
         boolean needsOverview = (entry.overview == null || entry.overview.trim().length() < 15)
@@ -583,10 +594,14 @@ public final class CatalogBrowser {
         if (entry.directPlayback()) {
             Button playBtn = button(actionsRow, "▶   Reproducir ahora", () -> host.play(entry, 0, 0, entry.title), -2);
             playBtn.requestFocus();
+            button(actionsRow, "🌐  Elegir servidor", () -> showSourceSelectionDialog(entry, 0, 0), -2);
+            button(actionsRow, "📺  Reproductor externo", () -> host.playExternal(entry, 0, 0, entry.title), -2);
             button(actionsRow, "⬇   Descargar película", () -> host.download(entry, 0, 0, entry.title), -2);
         } else {
             Button playFirstBtn = button(actionsRow, "▶   Reproducir T1 · Cap. 1", () -> host.play(entry, 1, 1, entry.title + " · T1 E1"), -2);
             playFirstBtn.requestFocus();
+            button(actionsRow, "🌐  Elegir servidor", () -> showSourceSelectionDialog(entry, 1, 1), -2);
+            button(actionsRow, "📺  Reproductor externo", () -> host.playExternal(entry, 1, 1, entry.title + " · T1 E1"), -2);
             button(actionsRow, "⬇   Descargar T1 · Cap. 1", () -> host.download(entry, 1, 1, entry.title + " · T1 E1"), -2);
         }
 
@@ -734,6 +749,41 @@ public final class CatalogBrowser {
         } else {
             backBtn.setNextFocusDownId(View.NO_ID);
         }
+    }
+
+    private void showSourceSelectionDialog(CatalogData.Entry entry, int season, int episode) {
+        final String[] providers = entry.isMovie()
+                ? new String[] { "CineHax", "SoloLatino", "Cuevana", "CineCalidad", "Pelispedia" }
+                : new String[] { "CineHax", "SoloLatino", "Cuevana", "Seriesflix", "Pelispedia", "LatAnime", "TioAnime" };
+
+        String[] display = new String[providers.length + 1];
+        for (int i = 0; i < providers.length; i++) {
+            String p = providers[i];
+            if ("CineHax".equals(p)) display[i] = "🌟 CineHax (Vimeos Full HD 1080p)";
+            else if ("SoloLatino".equals(p)) display[i] = "🌐 SoloLatino (Multi-calidad / Audio Latino)";
+            else if ("Cuevana".equals(p)) display[i] = "🌐 Cuevana (Servidores rápidos)";
+            else if ("CineCalidad".equals(p)) display[i] = "🌐 CineCalidad (Estrenos en HD)";
+            else if ("Pelispedia".equals(p)) display[i] = "🌐 Pelispedia";
+            else if ("Seriesflix".equals(p)) display[i] = "🌐 Seriesflix";
+            else if ("LatAnime".equals(p) || "TioAnime".equals(p)) display[i] = "⛩️ " + p + " (Anime HD)";
+            else display[i] = "🌐 " + p;
+        }
+        display[providers.length] = "📺 Abrir con Reproductor Externo (VLC / JustPlayer)";
+
+        android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(activity);
+        b.setTitle("🌐 Seleccionar Servidor / Fuente");
+        b.setItems(display, (dialog, which) -> {
+            dialog.dismiss();
+            if (which < providers.length) {
+                String chosenProv = providers[which];
+                Toast.makeText(activity, "Conectando con " + chosenProv + "...", Toast.LENGTH_SHORT).show();
+                host.playWithProvider(entry, season, episode, entry.title, chosenProv);
+            } else {
+                host.playExternal(entry, season, episode, entry.title);
+            }
+        });
+        b.setNegativeButton("Cancelar", null);
+        b.show();
     }
 
     private void loadSeasonEpisodesVisual(CatalogData.Entry entry, int seasonNum, LinearLayout rangeBar,

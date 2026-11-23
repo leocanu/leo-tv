@@ -1,7 +1,7 @@
 {
-  "versionCode": 47,
-  "versionName": "0.47.0",
-  "apkUrl": "https://github.com/leocanu/leo-tv/releases/download/v0.47.0/LeoTV-v0.47.0.apk",
-  "changelog": "• Selector de Calidad y Resolución en Reproductor (Botón directo 🎬 Calidad: 1080p, 720p, 480p y Automático)\n• Corrección de pixelación y macrobloques en películas y series HLS adaptativas\n• Filtro estricto en Estrenos 2026: eliminados clásicos antiguos y contenido fuera de año\n• Soporte enriquecido TMDB para series y anime (Dragon Ball, Dragon Ball Z con temporadas completas y episodios en español)\n• Extractores de video corregidos para mp4upload, streamtape, voe y uqload",
+  "versionCode": 48,
+  "versionName": "0.48.0",
+  "apkUrl": "https://raw.githubusercontent.com/leocanu/Chain-Reaction-Music-Updates/main/leotv/LeoTV-v0.48.0.apk",
+  "changelog": "• Sección +18 oculta por completo de la barra lateral (solo se muestra al desbloquear Control Parental con PIN en Ajustes)\n• Máxima calidad forzada por defecto (evita pixelación a 480p en Tornado y estrenos)\n• Selector de Servidores/Fuentes en el Menú y durante la Reproducción (CineHax 1080p, SoloLatino, Cuevana, CineCalidad, Pelispedia)\n• Soporte para Reproductor Externo (Abrir con VLC Player o JustPlayer en TV y Celular)\n• Ficha técnica enriquecida con calidad 1080p FHD, servidor y audio latino\n• Barra inferior OSD optimizada para control remoto Android TV",
   "mandatory": false
 }
