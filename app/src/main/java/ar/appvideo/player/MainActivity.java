@@ -81,6 +81,7 @@ public class MainActivity extends Activity {
     private int currentPlayingEpisode = 0;
     private TextView playerHudView = null;
     private LinearLayout playerOsdBar = null;
+    private Button nextEpBannerBtn = null;
     private int currentResizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT;
 
     private final Runnable hideHudRunnable = () -> {
@@ -139,10 +140,26 @@ public class MainActivity extends Activity {
                         PlaybackEngine.saveProgress(MainActivity.this, sTitle, sTitle,
                                 sPoster, pos, dur, sOrigin, sKind);
                     }).start();
+
+                    // Detectar si está por terminar el capítulo de una serie (faltan menos de 80s o > 92%)
+                    if (currentPlayingEntry != null && !currentPlayingEntry.isMovie() && currentPlayingEpisode > 0) {
+                        final long remainingMs = dur - pos;
+                        final double progressRatio = (double) pos / (double) dur;
+                        if ((remainingMs <= 80000 || progressRatio >= 0.92) && nextEpBannerBtn != null) {
+                            runOnUiThread(() -> {
+                                if (nextEpBannerBtn != null && nextEpBannerBtn.getVisibility() != android.view.View.VISIBLE) {
+                                    final int nextEp = currentPlayingEpisode + 1;
+                                    nextEpBannerBtn.setText("⏭ Siguiente Capítulo (Cap. " + nextEp + ")");
+                                    nextEpBannerBtn.setVisibility(android.view.View.VISIBLE);
+                                    nextEpBannerBtn.animate().alpha(1.0f).setDuration(250).start();
+                                }
+                            });
+                        }
+                    }
                 }
             }
             if ("playing".equals(page)) {
-                mainHandler.postDelayed(this, 15000);
+                mainHandler.postDelayed(this, 5000);
             }
         }
     };
@@ -7726,24 +7743,39 @@ public class MainActivity extends Activity {
                 custBar.addView(custBtn, new LinearLayout.LayoutParams(-2, dp(40)));
                 body.addView(custBar);
 
-                // 1. Continuar viendo si hay elementos guardados con progreso
+                // 1. Continuar viendo si hay elementos guardados con progreso (agrupado por serie para evitar duplicados de capítulos incompletos)
                 java.util.List<PlaybackEngine.PlaybackProgress> cwList = PlaybackEngine.getContinueWatchingList(this);
                 if (!cwList.isEmpty()) {
                     java.util.List<PosterItem> cwPosters = new java.util.ArrayList<>();
+                    java.util.Set<String> seenSeries = new java.util.HashSet<>();
                     for (PlaybackEngine.PlaybackProgress p : cwList) {
+                        boolean isSeries = !"movie".equals(p.kind);
+                        String displayTitle = p.title;
+                        String baseSeriesTitle = "";
+                        if (isSeries) {
+                            baseSeriesTitle = p.title.replaceAll("\\s*[·|\\-|–—]\\s*(?i)(?:T\\d+|Cap\\.?|Ep\\.?|Temporada).*", "").trim();
+                            if (baseSeriesTitle.isEmpty()) baseSeriesTitle = p.title;
+                            if (seenSeries.contains(baseSeriesTitle.toLowerCase(java.util.Locale.ROOT))) {
+                                continue; // Ya mostramos el capítulo más reciente de esta serie en Continuar viendo
+                            }
+                            seenSeries.add(baseSeriesTitle.toLowerCase(java.util.Locale.ROOT));
+                            displayTitle = baseSeriesTitle;
+                        }
                         cwPosters.add(new PosterItem(
-                                p.title + " (" + p.getPercentage() + "%)",
+                                displayTitle + (isSeries ? "" : " (" + p.getPercentage() + "%)"),
                                 2026,
-                                !"movie".equals(p.kind),
+                                isSeries,
                                 p.poster,
                                 p.provider,
-                                p.title,
+                                isSeries ? baseSeriesTitle : p.title,
                                 null));
                     }
-                    LinearLayout rCw = addPosterRow(body, "▶  Continuar viendo (" + cwList.size() + ")", cwPosters,
-                            "CineHax", "movie", "", "continue_watching");
-                    if (firstRail == null)
-                        firstRail = rCw;
+                    if (!cwPosters.isEmpty()) {
+                        LinearLayout rCw = addPosterRow(body, "▶  Continuar viendo (" + cwPosters.size() + ")", cwPosters,
+                                "CineHax", "movie", "", "continue_watching");
+                        if (firstRail == null)
+                            firstRail = rCw;
+                    }
                 }
 
                 // 2. Mis Favoritos en Inicio si hay títulos guardados
@@ -9445,6 +9477,47 @@ public class MainActivity extends Activity {
                     Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
             osdLp.setMargins(0, 0, 0, dp(75));
             overlay.addView(osdBar, osdLp);
+
+            // 3. Botón flotante para saltar al siguiente capítulo al final del video
+            Button nextBtn = new Button(this);
+            nextEpBannerBtn = nextBtn;
+            nextBtn.setText("⏭ Siguiente Capítulo");
+            nextBtn.setTextColor(Color.WHITE);
+            nextBtn.setTextSize(14);
+            nextBtn.setTypeface(null, Typeface.BOLD);
+            nextBtn.setFocusable(true);
+            nextBtn.setVisibility(android.view.View.GONE);
+            nextBtn.setAlpha(0.0f);
+            GradientDrawable nbBg = new GradientDrawable();
+            nbBg.setColor(Color.rgb(18, 92, 160));
+            nbBg.setCornerRadius(dp(12));
+            nbBg.setStroke(dp(2), Color.rgb(80, 180, 255));
+            nextBtn.setBackground(nbBg);
+            nextBtn.setOnClickListener(v -> {
+                if (currentPlayingEntry != null && !currentPlayingEntry.isMovie() && currentPlayingEpisode > 0) {
+                    final int nextEp = currentPlayingEpisode + 1;
+                    final int currSeason = currentPlayingSeason > 0 ? currentPlayingSeason : 1;
+                    final CatalogData.Entry seriesEntry = currentPlayingEntry;
+                    final String seriesBaseTitle = seriesEntry.title != null ? seriesEntry.title : "";
+                    final String nextTitle = seriesBaseTitle + " · T" + currSeason + " E" + nextEp;
+                    VideoProvider vp = VideoProviders.find(currentPlayingOrigin);
+                    if (vp == null) vp = VideoProviders.find("CineHax");
+                    nextBtn.setVisibility(android.view.View.GONE);
+                    playProviderTitle(vp, seriesEntry, currSeason, nextEp, nextTitle);
+                }
+            });
+            nextBtn.setOnFocusChangeListener((v, f) -> {
+                GradientDrawable g = new GradientDrawable();
+                g.setColor(f ? Color.rgb(25, 120, 210) : Color.rgb(18, 92, 160));
+                g.setCornerRadius(dp(12));
+                g.setStroke(f ? dp(3) : dp(2), f ? Color.WHITE : Color.rgb(80, 180, 255));
+                nextBtn.setBackground(g);
+                nextBtn.animate().scaleX(f ? 1.05f : 1f).scaleY(f ? 1.05f : 1f).setDuration(120).start();
+            });
+            android.widget.FrameLayout.LayoutParams nbLp = new android.widget.FrameLayout.LayoutParams(-2, -2,
+                    Gravity.BOTTOM | Gravity.END);
+            nbLp.setMargins(0, 0, dp(32), dp(90));
+            overlay.addView(nextBtn, nbLp);
         } else {
             body.addView(status);
         }
