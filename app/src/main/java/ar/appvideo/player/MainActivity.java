@@ -7749,7 +7749,9 @@ public class MainActivity extends Activity {
                     java.util.List<PosterItem> cwPosters = new java.util.ArrayList<>();
                     java.util.Set<String> seenSeries = new java.util.HashSet<>();
                     for (PlaybackEngine.PlaybackProgress p : cwList) {
-                        boolean isSeries = !"movie".equals(p.kind);
+                        boolean isSeries = (!"movie".equals(p.kind))
+                                || (p.title != null && (p.title.matches(".*[·\\-–—]\\s*(?i)(?:T\\d+|Cap|Ep|Temporada).*")
+                                || p.title.matches(".*(?i)T\\d+\\s*E\\d+.*")));
                         String displayTitle = p.title;
                         String baseSeriesTitle = "";
                         if (isSeries) {
