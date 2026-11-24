@@ -880,22 +880,27 @@ public final class CatalogBrowser {
         textCol.setPadding(18, 2, 8, 2);
         rowCard.addView(textCol, new LinearLayout.LayoutParams(0, -2, 1));
 
+        String playLabel = entry.title + " · T" + seasonNum + " E" + ep.episode + " · " + ep.title;
+        String epId = entry.title + " · T" + seasonNum + " E" + ep.episode;
+        boolean isEpWatched = PlaybackEngine.isWatched(activity, epId) || PlaybackEngine.isWatched(activity, playLabel);
+
         TextView epTitle = new TextView(activity);
-        epTitle.setText("T" + seasonNum + " · Cap. " + ep.episode + "  —  " + ep.title);
+        epTitle.setText((isEpWatched ? "✓ " : "") + "T" + seasonNum + " · Cap. " + ep.episode + "  —  " + ep.title);
         epTitle.setTextSize(16);
-        epTitle.setTextColor(Color.WHITE);
+        epTitle.setTextColor(isEpWatched ? Color.rgb(120, 220, 160) : Color.WHITE);
         epTitle.setTypeface(null, Typeface.BOLD);
         epTitle.setSingleLine(true);
         epTitle.setEllipsize(TextUtils.TruncateAt.END);
         textCol.addView(epTitle);
 
-        String subMeta = (ep.runtime > 0 ? ep.runtime + " min" : "45 min")
+        String subMeta = (isEpWatched ? "✓ VISTO  ·  " : "")
+            + (ep.runtime > 0 ? ep.runtime + " min" : "45 min")
             + (ep.airDate != null && !ep.airDate.isEmpty() ? "  ·  Emisión: " + ep.airDate : "")
             + "  ·  Audio Latino / Sub";
         TextView epMeta = new TextView(activity);
         epMeta.setText(subMeta);
         epMeta.setTextSize(12);
-        epMeta.setTextColor(Color.rgb(245, 197, 66));
+        epMeta.setTextColor(isEpWatched ? Color.rgb(100, 210, 140) : Color.rgb(245, 197, 66));
         epMeta.setPadding(0, 2, 0, 4);
         textCol.addView(epMeta);
 
@@ -910,7 +915,6 @@ public final class CatalogBrowser {
         epSyn.setEllipsize(TextUtils.TruncateAt.END);
         textCol.addView(epSyn);
 
-        String playLabel = entry.title + " · T" + seasonNum + " E" + ep.episode + " · " + ep.title;
         rowCard.setOnClickListener(v -> host.play(entry, seasonNum, ep.episode, playLabel));
 
         Button epDlBtn = new Button(activity);

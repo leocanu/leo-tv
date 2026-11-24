@@ -1,7 +1,7 @@
 {
-  "versionCode": 49,
-  "versionName": "0.49.0",
-  "apkUrl": "https://raw.githubusercontent.com/leocanu/leo-tv/main/LeoTV-v0.49.0.apk",
-  "changelog": "• Acceso rápido a Actualizaciones (icono 🚀 en la barra lateral y opción 0 en Ajustes)\n• Corrección estricta de series y capítulos (evita reproducir series equivocadas por trending/sidebar como en Abismo de pasión)\n• Sugerencia inteligente de búsqueda de capítulos completos en YouTube+ si no están en servidores web\n• Eliminación de insignia fija 1080p y visualización de la calidad y resolución real en Información del Video\n• Control parental reforzado (Zona +18 completamente oculta por defecto)\n• Soporte para Reproductor Externo (VLC o JustPlayer)",
+  "versionCode": 50,
+  "versionName": "0.50.0",
+  "apkUrl": "https://raw.githubusercontent.com/leocanu/leo-tv/main/LeoTV-v0.50.0.apk",
+  "changelog": "• Solución a Continuar Viendo (Tornado y películas sin servidor ahora cargan su ficha completa de CineHax/Vimeos en vez de proveedor genérico)\n• Título y capítulo siempre visible sobre la barra de controles al pausar, adelantar o entrar a Ajustes\n• Adelanto rápido continuo manteniendo presionada la flecha derecha (o izquierda para retroceder)\n• Autocarga/sugerencia del siguiente capítulo al finalizar un episodio de serie\n• Marcado visual con tilde verde (✓ VISTO) en la lista de capítulos ya reproducidos",
   "mandatory": false
 }

@@ -11,8 +11,10 @@ import androidx.media3.exoplayer.ExoPlayer;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Motor de reproducción avanzada para Leo TV:
@@ -24,6 +26,7 @@ import java.util.Locale;
 public final class PlaybackEngine {
     private static final String PREF_NAME = "leo_playback_history";
     private static final String KEY_ITEMS = "continue_watching_items";
+    private static final String KEY_WATCHED_SET = "watched_episodes_set";
     private static final long MIN_RESUME_TIME_MS = 10000; // Al menos 10 segundos para reanudar
 
     public static class PlaybackProgress {
@@ -90,6 +93,7 @@ public final class PlaybackEngine {
         SharedPreferences sp = ctx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         // Si ya vio más del 95% o faltan menos de 60 segundos, se considera terminado y se remueve
         if (durationMs > 0 && (positionMs > (durationMs * 0.95) || (durationMs - positionMs) < 60000)) {
+            markWatched(ctx, id);
             removeProgress(ctx, id);
             return;
         }
@@ -158,6 +162,30 @@ public final class PlaybackEngine {
             }
             sp.edit().putString(KEY_ITEMS, updated.toString()).apply();
         } catch (Exception ignored) {}
+    }
+
+    /** Marca un contenido o capítulo como completado/visto */
+    public static void markWatched(Context ctx, String id) {
+        if (ctx == null || id == null || id.trim().isEmpty()) return;
+        SharedPreferences sp = ctx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        try {
+            Set<String> set = new HashSet<>(sp.getStringSet(KEY_WATCHED_SET, new HashSet<>()));
+            set.add(id.trim());
+            sp.edit().putStringSet(KEY_WATCHED_SET, set).apply();
+        } catch (Exception ignored) {}
+    }
+
+    /** Comprueba si un contenido o capítulo ya fue visto */
+    public static boolean isWatched(Context ctx, String id) {
+        if (ctx == null || id == null || id.trim().isEmpty()) return false;
+        SharedPreferences sp = ctx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        try {
+            Set<String> set = sp.getStringSet(KEY_WATCHED_SET, null);
+            if (set != null && set.contains(id.trim())) {
+                return true;
+            }
+        } catch (Exception ignored) {}
+        return false;
     }
 
     /** Lista completa de elementos en 'Continuar viendo' */

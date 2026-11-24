@@ -162,7 +162,10 @@ public class MainActivity extends Activity {
         if (externalPlayer == null)
             return;
         android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(this);
-        b.setTitle("⚙️ Ajustes del Reproductor");
+        String dialogTitle = (currentPlayingTitle != null && !currentPlayingTitle.isEmpty())
+                ? "⚙️ Ajustes · " + currentPlayingTitle
+                : "⚙️ Ajustes del Reproductor";
+        b.setTitle(dialogTitle);
 
         String[] options = new String[] {
                 "🎬  Calidad y Resolución de Video",
@@ -222,7 +225,10 @@ public class MainActivity extends Activity {
         }
 
         android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(this);
-        b.setTitle("🎬 Calidad y Resolución de Video");
+        String dialogTitle = (currentPlayingTitle != null && !currentPlayingTitle.isEmpty())
+                ? "🎬 Calidad · " + currentPlayingTitle
+                : "🎬 Calidad y Resolución de Video";
+        b.setTitle(dialogTitle);
         b.setSingleChoiceItems(labels.toArray(new String[0]), selected, (dialog, which) -> {
             if (which == 0) {
                 PlaybackEngine.selectVideoTrack(externalPlayer, null);
@@ -255,7 +261,10 @@ public class MainActivity extends Activity {
                 selected = i;
         }
         android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(this);
-        b.setTitle("🔊 Seleccionar Pista de Audio");
+        String dialogTitle = (currentPlayingTitle != null && !currentPlayingTitle.isEmpty())
+                ? "🔊 Audio · " + currentPlayingTitle
+                : "🔊 Seleccionar Pista de Audio";
+        b.setTitle(dialogTitle);
         b.setSingleChoiceItems(items, selected, (dialog, which) -> {
             PlaybackEngine.selectAudioTrack(externalPlayer, audioTracks.get(which));
             showPlayerHud("🔊 Audio: " + audioTracks.get(which).label);
@@ -279,7 +288,10 @@ public class MainActivity extends Activity {
                 selected = i + 1;
         }
         android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(this);
-        b.setTitle("💬 Seleccionar Subtítulos");
+        String dialogTitle = (currentPlayingTitle != null && !currentPlayingTitle.isEmpty())
+                ? "💬 Subtítulos · " + currentPlayingTitle
+                : "💬 Seleccionar Subtítulos";
+        b.setTitle(dialogTitle);
         b.setSingleChoiceItems(labels.toArray(new String[0]), selected, (dialog, which) -> {
             if (which == 0) {
                 PlaybackEngine.disableSubtitles(externalPlayer);
@@ -405,7 +417,10 @@ public class MainActivity extends Activity {
         }
 
         android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(this);
-        b.setTitle("🌐 Cambiar Fuente / Servidor de Video");
+        String dialogTitle = (currentPlayingTitle != null && !currentPlayingTitle.isEmpty())
+                ? "🌐 Servidor · " + currentPlayingTitle
+                : "🌐 Cambiar Fuente / Servidor de Video";
+        b.setTitle(dialogTitle);
         b.setSingleChoiceItems(displayNames, selected, (dialog, which) -> {
             dialog.dismiss();
             String chosen = providers[which];
@@ -3735,6 +3750,47 @@ public class MainActivity extends Activity {
         }
         if (item.rawEntry != null) {
             openEntryDetail(item.rawEntry);
+            return;
+        }
+        if (item.queryHint != null && !item.queryHint.isEmpty()) {
+            final String searchTitle = item.queryHint;
+            showStatus("Cargando ficha de " + searchTitle + "...");
+            videoResolvers.submit(() -> {
+                CatalogData.Entry found = null;
+                try {
+                    CatalogData.CatalogPage cp = CineHaxProvider.catalog(item.isSeries ? "serie" : "movie", searchTitle, 1);
+                    if (cp != null && cp.entries != null && !cp.entries.isEmpty()) {
+                        for (CatalogData.Entry e : cp.entries) {
+                            if (isTitleMatch(searchTitle, e.title, e.originalTitle)) {
+                                found = e;
+                                break;
+                            }
+                        }
+                        if (found == null) {
+                            found = cp.entries.get(0);
+                        }
+                    }
+                } catch (Exception ignored) {}
+                final CatalogData.Entry finalFound = found;
+                runOnUiThread(() -> {
+                    if (finalFound != null) {
+                        openEntryDetail(finalFound);
+                    } else {
+                        String targetProvider = (item.providerName != null && !item.providerName.isEmpty()
+                                && !"Catálogo Global TV".equals(item.providerName)) ? item.providerName : activeProvider;
+                        VideoProvider prov = VideoProviders.find(targetProvider);
+                        if (prov != null) {
+                            CatalogBrowser.State st = new CatalogBrowser.State();
+                            st.kind = item.isSeries ? "serie" : "movie";
+                            st.query = searchTitle;
+                            catalogStates.put(prov.name(), st);
+                            openChannel(prov.name());
+                        } else {
+                            openChannel(targetProvider);
+                        }
+                    }
+                });
+            });
             return;
         }
         String targetProvider = (item.providerName != null && !item.providerName.isEmpty()
@@ -9175,10 +9231,28 @@ public class MainActivity extends Activity {
             // 2. Barra de acciones rápidas inferior (Audio, Calidad, Subtítulos y Relación de Aspecto)
             LinearLayout osdBar = new LinearLayout(this);
             playerOsdBar = osdBar;
-            osdBar.setOrientation(LinearLayout.HORIZONTAL);
-            osdBar.setPadding(dp(16), dp(12), dp(16), dp(8));
+            osdBar.setOrientation(LinearLayout.VERTICAL);
+            osdBar.setGravity(Gravity.CENTER_HORIZONTAL);
             osdBar.setVisibility(android.view.View.GONE);
             osdBar.setAlpha(0.0f);
+
+            // Título/Capítulo visible sobre la barra de controles
+            TextView osdTitle = text(title != null ? title : "", 15, Color.rgb(245, 197, 66));
+            osdTitle.setTypeface(null, Typeface.BOLD);
+            osdTitle.setGravity(Gravity.CENTER);
+            osdTitle.setPadding(dp(16), dp(6), dp(16), dp(6));
+            GradientDrawable osdTitleBg = new GradientDrawable();
+            osdTitleBg.setColor(Color.argb(210, 16, 20, 30));
+            osdTitleBg.setCornerRadius(dp(8));
+            osdTitle.setBackground(osdTitleBg);
+            LinearLayout.LayoutParams titleLp = new LinearLayout.LayoutParams(-2, -2);
+            titleLp.setMargins(0, 0, 0, dp(6));
+            osdBar.addView(osdTitle, titleLp);
+
+            LinearLayout buttonsRow = new LinearLayout(this);
+            buttonsRow.setOrientation(LinearLayout.HORIZONTAL);
+            buttonsRow.setPadding(dp(16), dp(4), dp(16), dp(4));
+            osdBar.addView(buttonsRow, new LinearLayout.LayoutParams(-2, -2));
 
             Button tracksBtn = new Button(this);
             tracksBtn.setText("💬 Audio y Subtítulos");
@@ -9203,7 +9277,7 @@ public class MainActivity extends Activity {
                 if (f)
                     scheduleOsdHide(5000);
             });
-            osdBar.addView(tracksBtn, new LinearLayout.LayoutParams(-2, dp(38)));
+            buttonsRow.addView(tracksBtn, new LinearLayout.LayoutParams(-2, dp(38)));
 
             Button qualityBtn = new Button(this);
             qualityBtn.setText("🎬 Calidad");
@@ -9230,7 +9304,7 @@ public class MainActivity extends Activity {
             });
             LinearLayout.LayoutParams qbLp = new LinearLayout.LayoutParams(-2, dp(38));
             qbLp.setMargins(dp(8), 0, 0, 0);
-            osdBar.addView(qualityBtn, qbLp);
+            buttonsRow.addView(qualityBtn, qbLp);
 
             Button serverBtn = new Button(this);
             serverBtn.setText("🌐 Servidor");
@@ -9257,7 +9331,7 @@ public class MainActivity extends Activity {
             });
             LinearLayout.LayoutParams sbLp = new LinearLayout.LayoutParams(-2, dp(38));
             sbLp.setMargins(dp(8), 0, 0, 0);
-            osdBar.addView(serverBtn, sbLp);
+            buttonsRow.addView(serverBtn, sbLp);
 
             Button extPlayerBtn = new Button(this);
             extPlayerBtn.setText("📺 Abrir en VLC");
@@ -9284,7 +9358,7 @@ public class MainActivity extends Activity {
             });
             LinearLayout.LayoutParams epLp = new LinearLayout.LayoutParams(-2, dp(38));
             epLp.setMargins(dp(8), 0, 0, 0);
-            osdBar.addView(extPlayerBtn, epLp);
+            buttonsRow.addView(extPlayerBtn, epLp);
 
             Button aspectBtn = new Button(this);
             aspectBtn.setText("⛶ Aspecto");
@@ -9311,7 +9385,7 @@ public class MainActivity extends Activity {
             });
             LinearLayout.LayoutParams abLp = new LinearLayout.LayoutParams(-2, dp(38));
             abLp.setMargins(dp(8), 0, 0, 0);
-            osdBar.addView(aspectBtn, abLp);
+            buttonsRow.addView(aspectBtn, abLp);
 
             Button downloadBtn = new Button(this);
             downloadBtn.setText("⬇ Descargar");
@@ -9338,7 +9412,7 @@ public class MainActivity extends Activity {
             });
             LinearLayout.LayoutParams dlLp = new LinearLayout.LayoutParams(-2, dp(38));
             dlLp.setMargins(dp(8), 0, 0, 0);
-            osdBar.addView(downloadBtn, dlLp);
+            buttonsRow.addView(downloadBtn, dlLp);
 
             Button rotateBtn = new Button(this);
             rotateBtn.setText("🔄 Rotar");
@@ -9365,7 +9439,7 @@ public class MainActivity extends Activity {
             });
             LinearLayout.LayoutParams rotLp = new LinearLayout.LayoutParams(-2, dp(38));
             rotLp.setMargins(dp(8), 0, 0, 0);
-            osdBar.addView(rotateBtn, rotLp);
+            buttonsRow.addView(rotateBtn, rotLp);
 
             android.widget.FrameLayout.LayoutParams osdLp = new android.widget.FrameLayout.LayoutParams(-2, -2,
                     Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
@@ -9503,6 +9577,33 @@ public class MainActivity extends Activity {
                     showStatus("Video finalizado.");
                     if (status != null)
                         status.setVisibility(android.view.View.VISIBLE);
+
+                    if (currentPlayingTitle != null && !currentPlayingTitle.isEmpty()) {
+                        PlaybackEngine.markWatched(MainActivity.this, currentPlayingTitle);
+                        if (currentPlayingEntry != null && !currentPlayingEntry.isMovie()) {
+                            PlaybackEngine.markWatched(MainActivity.this, currentPlayingEntry.title + " · T" + currentPlayingSeason + " E" + currentPlayingEpisode);
+                        }
+                    }
+
+                    if (currentPlayingEntry != null && !currentPlayingEntry.isMovie() && currentPlayingEpisode > 0) {
+                        final int nextEp = currentPlayingEpisode + 1;
+                        final int currSeason = currentPlayingSeason > 0 ? currentPlayingSeason : 1;
+                        final CatalogData.Entry seriesEntry = currentPlayingEntry;
+                        final String seriesBaseTitle = seriesEntry.title != null ? seriesEntry.title : "";
+                        final String nextTitle = seriesBaseTitle + " · T" + currSeason + " E" + nextEp;
+
+                        android.app.AlertDialog.Builder nextB = new android.app.AlertDialog.Builder(MainActivity.this);
+                        nextB.setTitle("⏭ Capítulo Finalizado");
+                        nextB.setMessage("¿Querés reproducir el siguiente capítulo?\n\n"
+                                + seriesBaseTitle + "\nTemporada " + currSeason + " · Capítulo " + nextEp);
+                        nextB.setPositiveButton("Reproducir Siguiente (Cap. " + nextEp + ")", (d, w) -> {
+                            VideoProvider vp = VideoProviders.find(currentPlayingOrigin);
+                            if (vp == null) vp = VideoProviders.find("CineHax");
+                            playProviderTitle(vp, seriesEntry, currSeason, nextEp, nextTitle);
+                        });
+                        nextB.setNegativeButton("Volver", null);
+                        nextB.show();
+                    }
                 } else if (state == Player.STATE_BUFFERING) {
                     showStatus("Cargando video...");
                     if (status != null)
@@ -9796,88 +9897,109 @@ public class MainActivity extends Activity {
         }
         if (externalPlayer != null && "playing".equals(page)) {
             int key = event.getKeyCode();
-            if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
-                android.view.View curFocus = getCurrentFocus();
-                boolean isOsdFocused = (playerOsdBar != null && (playerOsdBar.hasFocus() || (curFocus != null && curFocus.getParent() == playerOsdBar)));
-
-                if (isOsdFocused) {
-                    scheduleOsdHide(5000);
-                    if (key == KeyEvent.KEYCODE_DPAD_CENTER || key == KeyEvent.KEYCODE_ENTER) {
-                        if (curFocus != null) {
-                            curFocus.performClick();
-                            return true;
-                        }
-                    } else if (key == KeyEvent.KEYCODE_DPAD_DOWN) {
-                        if (playbackView != null) {
-                            playbackView.requestFocus();
-                            return true;
-                        }
-                    } else if (key == KeyEvent.KEYCODE_DPAD_LEFT || key == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                        return super.dispatchKeyEvent(event);
-                    }
-                }
-
+            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                // Adelantar y retroceder con pulsación simple o dejando apretado (repeatCount >= 0)
                 if (key == KeyEvent.KEYCODE_DPAD_LEFT || key == KeyEvent.KEYCODE_MEDIA_REWIND) {
                     scheduleOsdHide(4000);
-                    long newPos = Math.max(0, externalPlayer.getCurrentPosition() - 10000);
+                    long step = event.getRepeatCount() > 4 ? 30000 : 10000;
+                    long newPos = Math.max(0, externalPlayer.getCurrentPosition() - step);
                     externalPlayer.seekTo(newPos);
-                    showPlayerHud("⏪  -10s  (" + PlaybackEngine.formatTime(newPos) + " / "
+                    String titlePrefix = (currentPlayingTitle != null && !currentPlayingTitle.isEmpty())
+                            ? currentPlayingTitle + "\n" : "";
+                    showPlayerHud(titlePrefix + "⏪  -" + (step / 1000) + "s  (" + PlaybackEngine.formatTime(newPos) + " / "
                             + PlaybackEngine.formatTime(externalPlayer.getDuration()) + ")");
                     updateMediaState();
                     return true;
                 } else if (key == KeyEvent.KEYCODE_DPAD_RIGHT || key == KeyEvent.KEYCODE_MEDIA_FAST_FORWARD) {
                     scheduleOsdHide(4000);
-                    long newPos = Math.min(externalPlayer.getDuration(), externalPlayer.getCurrentPosition() + 10000);
+                    long step = event.getRepeatCount() > 4 ? 30000 : 10000;
+                    long newPos = Math.min(externalPlayer.getDuration(), externalPlayer.getCurrentPosition() + step);
                     externalPlayer.seekTo(newPos);
-                    showPlayerHud("⏩  +10s  (" + PlaybackEngine.formatTime(newPos) + " / "
+                    String titlePrefix = (currentPlayingTitle != null && !currentPlayingTitle.isEmpty())
+                            ? currentPlayingTitle + "\n" : "";
+                    showPlayerHud(titlePrefix + "⏩  +" + (step / 1000) + "s  (" + PlaybackEngine.formatTime(newPos) + " / "
                             + PlaybackEngine.formatTime(externalPlayer.getDuration()) + ")");
                     updateMediaState();
                     return true;
-                } else if (key == KeyEvent.KEYCODE_DPAD_CENTER || key == KeyEvent.KEYCODE_ENTER
-                        || key == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-                    scheduleOsdHide(4000);
-                    if (playbackView != null && !playbackView.isControllerFullyVisible()) {
-                        playbackView.showController();
+                }
+
+                if (event.getRepeatCount() == 0) {
+                    android.view.View curFocus = getCurrentFocus();
+                    boolean isOsdFocused = (playerOsdBar != null && (playerOsdBar.hasFocus() || (curFocus != null && curFocus.getParent() == playerOsdBar)));
+
+                    if (isOsdFocused) {
+                        scheduleOsdHide(5000);
+                        if (key == KeyEvent.KEYCODE_DPAD_CENTER || key == KeyEvent.KEYCODE_ENTER) {
+                            if (curFocus != null) {
+                                curFocus.performClick();
+                                return true;
+                            }
+                        } else if (key == KeyEvent.KEYCODE_DPAD_DOWN) {
+                            if (playbackView != null) {
+                                playbackView.requestFocus();
+                                return true;
+                            }
+                        } else if (key == KeyEvent.KEYCODE_DPAD_LEFT || key == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                            return super.dispatchKeyEvent(event);
+                        }
+                    }
+
+                    if (key == KeyEvent.KEYCODE_DPAD_CENTER || key == KeyEvent.KEYCODE_ENTER
+                            || key == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
+                        scheduleOsdHide(4000);
+                        if (playbackView != null && !playbackView.isControllerFullyVisible()) {
+                            playbackView.showController();
+                            if (playerOsdBar != null) {
+                                playerOsdBar.setVisibility(android.view.View.VISIBLE);
+                                playerOsdBar.animate().alpha(1.0f).setDuration(180).start();
+                            }
+                            return true;
+                        }
+                        String titlePrefix = (currentPlayingTitle != null && !currentPlayingTitle.isEmpty())
+                                ? currentPlayingTitle + "\n" : "";
+                        if (externalPlayer.isPlaying()) {
+                            externalPlayer.pause();
+                            showPlayerHud(titlePrefix + "⏸  Pausado");
+                        } else {
+                            externalPlayer.play();
+                            showPlayerHud(titlePrefix + "▶  Reproduciendo");
+                        }
+                        updateMediaState();
+                        return true;
+                    } else if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN) {
+                        scheduleOsdHide(5000);
+                        if (playbackView != null) {
+                            playbackView.showController();
+                        }
                         if (playerOsdBar != null) {
                             playerOsdBar.setVisibility(android.view.View.VISIBLE);
                             playerOsdBar.animate().alpha(1.0f).setDuration(180).start();
+                            android.view.View row = playerOsdBar.getChildAt(1); // buttonsRow
+                            if (row instanceof android.view.ViewGroup && ((android.view.ViewGroup) row).getChildCount() > 0) {
+                                ((android.view.ViewGroup) row).getChildAt(0).requestFocus();
+                                return true;
+                            } else if (playerOsdBar.getChildCount() > 0) {
+                                playerOsdBar.getChildAt(0).requestFocus();
+                                return true;
+                            }
                         }
+                    } else if (key == KeyEvent.KEYCODE_MEDIA_PLAY) {
+                        scheduleOsdHide(4000);
+                        externalPlayer.play();
+                        String titlePrefix = (currentPlayingTitle != null && !currentPlayingTitle.isEmpty())
+                                ? currentPlayingTitle + "\n" : "";
+                        showPlayerHud(titlePrefix + "▶  Reproduciendo");
+                        updateMediaState();
+                        return true;
+                    } else if (key == KeyEvent.KEYCODE_MEDIA_PAUSE) {
+                        scheduleOsdHide(4000);
+                        externalPlayer.pause();
+                        String titlePrefix = (currentPlayingTitle != null && !currentPlayingTitle.isEmpty())
+                                ? currentPlayingTitle + "\n" : "";
+                        showPlayerHud(titlePrefix + "⏸  Pausado");
+                        updateMediaState();
                         return true;
                     }
-                    if (externalPlayer.isPlaying()) {
-                        externalPlayer.pause();
-                        showPlayerHud("⏸  Pausado");
-                    } else {
-                        externalPlayer.play();
-                        showPlayerHud("▶  Reproduciendo");
-                    }
-                    updateMediaState();
-                    return true;
-                } else if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN) {
-                    scheduleOsdHide(5000);
-                    if (playbackView != null) {
-                        playbackView.showController();
-                    }
-                    if (playerOsdBar != null) {
-                        playerOsdBar.setVisibility(android.view.View.VISIBLE);
-                        playerOsdBar.animate().alpha(1.0f).setDuration(180).start();
-                        if (playerOsdBar.getChildCount() > 0) {
-                            playerOsdBar.getChildAt(0).requestFocus();
-                            return true;
-                        }
-                    }
-                } else if (key == KeyEvent.KEYCODE_MEDIA_PLAY) {
-                    scheduleOsdHide(4000);
-                    externalPlayer.play();
-                    showPlayerHud("▶  Reproduciendo");
-                    updateMediaState();
-                    return true;
-                } else if (key == KeyEvent.KEYCODE_MEDIA_PAUSE) {
-                    scheduleOsdHide(4000);
-                    externalPlayer.pause();
-                    showPlayerHud("⏸  Pausado");
-                    updateMediaState();
-                    return true;
                 }
             }
         }
