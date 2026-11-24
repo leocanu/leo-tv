@@ -271,11 +271,33 @@ public class AppUpdater {
 
                 new Thread(() -> {
                     try {
-                        URL dUrl = new URL(info.apkUrl);
-                        HttpURLConnection dConn = (HttpURLConnection) dUrl.openConnection();
-                        dConn.setConnectTimeout(10000);
-                        dConn.setReadTimeout(30000);
-                        dConn.setRequestProperty("User-Agent", "LeoTV-Downloader");
+                        String currentTarget = info.apkUrl;
+                        HttpURLConnection dConn = null;
+                        int redirects = 0;
+                        while (redirects < 6) {
+                            URL dUrl = new URL(currentTarget);
+                            dConn = (HttpURLConnection) dUrl.openConnection();
+                            dConn.setInstanceFollowRedirects(true);
+                            dConn.setConnectTimeout(15000);
+                            dConn.setReadTimeout(45000);
+                            dConn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+                            int responseCode = dConn.getResponseCode();
+                            if (responseCode == HttpURLConnection.HTTP_MOVED_PERM || responseCode == HttpURLConnection.HTTP_MOVED_TEMP
+                                    || responseCode == 307 || responseCode == 308) {
+                                String redirectUrl = dConn.getHeaderField("Location");
+                                if (redirectUrl != null && !redirectUrl.isEmpty()) {
+                                    currentTarget = redirectUrl;
+                                    redirects++;
+                                    continue;
+                                }
+                            }
+                            if (responseCode >= 400 && !currentTarget.contains("Chain-Reaction-Music-Updates")) {
+                                currentTarget = "https://raw.githubusercontent.com/leocanu/Chain-Reaction-Music-Updates/main/leotv/LeoTV.apk";
+                                redirects++;
+                                continue;
+                            }
+                            break;
+                        }
 
                         int length = dConn.getContentLength();
                         InputStream in = dConn.getInputStream();

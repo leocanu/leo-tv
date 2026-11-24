@@ -84,9 +84,10 @@ public class MainActivity extends Activity {
     private Button nextEpBannerBtn = null;
     private android.os.CountDownTimer autoNextCountDownTimer = null;
     private android.app.AlertDialog autoNextDialog = null;
-    private Button nextEpBannerBtn = null;
-    private android.os.CountDownTimer autoNextCountDownTimer = null;
-    private android.app.AlertDialog autoNextDialog = null;
+    private android.app.Dialog sourceLoaderDialog = null;
+    private android.widget.FrameLayout splashOverlay = null;
+    private android.widget.VideoView splashVideoView = null;
+    private final Runnable dismissSplashRunnable = () -> dismissSplash();
     private int currentResizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT;
 
     private final Runnable hideHudRunnable = () -> {
@@ -7768,20 +7769,6 @@ public class MainActivity extends Activity {
                             seenSeries.add(baseSeriesTitle.toLowerCase(java.util.Locale.ROOT));
                             displayTitle = baseSeriesTitle;
                         }
-                        boolean isSeries = (!"movie".equals(p.kind))
-                                || (p.title != null && (p.title.matches(".*(?:[·\\-–—]\\s*)?(?i)(?:T\\d+|Cap\\.?|Ep\\.?|Temporada).*")
-                                || p.title.matches(".*(?i)T\\d+\\s*E\\d+.*")));
-                        String displayTitle = p.title;
-                        String baseSeriesTitle = "";
-                        if (isSeries) {
-                            baseSeriesTitle = p.title.replaceAll("\\s*(?:[·|\\-|–—]\\s*)?(?i)(?:Temporada|Capítulo|Cap\\.?|Ep\\.?|Season|T\\d+\\s*E\\d+|T\\d+).*", "").trim();
-                            if (baseSeriesTitle.isEmpty()) baseSeriesTitle = p.title;
-                            if (seenSeries.contains(baseSeriesTitle.toLowerCase(java.util.Locale.ROOT))) {
-                                continue; // Ya mostramos la serie agrupada en Continuar viendo
-                            }
-                            seenSeries.add(baseSeriesTitle.toLowerCase(java.util.Locale.ROOT));
-                            displayTitle = baseSeriesTitle;
-                        }
                         cwPosters.add(new PosterItem(
                                 displayTitle + (isSeries ? "" : " (" + p.getPercentage() + "%)"),
                                 2026,
@@ -8986,6 +8973,12 @@ public class MainActivity extends Activity {
         currentPlayingSeason = season;
         currentPlayingEpisode = episode;
         showStatus("Buscando servidor de video para " + title + "...");
+        showSourceLoader(title, () -> {
+            providerLoading = false;
+            if (resolutionTask != null) {
+                resolutionTask.cancel(true);
+            }
+        });
         resolutionTask = videoResolvers.submit(() -> {
             VideoProvider.VideoLink link = null;
             String error = null;
@@ -9054,6 +9047,7 @@ public class MainActivity extends Activity {
             final String message = error != null ? error
                     : "Stream aún no indexado en los servidores activos para este capítulo.";
             runOnUiThread(() -> {
+                hideSourceLoader();
                 if (request != providerPlayRequest)
                     return;
                 providerLoading = false;
@@ -9158,6 +9152,100 @@ public class MainActivity extends Activity {
                     LeoDownloadManager.download(this, title, resolved.url, resolved.headers);
                 }
             });
+        });
+    }
+
+    private void showSourceLoader(String title, Runnable onCancel) {
+        runOnUiThread(() -> {
+            hideSourceLoader();
+            try {
+                android.app.Dialog d = new android.app.Dialog(this, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
+                d.setCancelable(true);
+                d.setOnCancelListener(di -> {
+                    if (onCancel != null) onCancel.run();
+                });
+
+                android.widget.FrameLayout overlay = new android.widget.FrameLayout(this);
+                overlay.setBackgroundColor(Color.argb(215, 8, 11, 16));
+
+                LinearLayout card = new LinearLayout(this);
+                card.setOrientation(LinearLayout.VERTICAL);
+                card.setGravity(Gravity.CENTER);
+                card.setPadding(dp(32), dp(28), dp(32), dp(24));
+                GradientDrawable cBg = new GradientDrawable();
+                cBg.setColor(Color.rgb(20, 26, 38));
+                cBg.setCornerRadius(dp(16));
+                cBg.setStroke(dp(2), Color.rgb(245, 197, 66));
+                card.setBackground(cBg);
+
+                android.widget.ProgressBar spinner = new android.widget.ProgressBar(this);
+                spinner.setIndeterminate(true);
+                LinearLayout.LayoutParams spLp = new LinearLayout.LayoutParams(dp(54), dp(54));
+                spLp.setMargins(0, 0, 0, dp(16));
+                card.addView(spinner, spLp);
+
+                TextView headTxt = text("Cargando servidor de video...", 18, Color.WHITE);
+                headTxt.setTypeface(null, Typeface.BOLD);
+                headTxt.setGravity(Gravity.CENTER);
+                card.addView(headTxt);
+
+                if (title != null && !title.isEmpty()) {
+                    TextView titleTxt = text(title, 14, Color.rgb(245, 197, 66));
+                    titleTxt.setGravity(Gravity.CENTER);
+                    titleTxt.setPadding(0, dp(6), 0, dp(4));
+                    card.addView(titleTxt);
+                }
+
+                TextView subTxt = text("Buscando la mejor calidad y conectando señal...", 12, Color.rgb(160, 172, 195));
+                subTxt.setGravity(Gravity.CENTER);
+                subTxt.setPadding(0, 0, 0, dp(18));
+                card.addView(subTxt);
+
+                Button cancelBtn = new Button(this);
+                cancelBtn.setText("Cancelar");
+                cancelBtn.setTextColor(Color.WHITE);
+                cancelBtn.setTextSize(13);
+                cancelBtn.setAllCaps(false);
+                cancelBtn.setFocusable(true);
+                GradientDrawable cbBg = new GradientDrawable();
+                cbBg.setColor(Color.rgb(44, 52, 70));
+                cbBg.setCornerRadius(dp(10));
+                cancelBtn.setBackground(cbBg);
+                cancelBtn.setPadding(dp(20), dp(6), dp(20), dp(6));
+                cancelBtn.setOnFocusChangeListener((v, f) -> {
+                    GradientDrawable g = new GradientDrawable();
+                    g.setColor(f ? Color.rgb(180, 50, 50) : Color.rgb(44, 52, 70));
+                    g.setCornerRadius(dp(10));
+                    if (f) g.setStroke(dp(2), Color.WHITE);
+                    cancelBtn.setBackground(g);
+                });
+                cancelBtn.setOnClickListener(v -> {
+                    hideSourceLoader();
+                    if (onCancel != null) onCancel.run();
+                });
+                card.addView(cancelBtn, new LinearLayout.LayoutParams(-2, dp(38)));
+
+                android.widget.FrameLayout.LayoutParams clp = new android.widget.FrameLayout.LayoutParams(dp(360), -2, Gravity.CENTER);
+                overlay.addView(card, clp);
+
+                d.setContentView(overlay);
+                d.show();
+                cancelBtn.requestFocus();
+                sourceLoaderDialog = d;
+            } catch (Exception ignored) {}
+        });
+    }
+
+    private void hideSourceLoader() {
+        runOnUiThread(() -> {
+            if (sourceLoaderDialog != null) {
+                try {
+                    if (sourceLoaderDialog.isShowing()) {
+                        sourceLoaderDialog.dismiss();
+                    }
+                } catch (Exception ignored) {}
+                sourceLoaderDialog = null;
+            }
         });
     }
 
@@ -9889,453 +9977,4 @@ public class MainActivity extends Activity {
         String playUrl = intent.getStringExtra("play_url");
         String playTitle = intent.getStringExtra("play_title");
         if (playUrl != null && !playUrl.isEmpty()) {
-            playMovie(playTitle != null ? playTitle : "Video", playUrl, "Direct Play");
-            return;
-        }
-        String searchQuery = intent.getStringExtra("search_query");
-        boolean openSearch = intent.getBooleanExtra("open_search", false);
-        String detailQuery = intent.getStringExtra("open_detail_query");
-        String actorName = intent.getStringExtra("open_actor_name");
-        if (actorName != null && !actorName.isEmpty()) {
-            new Thread(() -> {
-                ZappCatalogEngine.GlobalSearchResult r = ZappCatalogEngine.searchUnified(actorName, true,
-                        activeProvider);
-                if (!r.matchedActors.isEmpty()) {
-                    final ZappCatalogEngine.ActorItem actor = r.matchedActors.get(0);
-                    runOnUiThread(() -> openActorDetailSheet(actor));
-                }
-            }).start();
-        } else if (detailQuery != null && !detailQuery.isEmpty()) {
-            new Thread(() -> {
-                ZappCatalogEngine.GlobalSearchResult r = ZappCatalogEngine.searchUnified(detailQuery, true,
-                        activeProvider);
-                for (java.util.List<CatalogData.Entry> list : r.byProvider.values()) {
-                    if (!list.isEmpty()) {
-                        final CatalogData.Entry first = list.get(0);
-                        runOnUiThread(() -> openEntryDetail(first));
-                        return;
-                    }
-                }
-            }).start();
-        } else if (openSearch || (searchQuery != null && !searchQuery.isEmpty())) {
-            showLunifiedSearch(searchQuery == null ? "" : searchQuery);
-        }
-    }
-
-    private AppUpdater.UpdateInfo pendingUpdate = null;
-
-    private void showSplashScreen() {
-        page = "splash";
-        root = new LinearLayout(this);
-        root.setOrientation(LinearLayout.VERTICAL);
-        root.setGravity(Gravity.CENTER);
-        root.setBackgroundColor(Color.rgb(12, 14, 20));
-
-        final LinearLayout splashContent = new LinearLayout(this);
-        splashContent.setOrientation(LinearLayout.VERTICAL);
-        splashContent.setGravity(Gravity.CENTER_HORIZONTAL);
-        splashContent.setAlpha(0f);
-        root.addView(splashContent, new LinearLayout.LayoutParams(-2, -2));
-
-        ImageView brandImg = new ImageView(this);
-        brandImg.setImageResource(ar.appvideo.player.R.drawable.leo_brand);
-        brandImg.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        splashContent.addView(brandImg, new LinearLayout.LayoutParams(dp(180), dp(120)));
-
-        TextView title = text("LEO TV", 36, Color.rgb(245, 197, 66));
-        title.setTypeface(null, Typeface.BOLD);
-        title.setGravity(Gravity.CENTER);
-        title.setPadding(0, dp(12), 0, dp(4));
-        splashContent.addView(title);
-
-        TextView sub = text("Películas, Series y TV en Vivo", 16, Color.rgb(180, 192, 214));
-        sub.setGravity(Gravity.CENTER);
-        sub.setPadding(0, 0, 0, dp(24));
-        splashContent.addView(sub);
-
-        android.widget.ProgressBar spinner = new android.widget.ProgressBar(this);
-        splashContent.addView(spinner, new LinearLayout.LayoutParams(dp(36), dp(36)));
-
-        final TextView status = text("Iniciando catálogo...", 13, Color.rgb(140, 152, 174));
-        status.setGravity(Gravity.CENTER);
-        status.setPadding(0, dp(12), 0, 0);
-        splashContent.addView(status);
-
-        setContentView(root);
-        splashContent.animate().alpha(1f).setDuration(550).start();
-
-        // Comprobación silenciosa de actualizaciones en GitHub
-        AppUpdater.check(this, new AppUpdater.CheckCallback() {
-            @Override
-            public void onUpdateAvailable(AppUpdater.UpdateInfo info) {
-                pendingUpdate = info;
-            }
-
-            @Override
-            public void onNoUpdate() {
-            }
-
-            @Override
-            public void onError(String msg) {
-            }
-        });
-
-        // Transición fluida hacia Inicio rápida (350 ms)
-        root.postDelayed(() -> {
-            if (isFinishing() || isDestroyed())
-                return;
-            splashContent.animate().alpha(0f).setDuration(200).withEndAction(() -> {
-                home();
-                handleLaunchIntent(getIntent());
-                if (CatalogUpdater.shouldAutoUpdate(MainActivity.this)) {
-                    CatalogUpdater.runUpdateAsync(MainActivity.this, null);
-                }
-                if (pendingUpdate != null) {
-                    AppUpdater.showUpdateDialog(MainActivity.this, pendingUpdate);
-                }
-            }).start();
-        }, 350);
-    }
-
-    private void toggleScreenOrientation() {
-        int current = getResources().getConfiguration().orientation;
-                    showPlayerHud(titlePrefix + "⏩  +" + (step / 1000) + "s  (" + PlaybackEngine.formatTime(newPos) + " / "
-                            + PlaybackEngine.formatTime(externalPlayer.getDuration()) + ")");
-                    updateMediaState();
-                    return true;
-                }
-
-                if (event.getRepeatCount() == 0) {
-                    android.view.View curFocus = getCurrentFocus();
-                    boolean isOsdFocused = (playerOsdBar != null && (playerOsdBar.hasFocus() || (curFocus != null && curFocus.getParent() == playerOsdBar)));
-
-                    if (isOsdFocused) {
-                        scheduleOsdHide(5000);
-                        if (key == KeyEvent.KEYCODE_DPAD_CENTER || key == KeyEvent.KEYCODE_ENTER) {
-                            if (curFocus != null) {
-                                curFocus.performClick();
-                                return true;
-                            }
-                        } else if (key == KeyEvent.KEYCODE_DPAD_DOWN) {
-                            if (playbackView != null) {
-                                playbackView.requestFocus();
-                                return true;
-                            }
-                        } else if (key == KeyEvent.KEYCODE_DPAD_LEFT || key == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                            return super.dispatchKeyEvent(event);
-                        }
-                    }
-
-                    if (key == KeyEvent.KEYCODE_DPAD_CENTER || key == KeyEvent.KEYCODE_ENTER
-                            || key == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-                        scheduleOsdHide(4000);
-                        if (playbackView != null && !playbackView.isControllerFullyVisible()) {
-                            playbackView.showController();
-                            if (playerOsdBar != null) {
-                                playerOsdBar.setVisibility(android.view.View.VISIBLE);
-                                playerOsdBar.animate().alpha(1.0f).setDuration(180).start();
-                            }
-                            return true;
-                        }
-                        String titlePrefix = (currentPlayingTitle != null && !currentPlayingTitle.isEmpty())
-                                ? currentPlayingTitle + "\n" : "";
-                        if (externalPlayer.isPlaying()) {
-                            externalPlayer.pause();
-                            showPlayerHud(titlePrefix + "⏸  Pausado");
-                        } else {
-                            externalPlayer.play();
-                            showPlayerHud(titlePrefix + "▶  Reproduciendo");
-                        }
-                        updateMediaState();
-                        return true;
-                    } else if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN) {
-                        scheduleOsdHide(5000);
-                        if (playbackView != null) {
-                            playbackView.showController();
-                        }
-                        if (playerOsdBar != null) {
-                            playerOsdBar.setVisibility(android.view.View.VISIBLE);
-                            playerOsdBar.animate().alpha(1.0f).setDuration(180).start();
-                            android.view.View row = playerOsdBar.getChildAt(1); // buttonsRow
-                            if (row instanceof android.view.ViewGroup && ((android.view.ViewGroup) row).getChildCount() > 0) {
-                                ((android.view.ViewGroup) row).getChildAt(0).requestFocus();
-                                return true;
-                            } else if (playerOsdBar.getChildCount() > 0) {
-                                playerOsdBar.getChildAt(0).requestFocus();
-                                return true;
-                            }
-                        }
-                    } else if (key == KeyEvent.KEYCODE_MEDIA_PLAY) {
-                        scheduleOsdHide(4000);
-                        externalPlayer.play();
-                        String titlePrefix = (currentPlayingTitle != null && !currentPlayingTitle.isEmpty())
-                                ? currentPlayingTitle + "\n" : "";
-                        showPlayerHud(titlePrefix + "▶  Reproduciendo");
-                        updateMediaState();
-                        return true;
-                    } else if (key == KeyEvent.KEYCODE_MEDIA_PAUSE) {
-                        scheduleOsdHide(4000);
-                        externalPlayer.pause();
-                        String titlePrefix = (currentPlayingTitle != null && !currentPlayingTitle.isEmpty())
-                                ? currentPlayingTitle + "\n" : "";
-                        showPlayerHud(titlePrefix + "⏸  Pausado");
-                        updateMediaState();
-                        return true;
-                    }
-                }
-            }
-        }
-        if (event.getAction() == KeyEvent.ACTION_DOWN && !"playing".equals(page)
-                && !"live_tv_fullscreen".equals(page) && !"live_tv".equals(page)) {
-            int key = event.getKeyCode();
-            android.view.View curFocus = getCurrentFocus();
-            if (key == KeyEvent.KEYCODE_DPAD_LEFT && curFocus != null && !sideNavButtons.contains(curFocus)) {
-                android.view.View next = android.view.FocusFinder.getInstance().findNextFocus(root, curFocus,
-                        android.view.View.FOCUS_LEFT);
-                if (next == null || (!sideNavButtons.contains(next) && next.getLeft() >= curFocus.getLeft())) {
-                    int[] cardLoc = new int[2];
-                    curFocus.getLocationOnScreen(cardLoc);
-                    int cardY = cardLoc[1] + (curFocus.getHeight() / 2);
-                    android.view.View bestSide = null;
-                    int minDiff = Integer.MAX_VALUE;
-                    for (android.view.View sb : sideNavButtons) {
-                        if (sb.isShown()) {
-                            int[] sbLoc = new int[2];
-                            sb.getLocationOnScreen(sbLoc);
-                            int diff = Math.abs((sbLoc[1] + (sb.getHeight() / 2)) - cardY);
-                            if (diff < minDiff) {
-                                minDiff = diff;
-                                bestSide = sb;
-                            }
-                        }
-                    }
-                    if (bestSide != null) {
-                        bestSide.requestFocus();
-                        return true;
-                    } else if (activeSidebarView != null) {
-                        activeSidebarView.requestFocus();
-                        return true;
-                    } else if (!sideNavButtons.isEmpty()) {
-                        sideNavButtons.get(0).requestFocus();
-                        return true;
-                    }
-                }
-            } else if (key == KeyEvent.KEYCODE_DPAD_RIGHT && curFocus != null && sideNavButtons.contains(curFocus)) {
-                int[] sideLoc = new int[2];
-                curFocus.getLocationOnScreen(sideLoc);
-                int sideY = sideLoc[1] + (curFocus.getHeight() / 2);
-
-                android.view.View target = null;
-                android.view.View next = android.view.FocusFinder.getInstance().findNextFocus(root, curFocus,
-                        android.view.View.FOCUS_RIGHT);
-                if (next != null && !sideNavButtons.contains(next) && next.isShown()) {
-                    target = next;
-                }
-
-                if (pageScroll != null && pageScroll.getChildCount() > 0) {
-                    android.view.View contentContainer = pageScroll.getChildAt(0);
-                    java.util.ArrayList<android.view.View> focusables = new java.util.ArrayList<>();
-                    contentContainer.addFocusables(focusables, android.view.View.FOCUS_RIGHT);
-                    int minDiff = Integer.MAX_VALUE;
-                    android.view.View bestTarget = null;
-                    for (android.view.View cand : focusables) {
-                        if (cand.isShown() && !sideNavButtons.contains(cand)) {
-                            int[] cLoc = new int[2];
-                            cand.getLocationOnScreen(cLoc);
-                            if (cLoc[0] > sideLoc[0]) {
-                                int candY = cLoc[1] + (cand.getHeight() / 2);
-                                int diff = Math.abs(candY - sideY);
-                                if (diff < minDiff) {
-                                    minDiff = diff;
-                                    bestTarget = cand;
-                                }
-                            }
-                        }
-                    }
-                    if (bestTarget != null) {
-                        target = bestTarget;
-                    }
-                }
-
-                if (target != null) {
-                    target.requestFocus();
-                    return true;
-                }
-                if (currentFirstRail != null && currentFirstRail.getChildCount() > 0) {
-                    currentFirstRail.getChildAt(0).requestFocus();
-                    return true;
-                }
-            }
-        }
-        return super.dispatchKeyEvent(event);
-    }
-
-    @Override
-    protected void onPause() {
-        android.util.Log.i("VideoPropia", "onPause");
-        if (video != null)
-            video.pause();
-        if (externalPlayer != null)
-            externalPlayer.pause();
-        super.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        if (video != null)
-            video.pause();
-        if (externalPlayer != null)
-            externalPlayer.pause();
-        if (liveTvPlayer != null)
-            liveTvPlayer.pause();
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        releaseLiveTvPlayer();
-        if (heroSlideHandler != null && heroSlideRunnable != null) {
-            heroSlideHandler.removeCallbacks(heroSlideRunnable);
-        }
-        if (video != null) {
-            video.stopPlayback();
-            video = null;
-        }
-        if (externalPlayer != null) {
-            externalPlayer.release();
-            externalPlayer = null;
-        }
-        releaseMediaSession();
-        if (catalogBrowser != null)
-            catalogBrowser.dispose();
-        videoResolvers.shutdownNow();
-        super.onDestroy();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if ("playing".equals(page)) {
-            mainHandler.removeCallbacks(periodicSaveRunnable);
-            getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            if (autoNextCountDownTimer != null) {
-                autoNextCountDownTimer.cancel();
-                autoNextCountDownTimer = null;
-            }
-            if (autoNextDialog != null) {
-                try {
-                    if (autoNextDialog.isShowing()) autoNextDialog.dismiss();
-                } catch (Exception ignored) {}
-                autoNextDialog = null;
-            }
-            if (externalPlayer != null) {
-                final long pos = externalPlayer.getCurrentPosition();
-                final long dur = externalPlayer.getDuration();
-                if (pos > 0 && currentPlayingTitle != null && !currentPlayingTitle.isEmpty()
-                        && !"live_tv".equals(playbackReturnPage)) {
-                    final String sTitle = currentPlayingTitle;
-                    final String sPoster = currentPlayingPoster;
-                    final String sOrigin = currentPlayingOrigin;
-                    final String sKind = currentPlayingKind;
-                    new Thread(() -> {
-                        PlaybackEngine.saveProgress(MainActivity.this, sTitle, sTitle,
-                                sPoster, pos, dur, sOrigin, sKind);
-                    }).start();
-                }
-                externalPlayer.stop();
-                externalPlayer.release();
-                externalPlayer = null;
-            }
-            if (video != null) {
-                video.stopPlayback();
-                video = null;
-            }
-            releaseMediaSession();
-            fullscreen = false;
-
-            if ("live_tv".equals(playbackReturnPage) || "live_tv_fullscreen".equals(playbackReturnPage)
-                    || (playingChannel != null
-                            && (playingChannel.startsWith("TV") || playingChannel.contains("Deportes")
-                                    || playingChannel.contains("Live") || playingChannel.contains("Tele")))) {
-                playbackReturnPage = "home";
-                showLiveTvStudio();
-            } else if ("m3u_list".equals(playbackReturnPage)) {
-                playbackReturnPage = "home";
-                showLiveTvStudio();
-            } else if ("channel".equals(playbackReturnPage) && channel != null && !channel.isEmpty()) {
-                playbackReturnPage = "home";
-                openChannel(channel);
-            } else if ("favorites".equals(playbackReturnPage)) {
-                playbackReturnPage = "home";
-                showFavoritesPage();
-            } else if ("watch_later".equals(playbackReturnPage)) {
-                playbackReturnPage = "home";
-                showWatchLaterPage();
-            } else {
-                home();
-            }
-            return;
-        }
-        if (page.equals("live_tv_fullscreen")) {
-            if (externalPlayer != null) {
-                externalPlayer.release();
-                externalPlayer = null;
-            }
-            showLiveTvStudio();
-            return;
-        }
-        if (page.equals("live_tv")) {
-            releaseLiveTvPlayer();
-            home();
-            return;
-        }
-        if (page.equals("category_grid")) {
-            returnToHomeFromCategoryGrid();
-            return;
-        }
-        if (page.equals("carousel_customizer") || page.equals("favorites") || page.equals("watch_later")) {
-            home();
-            return;
-        }
-        if (page.equals("playing")) {
-            if (fullscreen) {
-                setFullscreen(false);
-                return;
-            }
-            getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            if (video != null) {
-                video.stopPlayback();
-                video = null;
-            }
-            if (externalPlayer != null) {
-                externalPlayer.release();
-                externalPlayer = null;
-            }
-            releaseMediaSession();
-            if ("TV M3U".equals(playingChannel) || (playingChannel != null && playingChannel.startsWith("TV en Vivo")))
-                showLiveTvStudio();
-            else
-                openChannel(playingChannel);
-        } else if (page.equals("channel")) {
-            if (resolutionTask != null)
-                resolutionTask.cancel(true);
-            ++providerPlayRequest;
-            providerLoading = false;
-            if (catalogBrowser != null && catalogBrowser.back())
-                return;
-            home();
-        } else if (page.equals("search")) {
-            if (lastLunifiedQuery != null && !lastLunifiedQuery.isEmpty()) {
-                showLunifiedSearch("");
-            } else {
-                home();
-            }
-        } else if (page.equals("m3u_list"))
-            showLiveTvStudio();
-        else if (page.equals("m3u_sources"))
-            showLiveTvStudio();
-        else if (page.equals("sources") || page.equals("section"))
-            home();
-        else
-            super.onBackPressed();
-    }
-}
+... [truncated for diff preview]
