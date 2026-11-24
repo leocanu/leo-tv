@@ -9977,4 +9977,553 @@ public class MainActivity extends Activity {
         String playUrl = intent.getStringExtra("play_url");
         String playTitle = intent.getStringExtra("play_title");
         if (playUrl != null && !playUrl.isEmpty()) {
-... [truncated for diff preview]
+            playMovie(playTitle != null ? playTitle : "Video", playUrl, "Direct Play");
+            return;
+        }
+        String searchQuery = intent.getStringExtra("search_query");
+        boolean openSearch = intent.getBooleanExtra("open_search", false);
+        String detailQuery = intent.getStringExtra("open_detail_query");
+        String actorName = intent.getStringExtra("open_actor_name");
+        if (actorName != null && !actorName.isEmpty()) {
+            new Thread(() -> {
+                ZappCatalogEngine.GlobalSearchResult r = ZappCatalogEngine.searchUnified(actorName, true,
+                        activeProvider);
+                if (!r.matchedActors.isEmpty()) {
+                    final ZappCatalogEngine.ActorItem actor = r.matchedActors.get(0);
+                    runOnUiThread(() -> openActorDetailSheet(actor));
+                }
+            }).start();
+        } else if (detailQuery != null && !detailQuery.isEmpty()) {
+            new Thread(() -> {
+                ZappCatalogEngine.GlobalSearchResult r = ZappCatalogEngine.searchUnified(detailQuery, true,
+                        activeProvider);
+                for (java.util.List<CatalogData.Entry> list : r.byProvider.values()) {
+                    if (!list.isEmpty()) {
+                        final CatalogData.Entry first = list.get(0);
+                        runOnUiThread(() -> openEntryDetail(first));
+                        return;
+                    }
+                }
+            }).start();
+        } else if (openSearch || (searchQuery != null && !searchQuery.isEmpty())) {
+            showLunifiedSearch(searchQuery == null ? "" : searchQuery);
+        }
+    }
+
+    private AppUpdater.UpdateInfo pendingUpdate = null;
+
+    private void showSplashScreen() {
+        page = "splash";
+
+        // Pre-cargar Home inmediatamente en segundo plano
+        // para que durante los 8 segundos del video se descarguen catálogos e imágenes de pósters
+        home();
+
+        splashOverlay = new android.widget.FrameLayout(this);
+        splashOverlay.setBackgroundColor(Color.BLACK);
+        splashOverlay.setFocusable(true);
+        splashOverlay.setFocusableInTouchMode(true);
+
+        splashVideoView = new android.widget.VideoView(this);
+        android.widget.FrameLayout.LayoutParams vvLp = new android.widget.FrameLayout.LayoutParams(
+                android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
+                android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
+                Gravity.CENTER);
+        splashOverlay.addView(splashVideoView, vvLp);
+
+        TextView skipBadge = text("Presioná  [OK]  para saltar", 13, Color.argb(210, 240, 240, 240));
+        skipBadge.setPadding(dp(16), dp(8), dp(16), dp(8));
+        GradientDrawable sbBg = new GradientDrawable();
+        sbBg.setColor(Color.argb(160, 16, 22, 34));
+        sbBg.setCornerRadius(dp(12));
+        sbBg.setStroke(dp(1), Color.argb(120, 245, 197, 66));
+        skipBadge.setBackground(sbBg);
+        android.widget.FrameLayout.LayoutParams sblp = new android.widget.FrameLayout.LayoutParams(-2, -2,
+                Gravity.BOTTOM | Gravity.END);
+        sblp.setMargins(0, 0, dp(32), dp(28));
+        splashOverlay.addView(skipBadge, sblp);
+
+        splashOverlay.setOnClickListener(v -> dismissSplash());
+        splashOverlay.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_UP) {
+                dismissSplash();
+                return true;
+            }
+            return false;
+        });
+
+        // Comprobación silenciosa de actualizaciones en GitHub
+        AppUpdater.check(this, new AppUpdater.CheckCallback() {
+            @Override
+            public void onUpdateAvailable(AppUpdater.UpdateInfo info) {
+                pendingUpdate = info;
+            }
+
+            @Override
+            public void onNoUpdate() {}
+
+            @Override
+            public void onError(String msg) {}
+        });
+
+        getWindow().addContentView(splashOverlay,
+                new android.view.ViewGroup.LayoutParams(
+                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                        android.view.ViewGroup.LayoutParams.MATCH_PARENT));
+        splashOverlay.requestFocus();
+
+        try {
+            Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.splash);
+            splashVideoView.setVideoURI(videoUri);
+            splashVideoView.setOnPreparedListener(mp -> {
+                mp.setLooping(false);
+                splashVideoView.start();
+            });
+            splashVideoView.setOnCompletionListener(mp -> dismissSplash());
+            splashVideoView.setOnErrorListener((mp, what, extra) -> {
+                dismissSplash();
+                return true;
+            });
+        } catch (Exception ex) {
+            dismissSplash();
+        }
+
+        // Temporizador de seguridad (8.5 segundos)
+        mainHandler.postDelayed(dismissSplashRunnable, 8500);
+    }
+
+    private void dismissSplash() {
+        runOnUiThread(() -> {
+            mainHandler.removeCallbacks(dismissSplashRunnable);
+            if (splashOverlay == null) return;
+            final android.view.View toDismiss = splashOverlay;
+            splashOverlay = null;
+            if (splashVideoView != null) {
+                try {
+                    splashVideoView.stopPlayback();
+                } catch (Exception ignored) {}
+                splashVideoView = null;
+            }
+            toDismiss.animate().alpha(0f).setDuration(400).withEndAction(() -> {
+                try {
+                    if (toDismiss.getParent() instanceof android.view.ViewGroup) {
+                        ((android.view.ViewGroup) toDismiss.getParent()).removeView(toDismiss);
+                    }
+                } catch (Exception ignored) {}
+                page = "home";
+                handleLaunchIntent(getIntent());
+                if (CatalogUpdater.shouldAutoUpdate(MainActivity.this)) {
+                    CatalogUpdater.runUpdateAsync(MainActivity.this, null);
+                }
+                if (pendingUpdate != null) {
+                    AppUpdater.showUpdateDialog(MainActivity.this, pendingUpdate);
+                }
+            }).start();
+        });
+    }
+
+    private void toggleScreenOrientation() {
+        int current = getResources().getConfiguration().orientation;
+        if (current == android.content.res.Configuration.ORIENTATION_PORTRAIT) {
+            setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+            Toast.makeText(this, "Pantalla en modo horizontal 🔄", Toast.LENGTH_SHORT).show();
+        } else {
+            setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            Toast.makeText(this, "Pantalla en modo vertical 🔄", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(android.content.res.Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if ("home".equals(page)) {
+            home();
+        } else if ("playing".equals(page)) {
+            if (fullscreen) {
+                setFullscreen(true);
+            }
+        }
+    }
+
+    @Override
+    public void onCreate(Bundle state) {
+        super.onCreate(state);
+        try {
+            setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        } catch (Exception ignored) {
+        }
+        LeoDownloadManager.checkPermissions(this);
+        loadChannels();
+        loadCatalog();
+        loadAudit();
+        showSplashScreen();
+    }
+
+    @Override
+    protected void onNewIntent(android.content.Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleLaunchIntent(intent);
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (splashOverlay != null) {
+            if (event.getAction() == KeyEvent.ACTION_UP) {
+                dismissSplash();
+                return true;
+            }
+            return true;
+        }
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                if ("playing".equals(page)) {
+                    if (playbackView != null && playbackView.isControllerFullyVisible()) {
+                        playbackView.hideController();
+                        return true;
+                    }
+                    if (playerOsdBar != null && playerOsdBar.getVisibility() == android.view.View.VISIBLE) {
+                        hidePlayerOsd();
+                        return true;
+                    }
+                }
+                return true;
+            }
+            if (event.getAction() == KeyEvent.ACTION_UP) {
+                onBackPressed();
+                return true;
+            }
+        }
+        if (page.equals("playing") && event.getKeyCode() == KeyEvent.KEYCODE_MENU) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
+                if (playbackView != null) {
+                    if (playbackView.isControllerFullyVisible()) {
+                        playbackView.hideController();
+                    } else {
+                        playbackView.showController();
+                        if (playerOsdBar != null) {
+                            playerOsdBar.setVisibility(android.view.View.VISIBLE);
+                            playerOsdBar.animate().alpha(1.0f).setDuration(180).start();
+                            if (playerOsdBar.getChildCount() > 0) {
+                                playerOsdBar.getChildAt(0).requestFocus();
+                            }
+                        }
+                    }
+                }
+                return true;
+            }
+        }
+        if (page.equals("playing") && externalPlayer != null) {
+            int key = event.getKeyCode();
+            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                if (key == KeyEvent.KEYCODE_DPAD_RIGHT || key == KeyEvent.KEYCODE_DPAD_LEFT) {
+                    scheduleOsdHide(4000);
+                    long curPos = externalPlayer.getCurrentPosition();
+                    long step = (event.getRepeatCount() > 4) ? 30000 : 10000;
+                    long newPos = (key == KeyEvent.KEYCODE_DPAD_RIGHT)
+                            ? Math.min(curPos + step, externalPlayer.getDuration())
+                            : Math.max(0, curPos - step);
+                    externalPlayer.seekTo(newPos);
+                    String titlePrefix = (currentPlayingTitle != null && !currentPlayingTitle.isEmpty())
+                            ? currentPlayingTitle + "\n" : "";
+                    if (key == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                        showPlayerHud(titlePrefix + "⏩  +" + (step / 1000) + "s  (" + PlaybackEngine.formatTime(newPos) + " / "
+                                + PlaybackEngine.formatTime(externalPlayer.getDuration()) + ")");
+                    } else {
+                        showPlayerHud(titlePrefix + "⏪  -" + (step / 1000) + "s  (" + PlaybackEngine.formatTime(newPos) + " / "
+                                + PlaybackEngine.formatTime(externalPlayer.getDuration()) + ")");
+                    }
+                    updateMediaState();
+                    return true;
+                }
+                if (event.getRepeatCount() == 0) {
+                    android.view.View curFocus = getCurrentFocus();
+                    boolean isOsdFocused = (playerOsdBar != null && (playerOsdBar.hasFocus() || (curFocus != null && curFocus.getParent() == playerOsdBar)));
+
+                    if (isOsdFocused) {
+                        scheduleOsdHide(5000);
+                        if (key == KeyEvent.KEYCODE_DPAD_CENTER || key == KeyEvent.KEYCODE_ENTER) {
+                            if (curFocus != null) {
+                                curFocus.performClick();
+                                return true;
+                            }
+                        } else if (key == KeyEvent.KEYCODE_DPAD_DOWN) {
+                            if (playbackView != null) {
+                                playbackView.requestFocus();
+                                return true;
+                            }
+                        } else if (key == KeyEvent.KEYCODE_DPAD_LEFT || key == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                            return super.dispatchKeyEvent(event);
+                        }
+                    }
+
+                    if (key == KeyEvent.KEYCODE_DPAD_CENTER || key == KeyEvent.KEYCODE_ENTER
+                            || key == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
+                        scheduleOsdHide(4000);
+                        if (playbackView != null && !playbackView.isControllerFullyVisible()) {
+                            playbackView.showController();
+                            if (playerOsdBar != null) {
+                                playerOsdBar.setVisibility(android.view.View.VISIBLE);
+                                playerOsdBar.animate().alpha(1.0f).setDuration(180).start();
+                            }
+                            return true;
+                        }
+                        String titlePrefix = (currentPlayingTitle != null && !currentPlayingTitle.isEmpty())
+                                ? currentPlayingTitle + "\n" : "";
+                        if (externalPlayer.isPlaying()) {
+                            externalPlayer.pause();
+                            showPlayerHud(titlePrefix + "⏸  Pausado");
+                        } else {
+                            externalPlayer.play();
+                            showPlayerHud(titlePrefix + "▶  Reproduciendo");
+                        }
+                        updateMediaState();
+                        return true;
+                    } else if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN) {
+                        scheduleOsdHide(5000);
+                        if (playbackView != null) {
+                            playbackView.showController();
+                        }
+                        if (playerOsdBar != null) {
+                            playerOsdBar.setVisibility(android.view.View.VISIBLE);
+                            playerOsdBar.animate().alpha(1.0f).setDuration(180).start();
+                            android.view.View row = playerOsdBar.getChildAt(1); // buttonsRow
+                            if (row instanceof android.view.ViewGroup && ((android.view.ViewGroup) row).getChildCount() > 0) {
+                                ((android.view.ViewGroup) row).getChildAt(0).requestFocus();
+                                return true;
+                            } else if (playerOsdBar.getChildCount() > 0) {
+                                playerOsdBar.getChildAt(0).requestFocus();
+                                return true;
+                            }
+                        }
+                    } else if (key == KeyEvent.KEYCODE_MEDIA_PLAY) {
+                        scheduleOsdHide(4000);
+                        externalPlayer.play();
+                        String titlePrefix = (currentPlayingTitle != null && !currentPlayingTitle.isEmpty())
+                                ? currentPlayingTitle + "\n" : "";
+                        showPlayerHud(titlePrefix + "▶  Reproduciendo");
+                        updateMediaState();
+                        return true;
+                    } else if (key == KeyEvent.KEYCODE_MEDIA_PAUSE) {
+                        scheduleOsdHide(4000);
+                        externalPlayer.pause();
+                        String titlePrefix = (currentPlayingTitle != null && !currentPlayingTitle.isEmpty())
+                                ? currentPlayingTitle + "\n" : "";
+                        showPlayerHud(titlePrefix + "⏸  Pausado");
+                        updateMediaState();
+                        return true;
+                    }
+                }
+            }
+        }
+        if (event.getAction() == KeyEvent.ACTION_DOWN && !"playing".equals(page)
+                && !"live_tv_fullscreen".equals(page) && !"live_tv".equals(page)) {
+            int key = event.getKeyCode();
+            android.view.View curFocus = getCurrentFocus();
+            if (key == KeyEvent.KEYCODE_DPAD_LEFT && curFocus != null && !sideNavButtons.contains(curFocus)) {
+                android.view.View next = android.view.FocusFinder.getInstance().findNextFocus(root, curFocus,
+                        android.view.View.FOCUS_LEFT);
+                if (next == null || (!sideNavButtons.contains(next) && next.getLeft() >= curFocus.getLeft())) {
+                    int[] cardLoc = new int[2];
+                    curFocus.getLocationOnScreen(cardLoc);
+                    int cardY = cardLoc[1] + (curFocus.getHeight() / 2);
+                    android.view.View bestSide = null;
+                    int minDiff = Integer.MAX_VALUE;
+                    for (android.view.View sb : sideNavButtons) {
+                        if (sb.isShown()) {
+                            int[] sbLoc = new int[2];
+                            sb.getLocationOnScreen(sbLoc);
+                            int diff = Math.abs((sbLoc[1] + (sb.getHeight() / 2)) - cardY);
+                            if (diff < minDiff) {
+                                minDiff = diff;
+                                bestSide = sb;
+                            }
+                        }
+                    }
+                    if (bestSide != null) {
+                        bestSide.requestFocus();
+                        return true;
+                    } else if (activeSidebarView != null) {
+                        activeSidebarView.requestFocus();
+                        return true;
+                    } else if (!sideNavButtons.isEmpty()) {
+                        sideNavButtons.get(0).requestFocus();
+                        return true;
+                    }
+                }
+            } else if (key == KeyEvent.KEYCODE_DPAD_RIGHT && curFocus != null && sideNavButtons.contains(curFocus)) {
+                int[] sideLoc = new int[2];
+                curFocus.getLocationOnScreen(sideLoc);
+                int sideY = sideLoc[1] + (curFocus.getHeight() / 2);
+
+                android.view.View target = null;
+                android.view.View next = android.view.FocusFinder.getInstance().findNextFocus(root, curFocus,
+                        android.view.View.FOCUS_RIGHT);
+                if (next != null && !sideNavButtons.contains(next) && next.isShown()) {
+                    target = next;
+                }
+
+                if (pageScroll != null && pageScroll.getChildCount() > 0) {
+                    android.view.View contentContainer = pageScroll.getChildAt(0);
+                    java.util.ArrayList<android.view.View> focusables = new java.util.ArrayList<>();
+                    contentContainer.addFocusables(focusables, android.view.View.FOCUS_RIGHT);
+                    int minDiff = Integer.MAX_VALUE;
+                    android.view.View bestTarget = null;
+                    for (android.view.View cand : focusables) {
+                        if (cand.isShown() && !sideNavButtons.contains(cand)) {
+                            int[] cLoc = new int[2];
+                            cand.getLocationOnScreen(cLoc);
+                            if (cLoc[0] > sideLoc[0]) {
+                                int candY = cLoc[1] + (cand.getHeight() / 2);
+                                int diff = Math.abs(candY - sideY);
+                                if (diff < minDiff) {
+                                    minDiff = diff;
+                                    bestTarget = cand;
+                                }
+                            }
+                        }
+                    }
+                    if (bestTarget != null) {
+                        target = bestTarget;
+                    }
+                }
+
+                if (target != null) {
+                    target.requestFocus();
+                    return true;
+                }
+                if (currentFirstRail != null && currentFirstRail.getChildCount() > 0) {
+                    currentFirstRail.getChildAt(0).requestFocus();
+                    return true;
+                }
+            }
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+    @Override
+    protected void onPause() {
+        android.util.Log.i("VideoPropia", "onPause");
+        if (video != null)
+            video.pause();
+        if (externalPlayer != null)
+            externalPlayer.pause();
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        if (video != null)
+            video.pause();
+        if (externalPlayer != null)
+            externalPlayer.pause();
+        if (liveTvPlayer != null)
+            liveTvPlayer.pause();
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        releaseLiveTvPlayer();
+        if (heroSlideHandler != null && heroSlideRunnable != null) {
+            heroSlideHandler.removeCallbacks(heroSlideRunnable);
+        }
+        if (video != null) {
+            video.stopPlayback();
+            video = null;
+        }
+        if (externalPlayer != null) {
+            externalPlayer.release();
+            externalPlayer = null;
+        }
+        releaseMediaSession();
+        if (catalogBrowser != null)
+            catalogBrowser.dispose();
+        videoResolvers.shutdownNow();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if ("playing".equals(page)) {
+            mainHandler.removeCallbacks(periodicSaveRunnable);
+            getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            if (autoNextCountDownTimer != null) {
+                autoNextCountDownTimer.cancel();
+                autoNextCountDownTimer = null;
+            }
+            if (autoNextDialog != null) {
+                try {
+                    if (autoNextDialog.isShowing()) autoNextDialog.dismiss();
+                } catch (Exception ignored) {}
+                autoNextDialog = null;
+            }
+            hideSourceLoader();
+            if (externalPlayer != null) {
+                final long pos = externalPlayer.getCurrentPosition();
+                final long dur = externalPlayer.getDuration();
+                if (pos > 0 && currentPlayingTitle != null && !currentPlayingTitle.isEmpty()
+                        && !"live_tv".equals(playbackReturnPage)) {
+                    final String sTitle = currentPlayingTitle;
+                    final String sPoster = currentPlayingPoster;
+                    final String sOrigin = currentPlayingOrigin;
+                    final String sKind = currentPlayingKind;
+                    new Thread(() -> {
+                        PlaybackEngine.saveProgress(MainActivity.this, sTitle, sTitle,
+                                sPoster, pos, dur, sOrigin, sKind);
+                    }).start();
+                }
+                externalPlayer.stop();
+                externalPlayer.release();
+                externalPlayer = null;
+            }
+            if (video != null) {
+                video.stopPlayback();
+                video = null;
+            }
+            releaseMediaSession();
+            fullscreen = false;
+
+            if ("live_tv".equals(playbackReturnPage) || "live_tv_fullscreen".equals(playbackReturnPage)
+                    || (playingChannel != null
+                            && (playingChannel.startsWith("TV") || playingChannel.contains("Deportes")
+                                    || playingChannel.contains("Live") || playingChannel.contains("Tele")))) {
+                playbackReturnPage = "home";
+                showLiveTvStudio();
+            } else if ("m3u_list".equals(playbackReturnPage)) {
+                playbackReturnPage = "home";
+                showLiveTvStudio();
+            } else if ("channel".equals(playbackReturnPage) && channel != null && !channel.isEmpty()) {
+                playbackReturnPage = "home";
+                openChannel(channel);
+            } else if ("favorites".equals(playbackReturnPage)) {
+                playbackReturnPage = "home";
+                showFavoritesPage();
+            } else if ("watch_later".equals(playbackReturnPage)) {
+                playbackReturnPage = "home";
+                showWatchLaterPage();
+            } else {
+                home();
+            }
+        } else if (fullscreen) {
+            setFullscreen(false);
+        } else if ("live_tv_fullscreen".equals(page)) {
+            page = "live_tv";
+            showLiveTvStudio();
+        } else if ("live_tv".equals(page)) {
+            home();
+        } else if ("lunified_search".equals(page)) {
+            home();
+        } else if ("m3u_list".equals(page)) {
+            showLiveTvStudio();
+        } else if ("actor_detail".equals(page)) {
+            home();
+        } else if (!page.equals("home")) {
+            home();
+        } else if (!"all".equals(activeTab)) {
+            activeTab = "all";
+            home();
+        } else
+            super.onBackPressed();
+    }
+}

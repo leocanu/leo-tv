@@ -10,6 +10,7 @@ import android.os.Environment;
 import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -34,6 +35,54 @@ public final class LeoDownloadManager {
         return clean;
     }
 
+    public static OutputStream openDownloadOutputStream(Context context, String fileName) throws Exception {
+        // 1. En Android 10+ (API 29+), usar MediaStore para guardar en Downloads sin requerir permisos especiales
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            try {
+                android.content.ContentValues values = new android.content.ContentValues();
+                values.put(android.provider.MediaStore.MediaColumns.DISPLAY_NAME, fileName);
+                values.put(android.provider.MediaStore.MediaColumns.MIME_TYPE,
+                        fileName.endsWith(".ts") ? "video/mp2t" : "video/mp4");
+                values.put(android.provider.MediaStore.MediaColumns.RELATIVE_PATH,
+                        Environment.DIRECTORY_DOWNLOADS + "/LeoTV");
+                Uri uri = context.getContentResolver().insert(
+                        android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+                if (uri != null) {
+                    OutputStream os = context.getContentResolver().openOutputStream(uri);
+                    if (os != null) return os;
+                }
+            } catch (Exception ex) {
+                android.util.Log.w("LeoDownload", "MediaStore insert failed, falling back to file IO", ex);
+            }
+        }
+
+        // 2. Intentar carpeta pública de descargas (para Android 9 o anteriores o con legacy storage)
+        try {
+            File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            if (!downloadsDir.exists()) {
+                downloadsDir.mkdirs();
+            }
+            File outFile = new File(downloadsDir, fileName);
+            return new FileOutputStream(outFile);
+        } catch (Exception ex) {
+            android.util.Log.w("LeoDownload", "Public downloads folder failed (EPERM), using app external dir", ex);
+        }
+
+        // 3. Fallback garantizado sin restricciones de Scoped Storage: getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+        File appDownloads = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+        if (appDownloads == null) {
+            appDownloads = context.getExternalFilesDir(null);
+        }
+        if (appDownloads == null) {
+            appDownloads = context.getFilesDir();
+        }
+        if (!appDownloads.exists()) {
+            appDownloads.mkdirs();
+        }
+        File fallbackFile = new File(appDownloads, fileName);
+        return new FileOutputStream(fallbackFile);
+    }
+
     public static void checkPermissions(Activity activity) {
         if (activity == null) return;
         if (Build.VERSION.SDK_INT >= 33) {
@@ -42,7 +91,7 @@ public final class LeoDownloadManager {
                 activity.requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 101);
             }
         }
-        if (Build.VERSION.SDK_INT <= 28) {
+        if (Build.VERSION.SDK_INT <= 29) {
             if (activity.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != android.content.pm.PackageManager.PERMISSION_GRANTED) {
                 activity.requestPermissions(new String[]{
@@ -112,12 +161,6 @@ public final class LeoDownloadManager {
 
         new Thread(() -> {
             try {
-                File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                if (!downloadsDir.exists()) {
-                    downloadsDir.mkdirs();
-                }
-                File outFile = new File(downloadsDir, fileName);
-
                 URL url = new URL(videoUrl);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestProperty("User-Agent", headers != null && headers.containsKey("User-Agent") ? headers.get("User-Agent") : HttpSupport.USER_AGENT);
@@ -144,7 +187,7 @@ public final class LeoDownloadManager {
                     reader.close();
 
                     if (!segmentUrls.isEmpty()) {
-                        FileOutputStream fos = new FileOutputStream(outFile);
+                        OutputStream fos = openDownloadOutputStream(activity, fileName);
                         byte[] buf = new byte[8192];
                         for (String seg : segmentUrls) {
                             try {
@@ -190,12 +233,6 @@ public final class LeoDownloadManager {
     private static void downloadBackgroundDirect(Activity activity, String title, String fileName, String videoUrl, Map<String, String> headers) {
         new Thread(() -> {
             try {
-                File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                if (!downloadsDir.exists()) {
-                    downloadsDir.mkdirs();
-                }
-                File outFile = new File(downloadsDir, fileName);
-
                 URL url = new URL(videoUrl);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestProperty("User-Agent", headers != null && headers.containsKey("User-Agent") ? headers.get("User-Agent") : HttpSupport.USER_AGENT);
@@ -207,7 +244,7 @@ public final class LeoDownloadManager {
 
                 if (conn.getResponseCode() >= 200 && conn.getResponseCode() < 300) {
                     InputStream in = conn.getInputStream();
-                    FileOutputStream out = new FileOutputStream(outFile);
+                    OutputStream out = openDownloadOutputStream(activity, fileName);
                     byte[] buf = new byte[8192];
                     int len;
                     while ((len = in.read(buf)) != -1) {
