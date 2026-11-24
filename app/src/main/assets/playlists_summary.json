@@ -1,0 +1,56 @@
+{
+  "deportes": {
+    "name": "Deportes",
+    "total": 1825,
+    "streams": 2501,
+    "working": 1331,
+    "failed": 494,
+    "pct": 72.93150684931507,
+    "elapsed": 63.3
+  },
+  "series": {
+    "name": "Series",
+    "total": 2004,
+    "streams": 2735,
+    "working": 1469,
+    "failed": 535,
+    "pct": 73.30339321357286,
+    "elapsed": 63.3
+  },
+  "movies": {
+    "name": "Cine & Películas",
+    "total": 2004,
+    "streams": 2735,
+    "working": 1466,
+    "failed": 538,
+    "pct": 73.15369261477046,
+    "elapsed": 63.7
+  },
+  "musica": {
+    "name": "Música",
+    "total": 2004,
+    "streams": 2735,
+    "working": 1468,
+    "failed": 536,
+    "pct": 73.25349301397206,
+    "elapsed": 63.3
+  },
+  "noticias": {
+    "name": "Noticias",
+    "total": 2004,
+    "streams": 2735,
+    "working": 1466,
+    "failed": 538,
+    "pct": 73.15369261477046,
+    "elapsed": 63.5
+  },
+  "hispanos": {
+    "name": "Hispanos Variedades",
+    "total": 2004,
+    "streams": 2735,
+    "working": 1470,
+    "failed": 534,
+    "pct": 73.35329341317365,
+    "elapsed": 63.5
+  }
+}

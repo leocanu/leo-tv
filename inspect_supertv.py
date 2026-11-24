@@ -1,0 +1,6 @@
+with open('xuper_plugin.js', 'r', encoding='utf-8') as f:
+    text = f.read()
+
+idx = text.find('src/sources/supertv.js')
+if idx != -1:
+    print(text[idx:idx+2500])

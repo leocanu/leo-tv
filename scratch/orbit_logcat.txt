@@ -1,0 +1,555 @@
+--------- beginning of system
+11-23 03:47:08.630   548  2971 W ActivityTaskManager: callingPackage for (uid=2000, pid=5127) has no WPC
+11-23 03:47:08.631   548  2971 D CompatibilityChangeReporter: Compat change id reported: 244637991; UID 2000; state: ENABLED
+11-23 03:47:08.632   548  2971 D CompatibilityChangeReporter: Compat change id reported: 265464455; UID 10129; state: DISABLED
+11-23 03:47:08.633   548  2971 D CompatibilityChangeReporter: Compat change id reported: 265452344; UID 10129; state: DISABLED
+11-23 03:47:08.633   548  2971 D CompatibilityChangeReporter: Compat change id reported: 266124927; UID 10129; state: DISABLED
+11-23 03:47:08.633   548  2971 D CompatibilityChangeReporter: Compat change id reported: 265451093; UID 10129; state: DISABLED
+11-23 03:47:08.633   548  2971 D CompatibilityChangeReporter: Compat change id reported: 265456536; UID 10129; state: DISABLED
+11-23 03:47:08.633   548  2971 D CompatibilityChangeReporter: Compat change id reported: 255940284; UID 10129; state: DISABLED
+11-23 03:47:08.634   548  2971 D CompatibilityChangeReporter: Compat change id reported: 236283604; UID 10129; state: DISABLED
+11-23 03:47:08.634   548  2971 D CompatibilityChangeReporter: Compat change id reported: 263959004; UID 10129; state: DISABLED
+11-23 03:47:08.634   548  2971 D CompatibilityChangeReporter: Compat change id reported: 264304459; UID 10129; state: DISABLED
+11-23 03:47:08.634   548  2971 D CompatibilityChangeReporter: Compat change id reported: 264301586; UID 10129; state: DISABLED
+11-23 03:47:08.634   548  2971 D CompatibilityChangeReporter: Compat change id reported: 254631730; UID 10129; state: DISABLED
+11-23 03:47:08.634   548  2971 D CompatibilityChangeReporter: Compat change id reported: 273509367; UID 10129; state: DISABLED
+11-23 03:47:08.635   548  2971 D CompatibilityChangeReporter: Compat change id reported: 263259275; UID 10129; state: DISABLED
+11-23 03:47:08.635   548  2971 D CompatibilityChangeReporter: Compat change id reported: 174042980; UID 10129; state: DISABLED
+11-23 03:47:08.635   548  2971 D CompatibilityChangeReporter: Compat change id reported: 174042936; UID 10129; state: DISABLED
+11-23 03:47:08.635   548  2971 D CompatibilityChangeReporter: Compat change id reported: 181136395; UID 10129; state: DISABLED
+11-23 03:47:08.639   548  2971 D CompatibilityChangeReporter: Compat change id reported: 194480991; UID 10129; state: ENABLED
+--------- beginning of main
+11-23 03:47:08.640   548  2971 E CellBroadcastUtils: getDefaultCellBroadcastReceiverPackageName: no package found
+11-23 03:47:08.644   548  2971 D CompatibilityChangeReporter: Compat change id reported: 184838306; UID 10129; state: DISABLED
+11-23 03:47:08.644   548  2971 D CompatibilityChangeReporter: Compat change id reported: 185004937; UID 10129; state: DISABLED
+11-23 03:47:08.648   548  2971 D CompatibilityChangeReporter: Compat change id reported: 205907456; UID 10129; state: ENABLED
+11-23 03:47:08.651   548  2971 I ActivityTaskManager: START u0 {flg=0x10000000 cmp=com.ocaja.tivi/ar.tvplayer.tv.ui.MainActivity} with LAUNCH_SINGLE_TOP from uid 2000 (BAL_ALLOW_PERMISSION) result code=0
+11-23 03:47:08.655   548   572 D CompatibilityChangeReporter: Compat change id reported: 135634846; UID 10129; state: DISABLED
+11-23 03:47:08.657   744   784 V WindowManagerShell: Transition requested: android.os.BinderProxy@294600f TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=463 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=com.ocaja.tivi/ar.tvplayer.tv.ui.MainActivity } baseActivity=ComponentInfo{com.ocaja.tivi/ar.tvplayer.tv.ui.MainActivity} topActivity=ComponentInfo{com.ocaja.tivi/ar.tvplayer.tv.ui.MainActivity} origActivity=null realActivity=ComponentInfo{com.ocaja.tivi/ar.tvplayer.tv.ui.MainActivity} numActivities=1 lastActiveTime=905084 supportsMultiWindow=false resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.window.IWindowContainerToken$Stub$Proxy@90ba89c} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=true launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=null topActivityInfo=ActivityInfo{bfe82a5 ar.tvplayer.tv.ui.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isSleeping=false topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= false topActivityLetterboxed= false isFromDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 locusId=null displayAreaFeatureId=1 cameraCompatControlState=hidden}, remoteTransition = null, displayChange = null }
+11-23 03:47:08.657   548   581 D CompatibilityChangeReporter: Compat change id reported: 143937733; UID 10129; state: ENABLED
+11-23 03:47:08.665   356   356 D Zygote  : Forked child process 5131
+11-23 03:47:08.666   548   581 I ActivityManager: Start proc 5131:com.ocaja.tivi/u0a129 for next-top-activity {com.ocaja.tivi/ar.tvplayer.tv.ui.MainActivity}
+11-23 03:47:08.675  1380  1380 W app_registers: Notif change unregister: 0
+11-23 03:47:08.675  1380  1380 W app_registers: 3P change unregister: 0
+11-23 03:47:08.676  1380  1380 W app_registers: Watch next change unregister: 1
+11-23 03:47:08.676  1380  1380 W P2B     : Hidden HOME_TAB
+11-23 03:47:08.677  1380  1380 W app_registers: Watch next change unregister: 0
+11-23 03:47:08.694   389   389 I BpBinder: onLastStrongRef automatically unlinking death recipients: 
+11-23 03:47:08.696   548   618 D CompatibilityChangeReporter: Compat change id reported: 265195908; UID 10129; state: ENABLED
+11-23 03:47:08.697  5131  5131 I com.ocaja.tivi: Using CollectorTypeCC GC.
+11-23 03:47:08.698  5131  5131 W com.ocaja.tivi: Unexpected CPU variant for x86: x86.
+11-23 03:47:08.698  5131  5131 W com.ocaja.tivi: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, tremont, kabylake, default
+11-23 03:47:08.699  5131  5131 I ndk_translation: Initialized NDK translation (armv7l), version 0.2.3
+11-23 03:47:08.733  1380  1779 D EGL_emulation: app_time_stats: avg=1975.52ms min=23.38ms max=3927.65ms count=2
+11-23 03:47:08.788   744   784 D WindowManagerShell: TvPipController: onTaskStackChanged()
+11-23 03:47:08.801  5131  5131 E com.ocaja.tivi: Not starting debugger since process cannot load the jdwp agent.
+11-23 03:47:08.823   548   579 D IntervalStats: Unable to parse usage stats packages: [148, 149, 152, 170]
+11-23 03:47:08.823   548   579 D IntervalStats: Unable to parse event packages: [148, 149, 152, 170]
+11-23 03:47:08.825   548   579 D IntervalStats: Unable to parse usage stats packages: [152]
+11-23 03:47:08.825   548   579 D IntervalStats: Unable to parse event packages: [152]
+11-23 03:47:08.831  5131  5131 D CompatibilityChangeReporter: Compat change id reported: 171979766; UID 10129; state: ENABLED
+11-23 03:47:08.831   548   579 D IntervalStats: Unable to parse usage stats packages: [148, 152, 185]
+11-23 03:47:08.831  5131  5131 D CompatibilityChangeReporter: Compat change id reported: 242716250; UID 10129; state: ENABLED
+11-23 03:47:08.831   548   579 D IntervalStats: Unable to parse event packages: [148, 152, 185]
+11-23 03:47:08.833   548   579 D IntervalStats: Unable to parse usage stats packages: [148, 149, 152, 170, 185, 189, 191]
+11-23 03:47:08.833   548  2771 D CompatibilityChangeReporter: Compat change id reported: 170503758; UID 10129; state: ENABLED
+11-23 03:47:08.834  5131  5131 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+11-23 03:47:08.834  5131  5131 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.sidecar.jar
+11-23 03:47:08.837  5131  5131 D nativeloader: Configuring clns-6 for other apk /data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk. target_sdk_version=34, uses_libraries=, library_path=/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/lib/arm:/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk!/lib/armeabi-v7a, permitted_path=/data:/mnt/expand:/data/user/0/com.ocaja.tivi
+11-23 03:47:08.851  5131  5131 V GraphicsEnvironment: Currently set values for:
+11-23 03:47:08.852  5131  5131 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+11-23 03:47:08.852  5131  5131 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+11-23 03:47:08.852  5131  5131 V GraphicsEnvironment: ANGLE GameManagerService for com.ocaja.tivi: false
+11-23 03:47:08.852  5131  5131 V GraphicsEnvironment: com.ocaja.tivi is not listed in per-application setting
+11-23 03:47:08.852  5131  5131 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+11-23 03:47:08.957  5131  5131 W System.err: Get apk path failed
+11-23 03:47:09.052  5131  5158 D CompatibilityChangeReporter: Compat change id reported: 183155436; UID 10129; state: ENABLED
+11-23 03:47:09.140   548  2971 I ActivityManager: Flag disabled. Ignoring finishAttachApplication from uid: 10129. pid: 5131
+11-23 03:47:09.140  5131  5166 W VideoCapabilities: Unrecognized profile/level 0/3 for video/mpeg2
+11-23 03:47:09.142  5131  5166 W VideoCapabilities: Unrecognized profile/level 0/3 for video/mpeg2
+11-23 03:47:09.169   548  2971 D CompatibilityChangeReporter: Compat change id reported: 161145287; UID 10129; state: ENABLED
+11-23 03:47:09.199  5131  5191 D libEGL  : loaded /vendor/lib/egl/libEGL_emulation.so
+11-23 03:47:09.208  5131  5184 W com.ocaja.tivi: ClassLoaderContext classpath size mismatch. expected=9, found=0 (DLC[];PCL[base.apk*2106904895:base.apk!classes2.dex*1910337455:base.apk!classes3.dex*1709327337:base.apk!classes4.dex*1845083123:base.apk!classes5.dex*3983974223:base.apk!classes6.dex*2330319036:base.apk!classes7.dex*3149907866:base.apk!classes8.dex*2537118383:base.apk!classes9.dex*1859781968]{PCL[/system/framework/org.apache.http.legacy.jar*365604908]#PCL[/system/framework/com.android.location.provider.jar*3994156536]#PCL[/system_ext/framework/androidx.window.extensions.jar*3801209684]#PCL[/system_ext/framework/androidx.window.sidecar.jar*2709203797]#PCL[/apex/com.android.extservices/javalib/android.ext.adservices.jar*483505879]} | DLC[];PCL[])
+11-23 03:47:09.216  5131  5191 D libEGL  : loaded /vendor/lib/egl/libGLESv1_CM_emulation.so
+11-23 03:47:09.232  5131  5191 D libEGL  : loaded /vendor/lib/egl/libGLESv2_emulation.so
+11-23 03:47:09.242  5131  5184 W System  : ClassLoader referenced unknown path: 
+11-23 03:47:09.252  5131  5131 D CompatibilityChangeReporter: Compat change id reported: 210923482; UID 10129; state: ENABLED
+11-23 03:47:09.264  5131  5173 D TrafficStats: tagSocket(70) with statsTag=0x8001, statsUid=-1
+11-23 03:47:09.280  5131  5172 D TrafficStats: tagSocket(75) with statsTag=0xffffffff, statsUid=-1
+11-23 03:47:09.281  5131  5181 D TrafficStats: tagSocket(79) with statsTag=0xffffffff, statsUid=-1
+11-23 03:47:09.292  5131  5184 D nativeloader: Configuring clns-7 for other apk . target_sdk_version=37, uses_libraries=, library_path=/data/app/~~NQZdZo-w54wOPuYgrn6Zag==/com.google.android.gms-HbRewRehCtergAZhd-sDMw==/lib/x86:/data/app/~~NQZdZo-w54wOPuYgrn6Zag==/com.google.android.gms-HbRewRehCtergAZhd-sDMw==/base.apk!/lib/x86, permitted_path=/data:/mnt/expand:/data/user/0/com.google.android.gms
+11-23 03:47:09.328  5131  5184 W com.ocaja.tivi: ClassLoaderContext classpath size mismatch. expected=9, found=23 (DLC[];PCL[base.apk*2106904895:base.apk!classes2.dex*1910337455:base.apk!classes3.dex*1709327337:base.apk!classes4.dex*1845083123:base.apk!classes5.dex*3983974223:base.apk!classes6.dex*2330319036:base.apk!classes7.dex*3149907866:base.apk!classes8.dex*2537118383:base.apk!classes9.dex*1859781968]{PCL[/system/framework/org.apache.http.legacy.jar*365604908]#PCL[/system/framework/com.android.location.provider.jar*3994156536]#PCL[/system_ext/framework/androidx.window.extensions.jar*3801209684]#PCL[/system_ext/framework/androidx.window.sidecar.jar*2709203797]#PCL[/apex/com.android.extservices/javalib/android.ext.adservices.jar*483505879]} | DLC[];PCL[/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk*2344629550:/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk!classes2.dex*72348398:/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk!classes3.dex*3768836726:/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk!classes4.dex*2902870254:/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk!classes5.dex*2827401357:/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk!classes6.dex*1088011598:/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk!classes7.dex*206204299:/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk!classes8.dex*2757660644:/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk!classes9.dex*3035043946:/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk!classes10.dex*3503102077:/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk!classes11.dex*4143493043:/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk!classes12.dex*1250034824:/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk!classes13.dex*3707211919:/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk!classes14.dex*590592177:/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk!classes15.dex*1309490556:/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk!classes16.dex*4211061916:/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk!classes17.dex*1661537046:/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk!classes18.dex*1163935164:/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk!classes19.dex*3699928278:/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk!classes20.dex*3107648957:/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk!classes21.dex*559414557:/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk!classes22.dex*555087464:/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk!classes23.dex*860776748]{PCL[/system_ext/framework/androidx.window.extensions.jar*3801209684]#PCL[/system_ext/framework/androidx.window.sidecar.jar*2709203797]})
+11-23 03:47:09.380   548  2771 D CompatibilityChangeReporter: Compat change id reported: 261072174; UID 10129; state: ENABLED
+11-23 03:47:09.409  1037  1178 I PhenotypeResourceReader: unable to find any Phenotype resource metadata for com.ocaja.tivi
+11-23 03:47:09.421  5131  5210 I PhClient: Unable to retrieve flag snapshot for com.google.android.gms.measurement#com.ocaja.tivi, using defaults.
+11-23 03:47:09.435  5131  5208 E com.ocaja.tivi: No package ID 76 found for resource ID 0x760b0013.
+11-23 03:47:09.445  5131  5208 I FA      : App measurement initialized, version: 196007
+11-23 03:47:09.445  5131  5208 I FA      : To enable debug logging run: adb shell setprop log.tag.FA VERBOSE
+11-23 03:47:09.445  5131  5208 I FA      : To enable faster debug mode event logging run:
+11-23 03:47:09.445  5131  5208 I FA      :   adb shell setprop debug.firebase.analytics.app com.ocaja.tivi
+11-23 03:47:09.449  5131  5208 E FA      : Missing google_app_id. Firebase Analytics disabled. See https://goo.gl/NAOOOI
+11-23 03:47:09.449  5131  5208 E FA      : Uploading is not possible. App measurement disabled
+11-23 03:47:09.568  5131  5131 D CompatibilityChangeReporter: Compat change id reported: 170233598; UID 10129; state: ENABLED
+11-23 03:47:09.639   548  2771 D CompatibilityChangeReporter: Compat change id reported: 161252188; UID 10085; state: DISABLED
+11-23 03:47:09.666  5131  5131 D CompatibilityChangeReporter: Compat change id reported: 237531167; UID 10129; state: DISABLED
+11-23 03:47:09.667  5131  5131 W OpenGLRenderer: Unknown dataspace 0
+11-23 03:47:09.667  5131  5208 I FA      : Tag Manager is not found and thus will not be used
+11-23 03:47:09.674  5131  5131 I Choreographer: Skipped 40 frames!  The application may be doing too much work on its main thread.
+11-23 03:47:09.675  1037  1037 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.measurement.START pkg=com.google.android.gms }
+11-23 03:47:09.675  1037  1037 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.measurement.START pkg=com.google.android.gms }
+11-23 03:47:09.688  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:09.689  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.691   548  2771 D CoreBackPreview: Window{595439f u0 com.ocaja.tivi/ar.tvplayer.tv.ui.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@46f4216, mPriority=0, mIsAnimationCallback=false}
+11-23 03:47:09.692  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:09.693  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.699  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:09.699  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.703  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:09.704  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.707  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:09.708  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.710  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:09.710  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.712  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:09.713  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.715  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:09.715  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.717  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:09.717  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.719  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:09.719  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.723  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:09.723  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.725  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:09.725  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.727  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:09.727  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.729  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:09.729  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.731  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:09.732  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.734  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:09.734  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.736   389   486 W ServiceManagerCppClient: Permission failure: android.permission.ROTATE_SURFACE_FLINGER from uid=10129 pid=0
+11-23 03:47:09.736   389   486 D PermissionCache: checking android.permission.ROTATE_SURFACE_FLINGER for uid=10129 => denied (362 us)
+11-23 03:47:09.736   389   534 W ServiceManagerCppClient: Permission failure: android.permission.ROTATE_SURFACE_FLINGER from uid=10129 pid=5131
+11-23 03:47:09.736   389   534 D PermissionCache: checking android.permission.ROTATE_SURFACE_FLINGER for uid=10129 => denied (336 us)
+11-23 03:47:09.736   389   486 W ServiceManagerCppClient: Permission failure: android.permission.INTERNAL_SYSTEM_WINDOW from uid=10129 pid=0
+11-23 03:47:09.736   389   486 D PermissionCache: checking android.permission.INTERNAL_SYSTEM_WINDOW for uid=10129 => denied (324 us)
+11-23 03:47:09.737   389   534 W ServiceManagerCppClient: Permission failure: android.permission.INTERNAL_SYSTEM_WINDOW from uid=10129 pid=5131
+11-23 03:47:09.737   389   534 D PermissionCache: checking android.permission.INTERNAL_SYSTEM_WINDOW for uid=10129 => denied (216 us)
+11-23 03:47:09.737   389   486 W ServiceManagerCppClient: Permission failure: android.permission.ACCESS_SURFACE_FLINGER from uid=10129 pid=0
+11-23 03:47:09.737   389   486 D PermissionCache: checking android.permission.ACCESS_SURFACE_FLINGER for uid=10129 => denied (284 us)
+11-23 03:47:09.737   389   534 W ServiceManagerCppClient: Permission failure: android.permission.ACCESS_SURFACE_FLINGER from uid=10129 pid=5131
+11-23 03:47:09.737   389   534 D PermissionCache: checking android.permission.ACCESS_SURFACE_FLINGER for uid=10129 => denied (304 us)
+11-23 03:47:09.741  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:09.741  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.742  5131  5214 D CompatibilityChangeReporter: Compat change id reported: 160794467; UID 10129; state: ENABLED
+11-23 03:47:09.743  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:09.743  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.747  5131  5131 W View    : requestLayout() improperly called by androidx.fragment.app.FragmentContainerView{974b75e V.E...... ......ID 0,0-504,1080 #7f0b00f1 app:id/id00f1} during layout: running second layout pass
+11-23 03:47:09.747  5131  5131 W View    : requestLayout() improperly called by androidx.fragment.app.FragmentContainerView{744e73f V.E...... ......ID 0,0-1920,1080 #7f0b00eb app:id/id00eb} during layout: running second layout pass
+11-23 03:47:09.749  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:09.749  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.754  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:09.754  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.756  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:09.756  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.757  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:09.757  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.758  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:09.758  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.760  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:09.761  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.767  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:09.767  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.769  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:09.769  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.773  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:09.773  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.775  5131  5220 D CompatibilityChangeReporter: Compat change id reported: 194532703; UID 10129; state: ENABLED
+11-23 03:47:09.775  5131  5220 D CompatibilityChangeReporter: Compat change id reported: 253665015; UID 10129; state: ENABLED
+11-23 03:47:09.775  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:09.775  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.776   548  2771 D CompatibilityChangeReporter: Compat change id reported: 253665015; UID 10129; state: ENABLED
+11-23 03:47:09.776   548  2771 D CompatibilityChangeReporter: Compat change id reported: 194532703; UID 10129; state: ENABLED
+11-23 03:47:09.776   166   166 I hwservicemanager: getTransport: Cannot find entry android.hardware.configstore@1.0::ISurfaceFlingerConfigs/default in either framework or device VINTF manifest.
+11-23 03:47:09.777  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:09.777  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.778  5131  5186 W OpenGLRenderer: Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
+11-23 03:47:09.778  5131  5186 W OpenGLRenderer: Failed to initialize 101010-2 format, error = EGL_SUCCESS
+11-23 03:47:09.778  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:09.778  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.780  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:09.780  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.790  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:09.790  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.792  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:09.792  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.795  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:09.796  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.798  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:09.798  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.800  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:09.801  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.802  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:09.803  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.805  5131  5214 D CompatibilityChangeReporter: Compat change id reported: 263076149; UID 10129; state: ENABLED
+11-23 03:47:09.806  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:09.806  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.813  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:09.814  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.815  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:09.815  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.817  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:09.817  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.820  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:09.820  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.824  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:09.824  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.825  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:09.826  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.829  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:09.829  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.832  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:09.833  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.835  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:09.835  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.838  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:09.838  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.840  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:09.840  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.842  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:09.842  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.847  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:09.847  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.848  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:09.849  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.850  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:09.851  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.852  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:09.853  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.856  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:09.856  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:09.871   166   166 I hwservicemanager: getTransport: Cannot find entry android.hardware.graphics.mapper@4.0::IMapper/default in either framework or device VINTF manifest.
+11-23 03:47:09.871  5131  5186 I Gralloc4: mapper 4.x is not supported
+11-23 03:47:09.884   548  2771 D CompatibilityChangeReporter: Compat change id reported: 271850009; UID 10129; state: ENABLED
+11-23 03:47:09.884   548  2771 D ConnectivityService: requestNetwork for uid/pid:1000/548 asUid: 10129 activeRequest: null callbackRequest: 164 [NetworkRequest [ REQUEST id=165, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10129 RequestorUid: 1000 RequestorPkg: android UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647
+11-23 03:47:09.885   548   679 D EthernetNetworkFactory: eth0: onNetworkNeeded for request: NetworkRequest [ REQUEST id=165, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10129 RequestorUid: 1000 RequestorPkg: android UnderlyingNetworks: Null] ]
+11-23 03:47:09.885   548   679 D EthernetNetworkFactory: IpClient already started
+11-23 03:47:09.885   548   680 D ConnectivityService: NetReassign [165 : null → 100] [c 0] [a 0] [i 1]
+11-23 03:47:09.886   548   672 D UntrustedWifiNetworkFactory: got request NetworkRequest [ REQUEST id=165, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10129 RequestorUid: 1000 RequestorPkg: android UnderlyingNetworks: Null] ]
+11-23 03:47:09.887   548   672 D OemPaidWifiNetworkFactory: got request NetworkRequest [ REQUEST id=165, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10129 RequestorUid: 1000 RequestorPkg: android UnderlyingNetworks: Null] ]
+11-23 03:47:09.887   548   672 D MultiInternetWifiNetworkFactory: got request NetworkRequest [ REQUEST id=165, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10129 RequestorUid: 1000 RequestorPkg: android UnderlyingNetworks: Null] ]
+11-23 03:47:09.900  5131  5186 E OpenGLRenderer: Unable to match the desired swap behavior.
+11-23 03:47:09.915   548  2771 W ServiceManagerCppClient: Permission failure: android.permission.ROTATE_SURFACE_FLINGER from uid=10129 pid=0
+11-23 03:47:09.915   548  2771 D PermissionCache: checking android.permission.ROTATE_SURFACE_FLINGER for uid=10129 => denied (181 us)
+11-23 03:47:09.915   548  2771 W ServiceManagerCppClient: Permission failure: android.permission.INTERNAL_SYSTEM_WINDOW from uid=10129 pid=0
+11-23 03:47:09.915   548  2771 D PermissionCache: checking android.permission.INTERNAL_SYSTEM_WINDOW for uid=10129 => denied (94 us)
+11-23 03:47:09.915   548  2771 W ServiceManagerCppClient: Permission failure: android.permission.ACCESS_SURFACE_FLINGER from uid=10129 pid=0
+11-23 03:47:09.915   548  2771 D PermissionCache: checking android.permission.ACCESS_SURFACE_FLINGER for uid=10129 => denied (83 us)
+11-23 03:47:09.921   744   784 V WindowManagerShell: onTransitionReady android.os.BinderProxy@294600f: {id=2 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{android.window.IWindowContainerToken$Stub$Proxy@af9a421} m=OPEN f=NONE leash=Surface(name=Task=463)/@0x7ca167a sb=Rect(0, 0 - 1920, 1080) eb=Rect(0, 0 - 1920, 1080) d=0},{WCT{android.window.IWindowContainerToken$Stub$Proxy@ed32046} m=TO_BACK f=NONE leash=Surface(name=Task=1)/@0x40ee2b sb=Rect(0, 0 - 1920, 1080) eb=Rect(0, 0 - 1920, 1080) d=0}]}
+11-23 03:47:09.922   744   784 V WindowManagerShell: Playing animation for (#2)android.os.BinderProxy@294600f@0
+11-23 03:47:09.922   744   784 V WindowManagerShell:  try handler com.android.wm.shell.keyguard.KeyguardTransitionHandler@77fbe98
+11-23 03:47:09.922   744   784 V WindowManagerShell:  try handler com.android.wm.shell.activityembedding.ActivityEmbeddingController@f06a6f1
+11-23 03:47:09.922   744   784 V WindowManagerShell:  try handler com.android.wm.shell.pip.tv.TvPipTransition@c18b2d6
+11-23 03:47:09.922   744   784 V WindowManagerShell:  try handler com.android.wm.shell.transition.RemoteTransitionHandler@4858957
+11-23 03:47:09.923   744   784 V WindowManagerShell: Transition doesn't have explicit remote, search filters for match for {id=2 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{android.window.IWindowContainerToken$Stub$Proxy@af9a421} m=OPEN f=NONE leash=Surface(name=Task=463)/@0x7ca167a sb=Rect(0, 0 - 1920, 1080) eb=Rect(0, 0 - 1920, 1080) d=0},{WCT{android.window.IWindowContainerToken$Stub$Proxy@ed32046} m=TO_BACK f=NONE leash=Surface(name=Task=1)/@0x40ee2b sb=Rect(0, 0 - 1920, 1080) eb=Rect(0, 0 - 1920, 1080) d=0}]}
+11-23 03:47:09.923   744   784 V WindowManagerShell:  Delegate animation for #2 to null
+11-23 03:47:09.923   744   784 V WindowManagerShell:  try handler com.android.wm.shell.transition.DefaultTransitionHandler@cfe2c44
+11-23 03:47:09.923   744   784 V WindowManagerShell: start default transition animation, info = {id=2 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{android.window.IWindowContainerToken$Stub$Proxy@af9a421} m=OPEN f=NONE leash=Surface(name=Task=463)/@0x7ca167a sb=Rect(0, 0 - 1920, 1080) eb=Rect(0, 0 - 1920, 1080) d=0},{WCT{android.window.IWindowContainerToken$Stub$Proxy@ed32046} m=TO_BACK f=NONE leash=Surface(name=Task=1)/@0x40ee2b sb=Rect(0, 0 - 1920, 1080) eb=Rect(0, 0 - 1920, 1080) d=0}]}
+11-23 03:47:09.928   548   569 W system_server: Failed to determine oat file name for dex location /data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.apk: Dalvik cache directory does not exist
+11-23 03:47:09.928   548   569 W ziparchive: Unable to open '/data/app/~~zx1EEl62bDXFNa71OgI8Uw==/com.ocaja.tivi-0MFATxEzi2sN9ccF32c0lg==/base.dm': No such file or directory
+11-23 03:47:09.931   548   569 I ActivityTaskManager: Displayed com.ocaja.tivi/ar.tvplayer.tv.ui.MainActivity for user 0: +1s288ms
+11-23 03:47:09.932   548   569 V WindowManager: Sent Transition #2 createdAt=11-23 03:47:08.640 via request=TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=463 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=com.ocaja.tivi/ar.tvplayer.tv.ui.MainActivity } baseActivity=ComponentInfo{com.ocaja.tivi/ar.tvplayer.tv.ui.MainActivity} topActivity=ComponentInfo{com.ocaja.tivi/ar.tvplayer.tv.ui.MainActivity} origActivity=null realActivity=ComponentInfo{com.ocaja.tivi/ar.tvplayer.tv.ui.MainActivity} numActivities=1 lastActiveTime=905084 supportsMultiWindow=false resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{da5cc6 Task{20853fc #463 type=standard A=10129:com.ocaja.tivi}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=true launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=null topActivityInfo=ActivityInfo{c620487 ar.tvplayer.tv.ui.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isSleeping=false topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= false topActivityLetterboxed= false isFromDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 locusId=null displayAreaFeatureId=1 cameraCompatControlState=hidden}, remoteTransition = null, displayChange = null }
+11-23 03:47:09.932   744   784 V WindowManagerShell: loadAnimation: anim=android.view.animation.AlphaAnimation@510fad2 animAttr=0x9 type=OPEN isEntrance=false
+11-23 03:47:09.933  5131  5146 I OpenGLRenderer: Davey! duration=934ms; Flags=1, FrameTimelineVsyncId=5587, IntendedVsync=905427139840, Vsync=906093806480, InputEventId=0, HandleInputStart=906108447900, AnimationStart=906108478300, PerformTraversalsStart=906108563800, DrawStart=906334957700, FrameDeadline=905443806506, FrameInterval=906108003500, FrameStartTime=16666666, SyncQueued=906335707100, SyncStart=906336496400, IssueDrawCommandsStart=906337450600, SwapBuffers=906344639000, FrameCompleted=906362222300, DequeueBufferDuration=80300, QueueBufferDuration=301000, GpuCompleted=906362222300, SwapBuffersCompleted=906348085000, DisplayPresentTime=0, CommandSubmissionCompleted=906344639000, 
+11-23 03:47:09.933   548   569 V WindowManager:     startWCT=WindowContainerTransaction { changes = {} hops = [] errorCallbackToken=null taskFragmentOrganizer=null }
+11-23 03:47:09.933   548   569 V WindowManager:     info={id=2 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{RemoteToken{da5cc6 Task{20853fc #463 type=standard A=10129:com.ocaja.tivi}}} m=OPEN f=NONE leash=Surface(name=Task=463)/@0xbd588ab sb=Rect(0, 0 - 1920, 1080) eb=Rect(0, 0 - 1920, 1080) d=0},{WCT{RemoteToken{a873fb4 Task{11d3bcd #1 type=home}}} m=TO_BACK f=NONE leash=Surface(name=Task=1)/@0x9921ded sb=Rect(0, 0 - 1920, 1080) eb=Rect(0, 0 - 1920, 1080) d=0}]}
+11-23 03:47:09.937   744   784 V WindowManagerShell: loadAnimation: anim=android.view.animation.AlphaAnimation@d536aff animAttr=0x8 type=OPEN isEntrance=true
+11-23 03:47:09.938   744   784 V WindowManagerShell:  animated by com.android.wm.shell.transition.DefaultTransitionHandler@cfe2c44
+11-23 03:47:09.983   548  2771 D CompatibilityChangeReporter: Compat change id reported: 214016041; UID 10129; state: ENABLED
+11-23 03:47:09.983   548  2771 I ImeTracker: com.ocaja.tivi:1ae0456f: onRequestHide at ORIGIN_SERVER_HIDE_INPUT reason HIDE_UNSPECIFIED_WINDOW
+11-23 03:47:09.984   548  2771 I ImeTracker: com.ocaja.tivi:1ae0456f: onCancelled at PHASE_SERVER_SHOULD_HIDE
+11-23 03:47:10.002  1166  1166 I GoogleInputMethodService: GoogleInputMethodService.onFinishInput():2259 
+11-23 03:47:10.005  1166  1166 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():103 repeatCheckTimes = 0, locked = false
+11-23 03:47:10.006  1166  1166 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1446 onStartInput(EditorInfo{EditorInfo{packageName=com.ocaja.tivi, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+11-23 03:47:10.009  1166  1166 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():103 repeatCheckTimes = 1, locked = false
+11-23 03:47:10.014   548  2667 W PackageConfigPersister: App-specific configuration not found for packageName: com.ocaja.tivi and userId: 0
+11-23 03:47:10.014  5131  5131 W View    : requestLayout() improperly called by androidx.fragment.app.FragmentContainerView{744e73f V.E...... ......I. 0,0-1920,1080 #7f0b00eb app:id/id00eb} during layout: running second layout pass
+11-23 03:47:10.021  1166  1166 I GoogleInputMethodService: GoogleInputMethodService.onFinishInput():2259 
+11-23 03:47:10.022  1166  1166 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():103 repeatCheckTimes = 0, locked = false
+11-23 03:47:10.023  1166  1166 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1446 onStartInput(EditorInfo{EditorInfo{packageName=com.ocaja.tivi, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+11-23 03:47:10.024  1166  1166 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatus():103 repeatCheckTimes = 1, locked = false
+11-23 03:47:10.024  5131  5231 D TrafficStats: tagSocket(120) with statsTag=0xffffffff, statsUid=-1
+11-23 03:47:10.026   548  2667 W PackageConfigPersister: App-specific configuration not found for packageName: com.ocaja.tivi and userId: 0
+11-23 03:47:10.034  5131  5131 W InputMethodManager: Ignoring onBind: cur seq=4, given seq=3
+11-23 03:47:10.157  5131  5172 D TrafficStats: tagSocket(75) with statsTag=0xffffffff, statsUid=-1
+11-23 03:47:10.171  5131  5181 D TrafficStats: tagSocket(140) with statsTag=0xffffffff, statsUid=-1
+11-23 03:47:10.174  1037  1053 I FontLog : (REDACTED) Received query %s, URI %s
+11-23 03:47:10.175  1037  1053 I FontLog : (REDACTED) Query [%s] resolved to %s
+11-23 03:47:10.183  1037  1053 I FontLog : (REDACTED) Fetch %s end status %s
+11-23 03:47:10.186  1037  1053 I FontLog : (REDACTED) Pulling font file for id = %d, cache size = %d
+11-23 03:47:10.211  1037  1053 I FontLog : (REDACTED) Pulling font file for id = %d, cache size = %d
+11-23 03:47:10.276  5131  5234 D TrafficStats: tagSocket(141) with statsTag=0xffffffff, statsUid=-1
+11-23 03:47:10.347   744   784 V WindowManagerShell: Transition animation finished (aborted=false), notifying core (#2)android.os.BinderProxy@294600f@0
+11-23 03:47:10.349   548   569 V WindowManager: Finish Transition #2: created at 11-23 03:47:08.640 collect-started=0.11ms request-sent=10.991ms started=26.124ms ready=170.574ms sent=1278.683ms finished=1708.85ms
+11-23 03:47:10.350   744   784 V WindowManagerShell: Track 0 became idle
+11-23 03:47:10.350   744   784 V WindowManagerShell: All active transition animations finished
+11-23 03:47:10.387  1380  1380 W A2B     : Data Refresh stop
+11-23 03:47:10.645   548   603 I AppsFilter: interaction: PackageSetting{f4e5e9d com.chainreactionmusic.android/10137} -> PackageSetting{f07b626 com.ocaja.tivi/10129} BLOCKED
+11-23 03:47:10.645   548   603 I AppsFilter: interaction: PackageSetting{94556e3 com.chainreactionmusic.android.tv.homepreview/10128} -> PackageSetting{f07b626 com.ocaja.tivi/10129} BLOCKED
+11-23 03:47:10.645   548   603 I AppsFilter: interaction: PackageSetting{99158e0 com.chainreactionmusic.android.tv/10122} -> PackageSetting{f07b626 com.ocaja.tivi/10129} BLOCKED
+11-23 03:47:10.645   548   603 I AppsFilter: interaction: PackageSetting{9374799 com.cactusverse.lginstaller/10136} -> PackageSetting{f07b626 com.ocaja.tivi/10129} BLOCKED
+11-23 03:47:10.649   548   618 D CompatibilityChangeReporter: Compat change id reported: 218533173; UID 10129; state: ENABLED
+11-23 03:47:10.649   548   618 D CompatibilityChangeReporter: Compat change id reported: 262645982; UID 10129; state: ENABLED
+11-23 03:47:10.656   548   628 I RoleService: Granting default roles...
+11-23 03:47:10.657   548   579 W Searchables: No web search activity found
+11-23 03:47:10.662   844   844 V MediaPlayerList: mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-23 03:47:10.663   844   844 V MediaPlayerList: mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-23 03:47:10.664   548   638 I InputReader: Reconfiguring input devices, changes=KEYBOARD_LAYOUTS
+11-23 03:47:10.697   548   628 D ActivityManager: sync unfroze 1059 com.google.android.permissioncontroller for 6
+11-23 03:47:10.702  1059  4955 I PermissionControllerServiceImpl: Updating user sensitive for uid 10129
+11-23 03:47:10.713  1059  5236 W Role    : Cannot get ApplicationInfo for default holder: com.android.messaging
+11-23 03:47:10.742  1059  5236 W Role    : Cannot get ApplicationInfo for default holder: com.google.android.gms.supervision
+11-23 03:47:10.795  1059  5236 W Role    : Cannot get ApplicationInfo for default holder: com.android.gallery3d
+11-23 03:47:10.882  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:10.882  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.883  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:10.884  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.886  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:10.886  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.887  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:10.887  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.889  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:10.889  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.891  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:10.891  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.893  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:10.893  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.895  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:10.895  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.896  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:10.896  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.898  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:10.899  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.900  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:10.900  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.904  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:10.904  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.907  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:10.907  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.909  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:10.909  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.911  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:10.911  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.912  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:10.912  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.914  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:10.914  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.915  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:10.915  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.919  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:10.919  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.921  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:10.921  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.923  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:10.923  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.924  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:10.925  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.925  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:10.926  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.927  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:10.928  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.929  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:10.929  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.931  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:10.931  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.933  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:10.933  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.935  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:10.935  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.937  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:10.937  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.938  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:10.939  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.940  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:10.940  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.942  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:10.942  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.944  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:10.944  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.945  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:10.945  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.947  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:10.947  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.948  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:10.948  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.950  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:10.950  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.951  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:10.952  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.953  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:10.953  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.955  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:10.955  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.957  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:10.957  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.958  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:10.958  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.960  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:10.960  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.962  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:10.962  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.964  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:10.964  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.965  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:10.965  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.968  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:10.968  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.970  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:10.970  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.971  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:10.972  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.974  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:10.974  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.976  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:10.976  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.977  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:10.977  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.978  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:10.978  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.980  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:10.980  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:10.982  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:10.982  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:11.149  5018  5018 I katniss_interactor_PackageCache: Queueing package cache update for Intent { act=android.intent.action.PACKAGE_CHANGED dat=package: flg=0x45000010 (has extras) }
+11-23 03:47:11.149  5018  5045 I katniss_interactor_SystemSearchableSources: createSources
+11-23 03:47:11.164  5018  5050 I katniss_interactor_PackageCache: Apps for Intent { act=android.intent.action.MAIN cat=[android.intent.category.LEANBACK_LAUNCHER] }: [AppInfo(enabled=true, longVersionCode=1, packageName=com.android.tv.settings, versionCode=1, versionName=1.0), AppInfo(enabled=true, longVersionCode=85381828, packageName=com.android.vending, versionCode=85381828, versionName=53.8.18-34 [8] [PR] 1012991030), AppInfo(enabled=true, longVersionCode=530304320, packageName=com.google.android.youtube.tv, versionCode=530304320, versionName=5.30.304), AppInfo(enabled=true, longVersionCode=110003320, packageName=com.google.android.youtube.tvmusic, versionCode=110003320, versionName=1.10.03), AppInfo(enabled=true, longVersionCode=182, packageName=com.streamflixreborn.streamflix, versionCode=182, versionName=1.7.253), AppInfo(enabled=true, longVersionCode=828, packageName=com.tubitv, versionCode=828, versionName=8.8.0), AppInfo(enabled=true, longVersionCode=24, packageName=mk.neptun.neptunapp, versionCode=24, versionName=24.0.0), AppInfo(enabled=true, longVersionCode=714275470, packageName=com.google.android.play.games, versionCode=714275470, versionName=2026.11.71427 (1019846497.1019846497-040700)), AppInfo(enabled=true, longVersionCode=33, packageName=alphastudio.adrama, versionCode=33, versionName=6.2.0), AppInfo(enabled=true, longVersionCode=7, packageName=app.aksports.live, versionCode=7, versionName=1.6), AppInfo(enabled=true, longVersionCode=79, packageName=app.velora.tv, versionCode=79, versionName=3.2), AppInfo(enabled=true, longVersionCode=46, packageName=ar.appvideo.player, versionCode=46, versionName=0.46.0), AppInfo(enabled=true, longVersionCode=605215700, packageName=ch.protonvpn.android, versionCode=605215700, versionName=5.21.57.0), AppInfo(enabled=true, longVersionCode=1239, packageName=com.arkiv.player.light, versionCode=1239, versionName=0.9.86), AppInfo(enabled=true, longVersionCode=9, packageName=com.booking.okrtravel, versionCode=9, versionName=1.0.9), AppInfo(enabled=true, longVersionCode=42, packageName=com.chainreactionmusic.android.tv, versionCode=42, versionName=0.1.0-tv-beta1-r26), AppInfo(enabled=true, longVersionCode=45, packageName=com.chainreactionmusic.android.tv.homepreview, versionCode=45, versionName=0.1.0-tv-beta1-r29), AppInfo(enabled=true, longVersionCode=50040014, packageName=com.community.mbox.tv, versionCode=50040014, versionName=1.1.9.0820.03), AppInfo(enabled=true, longVersionCode=75, packageName=com.esaba.downloader, versionCode=75, versionName=2.0.4-ForGoogleAndroidDevices), AppInfo(enabled=true, longVersionCode=203, packageName=com.i4aukturks.ukturksapp, versionCode=203, versionName=2.0.3), AppInfo(enabled=true, longVersionCode=12, packageName=com.live.geesports, versionCode=12, versionName=3.9), AppInfo(enabled=true, longVersionCode=17, packageName=com.live.sktechtv, versionCode=17, versionName=2.7), AppInfo(enabled=true, longVersionCode=5, packageName=com.maxliv.live, versionCode=5, versionName=1.4), AppInfo(enabled=true, longVersionCode=95, packageName=com.miruronative, versionCode=95, versionName=0.1.84), AppInfo(enabled=true, longVersionCode=3, packageName=com.newapp.live, versionCode=3, versionName=3.0), AppInfo(enabled=true, longVersionCode=1000005332, packageName=com.ocaja.tivi, versionCode=1000005332, versionName=5.3.3), AppInfo(enabled=true, longVersionCode=512, packageName=com.parky.app.http, versionCode=512, versionName=1.0.6), AppInfo(enabled=true, longVersionCode=69, packageName=com.phlox.tvwebbrowser, versionCode=69, versionName=2.1.6), AppInfo(enabled=true, longVersionCode=59, packageName=com.plavio.tv, versionCode=59, versionName=0.3.25), AppInfo(enabled=true, longVersionCode=2019049, packageName=com.player.bear, versionCode=2019049, versionName=2.20.39), AppInfo(enabled=true, longVersionCode=8, packageName=com.playfy.tv, versionCode=8, versionName=1.7), AppInfo(enabled=true, longVersionCode=8, packageName=com.playz.tv, versionCode=8, versionName=2.3.1), AppInfo(enabled=true, longVersionCode=39, packageName=com.rmedia.rplayer, v
+11-23 03:47:11.164  5018  5050 I katniss_interactor_PackageCache: ersionCode=39, versionName=2.0.20), AppInfo(enabled=true, longVersionCode=43, packageName=com.shubh.anililitv, versionCode=43, versionName=1.2.1), AppInfo(enabled=true, longVersionCode=159, packageName=com.skidush.clonex, versionCode=159, versionName=5.7.4), AppInfo(enabled=true, longVersionCode=18, packageName=com.sportzx.live, versionCode=18, versionName=3.2), AppInfo(enabled=true, longVersionCode=1004, packageName=com.vyse.vyse_tv, versionCode=1004, versionName=1.0.1), AppInfo(enabled=true, longVersionCode=10600, packageName=com.world.youcinetv, versionCode=10600, versionName=1.6.0), AppInfo(enabled=true, longVersionCode=1029, packageName=com.yyt.zapptv, versionCode=1029, versionName=v1.0.29), AppInfo(enabled=true, longVersionCode=188, packageName=com.zini.tevi, versionCode=188, versionName=1.5.6), AppInfo(enabled=true, longVersionCode=14, packageName=dev.beamlak.flixquest_v2, versionCode=14, versionName=4.3.3), AppInfo(enabled=true, longVersionCode=40, packageName=me.zhanghai.android.files, versionCode=40, versionName=1.7.5), AppInfo(enabled=true, longVersionCode=2103000, packageName=org.xbmc.kodi, versionCode=2103000, versionName=21.3), AppInfo(enabled=true, longVersionCode=134, packageName=tv.mxliptv.app, versionCode=134, versionName=3.2.5-tvbox), AppInfo(enabled=true, longVersionCode=65, packageName=tv.mxlmovies.app, versionCode=65, versionName=3.1.2-tvbox)]
+11-23 03:47:11.165  5018  5050 I katniss_interactor_PackageCache: Apps for Intent { act=android.intent.action.MAIN cat=[android.intent.category.LEANBACK_SETTINGS] }: [AppInfo(enabled=true, longVersionCode=1, packageName=com.android.tv.settings, versionCode=1, versionName=1.0), AppInfo(enabled=true, longVersionCode=1, packageName=com.android.tv.settings, versionCode=1, versionName=1.0)]
+11-23 03:47:11.166  5018  5050 I katniss_interactor_PackageCache: Apps for Intent { act=android.intent.action.MAIN cat=[android.intent.category.HOME] }: [AppInfo(enabled=true, longVersionCode=1010943512, packageName=com.google.android.tvlauncher, versionCode=1010943512, versionName=7.7.15-968255986-f), AppInfo(enabled=true, longVersionCode=1, packageName=com.android.tv.settings, versionCode=1, versionName=1.0)]
+11-23 03:47:11.166  5018  5050 I katniss_interactor_PackageCache: Apps for Intent { act=com.google.assistant.DATA_SHARING_CONSENT }: [AppInfo(enabled=true, longVersionCode=15040477, packageName=com.google.android.katniss, versionCode=15040477, versionName=7.55.87+964183260.01)]
+11-23 03:47:11.166  5018  5050 I katniss_interactor_PackageCache: Apps for experience type WATSON23: [AppInfo(enabled=true, longVersionCode=264531119, packageName=com.google.android.gms, versionCode=264531119, versionName=26.45.31 (180700-1020418964)), AppInfo(enabled=true, longVersionCode=530304320, packageName=com.google.android.youtube.tv, versionCode=530304320, versionName=5.30.304)]
+11-23 03:47:11.168  5018  5047 I katniss_interactor_KatnissAccountManagerImpl: Read invalid search account from PDS
+11-23 03:47:11.168  5018  5047 I katniss_interactor_KatnissAccountManagerImpl: Read invalid search account from PDS
+11-23 03:47:11.659   548  1309 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+11-23 03:47:13.004  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:13.004  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.006  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:13.007  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.008  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:13.009  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.010  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:13.010  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.013  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:13.013  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.015  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:13.015  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.016  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:13.016  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.018  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:13.018  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.020  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:13.020  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.022  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:13.022  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.024  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:13.024  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.025  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:13.026  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.029  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:13.029  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.031  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:13.031  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.033  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:13.033  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.035  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:13.035  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.037  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:13.037  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.038  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:13.039  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.040  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:13.040  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.042  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:13.044  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.047  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:13.047  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.051  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:13.051  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.053  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:13.054  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.056  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:13.056  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.058  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:13.059  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.061  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:13.061  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.063  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:13.063  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.065  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:13.066  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.068  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:13.068  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.069  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:13.070  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.071  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:13.072  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.074  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:13.074  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.077  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:13.077  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.079  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:13.079  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.081  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:13.081  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.082  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:13.082  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.084  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:13.084  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.086  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:13.086  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.087  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:13.087  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.089  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:13.089  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.093  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:13.093  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.095  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:13.095  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.097  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:13.097  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.099  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:13.099  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.100  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:13.100  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.102  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:13.102  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.104  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:13.104  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.107  2047  2381 W Finsky  : [53] com.ocaja.tivi: No account found.
+11-23 03:47:13.107  2047  2381 I Finsky  : [53] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.109  2047  2383 W Finsky  : [54] com.ocaja.tivi: No account found.
+11-23 03:47:13.109  2047  2383 I Finsky  : [54] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.111  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:13.111  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.113  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:13.113  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.115  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:13.115  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.117  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:13.117  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.119  2047  2393 W Finsky  : [58] com.ocaja.tivi: No account found.
+11-23 03:47:13.120  2047  2393 I Finsky  : [58] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:13.121  2047  2394 W Finsky  : [59] com.ocaja.tivi: No account found.
+11-23 03:47:13.121  2047  2394 I Finsky  : [59] Billing preferred account via installer for com.ocaja.tivi: [dCNOmK_nSY-12vHzasLXiswzlGT5UHA7jAGYkvmCuQs]
+11-23 03:47:16.749  2065  2065 W cast_shell: [1123/034716.749067:WARNING:ccs_manager_impl.cc(1728)] Device does not have a weave device id
+11-23 03:47:16.749  2065  2065 I cast_shell: [1123/034716.749365:INFO:ccs_transport_https.cc(1468)] No cloud settings for register request
+11-23 03:47:16.749  2065  2065 W cast_shell: [1123/034716.749698:WARNING:client_auth_signer.cc(180)] No private key, hence empty signature.
+11-23 03:47:16.749  2065  2065 I cast_shell: [1123/034716.749744:INFO:ccs_manager_impl.cc(1663)] Registering device with CCS: message_id = 6e91f2ab-c5a1-4feb-94bb-3a7b61624f9f
+11-23 03:47:16.749  2065  2065 I cast_shell: [1123/034716.749873:INFO:application_identification_settings.cc(1079)] CreateJwt completed; running all done signing callbacks.
+11-23 03:47:16.749  2065  2065 I cast_shell: [1123/034716.749961:INFO:application_identification_settings.cc(1084)] Missing signature, return empty JWT
+11-23 03:47:16.750  2065  2065 E cast_shell: [1123/034716.750000:ERROR:ccs_transport_https.cc(1424)] CreateAndSignJwtAsync() returned invalid JWT. Not attaching to headers.
+11-23 03:47:16.750  2065  2065 E cast_shell: [1123/034716.750143:ERROR:cast_auth_headers.cc(167)] Unable to update signature header
+11-23 03:47:16.750  2065  2065 I cast_shell: [1123/034716.750265:INFO:metrics_recorder.cc(193)] cast event: Cloud.Transport.Https.Register.Out

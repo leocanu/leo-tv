@@ -82,6 +82,11 @@ public class MainActivity extends Activity {
     private TextView playerHudView = null;
     private LinearLayout playerOsdBar = null;
     private Button nextEpBannerBtn = null;
+    private android.os.CountDownTimer autoNextCountDownTimer = null;
+    private android.app.AlertDialog autoNextDialog = null;
+    private Button nextEpBannerBtn = null;
+    private android.os.CountDownTimer autoNextCountDownTimer = null;
+    private android.app.AlertDialog autoNextDialog = null;
     private int currentResizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT;
 
     private final Runnable hideHudRunnable = () -> {
@@ -7750,15 +7755,29 @@ public class MainActivity extends Activity {
                     java.util.Set<String> seenSeries = new java.util.HashSet<>();
                     for (PlaybackEngine.PlaybackProgress p : cwList) {
                         boolean isSeries = (!"movie".equals(p.kind))
-                                || (p.title != null && (p.title.matches(".*[·\\-–—]\\s*(?i)(?:T\\d+|Cap|Ep|Temporada).*")
+                                || (p.title != null && (p.title.matches(".*(?:[·\\-–—]\\s*)?(?i)(?:T\\d+|Cap\\.?|Ep\\.?|Temporada).*")
                                 || p.title.matches(".*(?i)T\\d+\\s*E\\d+.*")));
                         String displayTitle = p.title;
                         String baseSeriesTitle = "";
                         if (isSeries) {
-                            baseSeriesTitle = p.title.replaceAll("\\s*[·|\\-|–—]\\s*(?i)(?:T\\d+|Cap\\.?|Ep\\.?|Temporada).*", "").trim();
+                            baseSeriesTitle = p.title.replaceAll("\\s*(?:[·|\\-|–—]\\s*)?(?i)(?:Temporada|Capítulo|Cap\\.?|Ep\\.?|Season|T\\d+\\s*E\\d+|T\\d+).*", "").trim();
                             if (baseSeriesTitle.isEmpty()) baseSeriesTitle = p.title;
                             if (seenSeries.contains(baseSeriesTitle.toLowerCase(java.util.Locale.ROOT))) {
-                                continue; // Ya mostramos el capítulo más reciente de esta serie en Continuar viendo
+                                continue; // Ya mostramos la serie agrupada en Continuar viendo
+                            }
+                            seenSeries.add(baseSeriesTitle.toLowerCase(java.util.Locale.ROOT));
+                            displayTitle = baseSeriesTitle;
+                        }
+                        boolean isSeries = (!"movie".equals(p.kind))
+                                || (p.title != null && (p.title.matches(".*(?:[·\\-–—]\\s*)?(?i)(?:T\\d+|Cap\\.?|Ep\\.?|Temporada).*")
+                                || p.title.matches(".*(?i)T\\d+\\s*E\\d+.*")));
+                        String displayTitle = p.title;
+                        String baseSeriesTitle = "";
+                        if (isSeries) {
+                            baseSeriesTitle = p.title.replaceAll("\\s*(?:[·|\\-|–—]\\s*)?(?i)(?:Temporada|Capítulo|Cap\\.?|Ep\\.?|Season|T\\d+\\s*E\\d+|T\\d+).*", "").trim();
+                            if (baseSeriesTitle.isEmpty()) baseSeriesTitle = p.title;
+                            if (seenSeries.contains(baseSeriesTitle.toLowerCase(java.util.Locale.ROOT))) {
+                                continue; // Ya mostramos la serie agrupada en Continuar viendo
                             }
                             seenSeries.add(baseSeriesTitle.toLowerCase(java.util.Locale.ROOT));
                             displayTitle = baseSeriesTitle;
@@ -8948,6 +8967,19 @@ public class MainActivity extends Activity {
             String title) {
         if (providerLoading)
             return;
+        if (autoNextCountDownTimer != null) {
+            autoNextCountDownTimer.cancel();
+            autoNextCountDownTimer = null;
+        }
+        if (autoNextDialog != null) {
+            try {
+                if (autoNextDialog.isShowing()) autoNextDialog.dismiss();
+            } catch (Exception ignored) {}
+            autoNextDialog = null;
+        }
+        if (nextEpBannerBtn != null) {
+            nextEpBannerBtn.setVisibility(android.view.View.GONE);
+        }
         final long request = ++providerPlayRequest;
         providerLoading = true;
         currentPlayingEntry = entry;
@@ -9653,6 +9685,10 @@ public class MainActivity extends Activity {
                     if (status != null)
                         status.setVisibility(android.view.View.VISIBLE);
 
+                    if (nextEpBannerBtn != null) {
+                        nextEpBannerBtn.setVisibility(android.view.View.GONE);
+                    }
+
                     if (currentPlayingTitle != null && !currentPlayingTitle.isEmpty()) {
                         PlaybackEngine.markWatched(MainActivity.this, currentPlayingTitle);
                         if (currentPlayingEntry != null && !currentPlayingEntry.isMovie()) {
@@ -9667,17 +9703,85 @@ public class MainActivity extends Activity {
                         final String seriesBaseTitle = seriesEntry.title != null ? seriesEntry.title : "";
                         final String nextTitle = seriesBaseTitle + " · T" + currSeason + " E" + nextEp;
 
+                        if (autoNextCountDownTimer != null) {
+                            autoNextCountDownTimer.cancel();
+                            autoNextCountDownTimer = null;
+                        }
+                        if (autoNextDialog != null) {
+                            try {
+                                if (autoNextDialog.isShowing()) autoNextDialog.dismiss();
+                            } catch (Exception ignored) {}
+                            autoNextDialog = null;
+                        }
+
+                        final int COUNTDOWN_SECONDS = 5;
+                        final boolean[] actionTaken = new boolean[]{false};
+
                         android.app.AlertDialog.Builder nextB = new android.app.AlertDialog.Builder(MainActivity.this);
-                        nextB.setTitle("⏭ Capítulo Finalizado");
+                        nextB.setTitle("⏭ Siguiente Capítulo (" + COUNTDOWN_SECONDS + "s)");
                         nextB.setMessage("¿Querés reproducir el siguiente capítulo?\n\n"
-                                + seriesBaseTitle + "\nTemporada " + currSeason + " · Capítulo " + nextEp);
-                        nextB.setPositiveButton("Reproducir Siguiente (Cap. " + nextEp + ")", (d, w) -> {
+                                + seriesBaseTitle + "\nTemporada " + currSeason + " · Capítulo " + nextEp
+                                + "\n\nIniciando automáticamente en " + COUNTDOWN_SECONDS + " segundos...");
+
+                        nextB.setPositiveButton("Reproducir ahora (Cap. " + nextEp + ")", (d, w) -> {
+                            actionTaken[0] = true;
+                            if (autoNextCountDownTimer != null) {
+                                autoNextCountDownTimer.cancel();
+                                autoNextCountDownTimer = null;
+                            }
                             VideoProvider vp = VideoProviders.find(currentPlayingOrigin);
                             if (vp == null) vp = VideoProviders.find("CineHax");
                             playProviderTitle(vp, seriesEntry, currSeason, nextEp, nextTitle);
                         });
-                        nextB.setNegativeButton("Volver", null);
-                        nextB.show();
+
+                        nextB.setNegativeButton("Cancelar", (d, w) -> {
+                            actionTaken[0] = true;
+                            if (autoNextCountDownTimer != null) {
+                                autoNextCountDownTimer.cancel();
+                                autoNextCountDownTimer = null;
+                            }
+                            d.dismiss();
+                        });
+
+                        final android.app.AlertDialog dialog = nextB.create();
+                        autoNextDialog = dialog;
+
+                        dialog.setOnDismissListener(d -> {
+                            if (!actionTaken[0] && autoNextCountDownTimer != null) {
+                                autoNextCountDownTimer.cancel();
+                                autoNextCountDownTimer = null;
+                            }
+                        });
+
+                        dialog.show();
+
+                        autoNextCountDownTimer = new android.os.CountDownTimer(COUNTDOWN_SECONDS * 1000L, 1000L) {
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                                if (actionTaken[0] || !dialog.isShowing()) return;
+                                long secLeft = (millisUntilFinished + 999) / 1000;
+                                dialog.setTitle("⏭ Siguiente Capítulo (" + secLeft + "s)");
+                                dialog.setMessage("¿Querés reproducir el siguiente capítulo?\n\n"
+                                        + seriesBaseTitle + "\nTemporada " + currSeason + " · Capítulo " + nextEp
+                                        + "\n\nIniciando automáticamente en " + secLeft + " segundos...");
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                if (actionTaken[0]) return;
+                                actionTaken[0] = true;
+                                try {
+                                    if (dialog.isShowing()) {
+                                        dialog.dismiss();
+                                    }
+                                } catch (Exception ignored) {}
+                                autoNextDialog = null;
+                                autoNextCountDownTimer = null;
+                                VideoProvider vp = VideoProviders.find(currentPlayingOrigin);
+                                if (vp == null) vp = VideoProviders.find("CineHax");
+                                playProviderTitle(vp, seriesEntry, currSeason, nextEp, nextTitle);
+                            }
+                        }.start();
                     }
                 } else if (state == Player.STATE_BUFFERING) {
                     showStatus("Cargando video...");
@@ -9895,103 +9999,6 @@ public class MainActivity extends Activity {
 
     private void toggleScreenOrientation() {
         int current = getResources().getConfiguration().orientation;
-        if (current == android.content.res.Configuration.ORIENTATION_PORTRAIT) {
-            setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-            Toast.makeText(this, "Pantalla en modo horizontal 🔄", Toast.LENGTH_SHORT).show();
-        } else {
-            setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            Toast.makeText(this, "Pantalla en modo vertical 🔄", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    public void onConfigurationChanged(android.content.res.Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if ("home".equals(page)) {
-            home();
-        } else if ("playing".equals(page)) {
-            if (fullscreen) {
-                setFullscreen(true);
-            }
-        }
-    }
-
-    @Override
-    public void onCreate(Bundle state) {
-        super.onCreate(state);
-        try {
-            setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-        } catch (Exception ignored) {
-        }
-        LeoDownloadManager.checkPermissions(this);
-        loadChannels();
-        loadCatalog();
-        loadAudit();
-        showSplashScreen();
-    }
-
-    @Override
-    protected void onNewIntent(android.content.Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
-        handleLaunchIntent(intent);
-    }
-
-    @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-            if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                if ("playing".equals(page)) {
-                    if (playbackView != null && playbackView.isControllerFullyVisible()) {
-                        playbackView.hideController();
-                        return true;
-                    }
-                    if (playerOsdBar != null && playerOsdBar.getVisibility() == android.view.View.VISIBLE) {
-                        hidePlayerOsd();
-                        return true;
-                    }
-                }
-                return true;
-            }
-            if (event.getAction() == KeyEvent.ACTION_UP) {
-                onBackPressed();
-                return true;
-            }
-        }
-        if (page.equals("playing") && event.getKeyCode() == KeyEvent.KEYCODE_MENU) {
-            if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
-                if (playbackView != null) {
-                    if (playbackView.isControllerFullyVisible()) {
-                        playbackView.hideController();
-                    } else {
-                        playbackView.showController();
-                    }
-                }
-            }
-            return true;
-        }
-        if (externalPlayer != null && "playing".equals(page)) {
-            int key = event.getKeyCode();
-            if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                // Adelantar y retroceder con pulsación simple o dejando apretado (repeatCount >= 0)
-                if (key == KeyEvent.KEYCODE_DPAD_LEFT || key == KeyEvent.KEYCODE_MEDIA_REWIND) {
-                    scheduleOsdHide(4000);
-                    long step = event.getRepeatCount() > 4 ? 30000 : 10000;
-                    long newPos = Math.max(0, externalPlayer.getCurrentPosition() - step);
-                    externalPlayer.seekTo(newPos);
-                    String titlePrefix = (currentPlayingTitle != null && !currentPlayingTitle.isEmpty())
-                            ? currentPlayingTitle + "\n" : "";
-                    showPlayerHud(titlePrefix + "⏪  -" + (step / 1000) + "s  (" + PlaybackEngine.formatTime(newPos) + " / "
-                            + PlaybackEngine.formatTime(externalPlayer.getDuration()) + ")");
-                    updateMediaState();
-                    return true;
-                } else if (key == KeyEvent.KEYCODE_DPAD_RIGHT || key == KeyEvent.KEYCODE_MEDIA_FAST_FORWARD) {
-                    scheduleOsdHide(4000);
-                    long step = event.getRepeatCount() > 4 ? 30000 : 10000;
-                    long newPos = Math.min(externalPlayer.getDuration(), externalPlayer.getCurrentPosition() + step);
-                    externalPlayer.seekTo(newPos);
-                    String titlePrefix = (currentPlayingTitle != null && !currentPlayingTitle.isEmpty())
-                            ? currentPlayingTitle + "\n" : "";
                     showPlayerHud(titlePrefix + "⏩  +" + (step / 1000) + "s  (" + PlaybackEngine.formatTime(newPos) + " / "
                             + PlaybackEngine.formatTime(externalPlayer.getDuration()) + ")");
                     updateMediaState();
@@ -10210,6 +10217,16 @@ public class MainActivity extends Activity {
         if ("playing".equals(page)) {
             mainHandler.removeCallbacks(periodicSaveRunnable);
             getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            if (autoNextCountDownTimer != null) {
+                autoNextCountDownTimer.cancel();
+                autoNextCountDownTimer = null;
+            }
+            if (autoNextDialog != null) {
+                try {
+                    if (autoNextDialog.isShowing()) autoNextDialog.dismiss();
+                } catch (Exception ignored) {}
+                autoNextDialog = null;
+            }
             if (externalPlayer != null) {
                 final long pos = externalPlayer.getCurrentPosition();
                 final long dur = externalPlayer.getDuration();
