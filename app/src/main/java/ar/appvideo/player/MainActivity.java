@@ -9948,4 +9948,876 @@ public class MainActivity extends Activity {
         view.setControllerShowTimeoutMs(4000);
         view.post(() -> {
             try {
-... [truncated for diff preview]
+                android.view.View exoSettings = view.findViewById(androidx.media3.ui.R.id.exo_settings);
+                if (exoSettings != null) {
+                    exoSettings.setOnClickListener(v -> {
+                        scheduleOsdHide(5000);
+                        showTracksDialog();
+                    });
+                }
+            } catch (Exception ignored) {}
+        });
+        view.setControllerVisibilityListener(new PlayerView.ControllerVisibilityListener() {
+            @Override
+            public void onVisibilityChanged(int visibility) {
+                if (playerOsdBar != null) {
+                    if (visibility == android.view.View.VISIBLE) {
+                        playerOsdBar.setVisibility(android.view.View.VISIBLE);
+                        playerOsdBar.animate().alpha(1.0f).setDuration(200).start();
+                    } else {
+                        playerOsdBar.animate().alpha(0.0f).setDuration(200).withEndAction(() -> {
+                            if (playerOsdBar != null) {
+                                playerOsdBar.setVisibility(android.view.View.GONE);
+                            }
+                        }).start();
+                    }
+                }
+            }
+        });
+        view.setOnClickListener(v -> {
+            if (view.isControllerFullyVisible()) {
+                view.hideController();
+            } else {
+                view.showController();
+            }
+        });
+
+        // Restaurar posición guardada de Continuar viendo si existe
+        final long savedPos = PlaybackEngine.getSavedPosition(this, currentPlayingTitle);
+        if (savedPos > 10000) {
+            externalPlayer.addListener(new Player.Listener() {
+                private boolean resumed = false;
+
+                @Override
+                public void onPlaybackStateChanged(int state) {
+                    if (state == Player.STATE_READY && !resumed) {
+                        resumed = true;
+                        externalPlayer.seekTo(savedPos);
+                        showPlayerHud("▶  Reanudando desde " + PlaybackEngine.formatTime(savedPos));
+                    }
+                }
+            });
+        }
+
+        // Iniciar guardado periódico cada 5 segundos
+        mainHandler.removeCallbacks(periodicSaveRunnable);
+        mainHandler.postDelayed(periodicSaveRunnable, 5000);
+        externalPlayer.addListener(new Player.Listener() {
+            @Override
+            public void onPlaybackStateChanged(int state) {
+                if (state == Player.STATE_READY) {
+                    if (bufferingWatchdogRunnable != null) {
+                        mainHandler.removeCallbacks(bufferingWatchdogRunnable);
+                        bufferingWatchdogRunnable = null;
+                    }
+                    isSwitchingUnstableServer = false;
+                    showStatus(externalPlayer != null && externalPlayer.getPlayWhenReady()
+                            ? "Video preparado."
+                            : "Pausado.");
+                    if (status != null)
+                        status.setVisibility(android.view.View.GONE);
+                    scheduleOsdHide(3500);
+                } else if (state == Player.STATE_ENDED) {
+                    if (bufferingWatchdogRunnable != null) {
+                        mainHandler.removeCallbacks(bufferingWatchdogRunnable);
+                        bufferingWatchdogRunnable = null;
+                    }
+                    showStatus("Video finalizado.");
+                    if (status != null)
+                        status.setVisibility(android.view.View.VISIBLE);
+
+                    if (nextEpBannerBtn != null) {
+                        nextEpBannerBtn.setVisibility(android.view.View.GONE);
+                    }
+
+                    if (currentPlayingTitle != null && !currentPlayingTitle.isEmpty()) {
+                        PlaybackEngine.markWatched(MainActivity.this, currentPlayingTitle);
+                        if (currentPlayingEntry != null && !currentPlayingEntry.isMovie()) {
+                            PlaybackEngine.markWatched(MainActivity.this, currentPlayingEntry.title + " · T" + currentPlayingSeason + " E" + currentPlayingEpisode);
+                        }
+                    }
+
+                    if (currentPlayingEntry != null && !currentPlayingEntry.isMovie() && currentPlayingEpisode > 0) {
+                        final int nextEp = currentPlayingEpisode + 1;
+                        final int currSeason = currentPlayingSeason > 0 ? currentPlayingSeason : 1;
+                        final CatalogData.Entry seriesEntry = currentPlayingEntry;
+                        final String seriesBaseTitle = seriesEntry.title != null ? seriesEntry.title : "";
+                        final String nextTitle = seriesBaseTitle + " · T" + currSeason + " E" + nextEp;
+
+                        if (autoNextCountDownTimer != null) {
+                            autoNextCountDownTimer.cancel();
+                            autoNextCountDownTimer = null;
+                        }
+                        if (autoNextDialog != null) {
+                            try {
+                                if (autoNextDialog.isShowing()) autoNextDialog.dismiss();
+                            } catch (Exception ignored) {}
+                            autoNextDialog = null;
+                        }
+
+                        final int COUNTDOWN_SECONDS = 5;
+                        final boolean[] actionTaken = new boolean[]{false};
+
+                        android.app.AlertDialog.Builder nextB = new android.app.AlertDialog.Builder(MainActivity.this);
+                        nextB.setTitle("⏭ Siguiente Capítulo (" + COUNTDOWN_SECONDS + "s)");
+                        nextB.setMessage("¿Querés reproducir el siguiente capítulo?\n\n"
+                                + seriesBaseTitle + "\nTemporada " + currSeason + " · Capítulo " + nextEp
+                                + "\n\nIniciando automáticamente en " + COUNTDOWN_SECONDS + " segundos...");
+
+                        nextB.setPositiveButton("Reproducir ahora (Cap. " + nextEp + ")", (d, w) -> {
+                            actionTaken[0] = true;
+                            if (autoNextCountDownTimer != null) {
+                                autoNextCountDownTimer.cancel();
+                                autoNextCountDownTimer = null;
+                            }
+                            VideoProvider vp = VideoProviders.find(currentPlayingOrigin);
+                            if (vp == null) vp = VideoProviders.find("CineHax");
+                            playProviderTitle(vp, seriesEntry, currSeason, nextEp, nextTitle);
+                        });
+
+                        nextB.setNegativeButton("Cancelar", (d, w) -> {
+                            actionTaken[0] = true;
+                            if (autoNextCountDownTimer != null) {
+                                autoNextCountDownTimer.cancel();
+                                autoNextCountDownTimer = null;
+                            }
+                            d.dismiss();
+                        });
+
+                        final android.app.AlertDialog dialog = nextB.create();
+                        autoNextDialog = dialog;
+
+                        dialog.setOnDismissListener(d -> {
+                            if (!actionTaken[0] && autoNextCountDownTimer != null) {
+                                autoNextCountDownTimer.cancel();
+                                autoNextCountDownTimer = null;
+                            }
+                        });
+
+                        dialog.show();
+
+                        autoNextCountDownTimer = new android.os.CountDownTimer(COUNTDOWN_SECONDS * 1000L, 1000L) {
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                                if (actionTaken[0] || !dialog.isShowing()) return;
+                                long secLeft = (millisUntilFinished + 999) / 1000;
+                                dialog.setTitle("⏭ Siguiente Capítulo (" + secLeft + "s)");
+                                dialog.setMessage("¿Querés reproducir el siguiente capítulo?\n\n"
+                                        + seriesBaseTitle + "\nTemporada " + currSeason + " · Capítulo " + nextEp
+                                        + "\n\nIniciando automáticamente en " + secLeft + " segundos...");
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                if (actionTaken[0]) return;
+                                actionTaken[0] = true;
+                                try {
+                                    if (dialog.isShowing()) {
+                                        dialog.dismiss();
+                                    }
+                                } catch (Exception ignored) {}
+                                autoNextDialog = null;
+                                autoNextCountDownTimer = null;
+                                VideoProvider vp = VideoProviders.find(currentPlayingOrigin);
+                                if (vp == null) vp = VideoProviders.find("CineHax");
+                                playProviderTitle(vp, seriesEntry, currSeason, nextEp, nextTitle);
+                            }
+                        }.start();
+                    }
+                } else if (state == Player.STATE_BUFFERING) {
+                    showStatus("Cargando video...");
+                    if (status != null)
+                        status.setVisibility(android.view.View.VISIBLE);
+
+                    if (bufferingWatchdogRunnable != null) {
+                        mainHandler.removeCallbacks(bufferingWatchdogRunnable);
+                    }
+                    bufferingWatchdogRunnable = () -> {
+                        if (externalPlayer != null && externalPlayer.getPlaybackState() == Player.STATE_BUFFERING
+                                && externalPlayer.getPlayWhenReady() && !isSwitchingUnstableServer) {
+                            android.util.Log.w("LeoTVPlayer", "Watchdog de buffering sostenido disparado (>8s)");
+                            autoFallbackUnstableServer("Buffering sostenido");
+                        }
+                    };
+                    mainHandler.postDelayed(bufferingWatchdogRunnable, 8000);
+                }
+                updateMediaState();
+            }
+
+            @Override
+            public void onPositionDiscontinuity(Player.PositionInfo oldPosition,
+                    Player.PositionInfo newPosition, int reason) {
+                updateMediaState();
+            }
+
+            @Override
+            public void onPlayWhenReadyChanged(boolean ready, int reason) {
+                if (!ready && bufferingWatchdogRunnable != null) {
+                    mainHandler.removeCallbacks(bufferingWatchdogRunnable);
+                    bufferingWatchdogRunnable = null;
+                }
+                updateMediaState();
+                showStatus(ready ? (externalPlayer.getPlaybackState() == Player.STATE_READY
+                        ? "Video preparado. Reproduciendo."
+                        : "Cargando datos de video...") : "Pausado.");
+                android.util.Log.i("VideoPropia", "playWhenReady=" + ready + " reason=" + reason
+                        + " position=" + externalPlayer.getCurrentPosition()
+                        + " state=" + externalPlayer.getPlaybackState()
+                        + " playing=" + externalPlayer.isPlaying());
+            }
+
+            @Override
+            public void onIsPlayingChanged(boolean playing) {
+                updateMediaState();
+                if (externalPlayer != null && externalPlayer.getPlaybackState() == Player.STATE_READY) {
+                    if (status != null)
+                        status.setVisibility(android.view.View.GONE);
+                    android.util.Log.i("LeoTVPlayer", "playing=" + playing +
+                            " positionMs=" + externalPlayer.getCurrentPosition());
+                }
+            }
+
+            @Override
+            public void onPlayerError(PlaybackException error) {
+                if (bufferingWatchdogRunnable != null) {
+                    mainHandler.removeCallbacks(bufferingWatchdogRunnable);
+                    bufferingWatchdogRunnable = null;
+                }
+                if (currentPlayingEntry != null && !isSwitchingUnstableServer) {
+                    android.util.Log.w("LeoTVPlayer", "Player error -> auto-fallback activado: " + error.getMessage());
+                    autoFallbackUnstableServer("Error de conexión");
+                    return;
+                }
+                Throwable cause = error;
+                int httpCode = 0;
+                while (cause != null) {
+                    if (cause instanceof androidx.media3.datasource.HttpDataSource.InvalidResponseCodeException) {
+                        httpCode = ((androidx.media3.datasource.HttpDataSource.InvalidResponseCodeException) cause).responseCode;
+                        break;
+                    }
+                    cause = cause.getCause();
+                }
+                String message = httpCode == 403 ? "Acceso denegado por la fuente (HTTP 403). Probá otro canal."
+                        : httpCode == 404 ? "La fuente no existe (HTTP 404). Probá otro canal."
+                                : httpCode > 0 ? "Error HTTP " + httpCode + " de la fuente."
+                                        : "No se pudo reproducir: " + error.getErrorCodeName();
+                showStatus(message + "  Atras para elegir otro video.");
+                if (status != null)
+                    status.setVisibility(android.view.View.VISIBLE);
+                if (mediaSession != null)
+                    mediaSession.setPlaybackState(
+                            new android.media.session.PlaybackState.Builder()
+                                    .setState(android.media.session.PlaybackState.STATE_ERROR,
+                                            externalPlayer.getCurrentPosition(), 0f)
+                                    .build());
+                android.util.Log.e("LeoTVPlayer", "Playback error origin=" + origin +
+                        " code=" + error.getErrorCodeName() + " http=" + httpCode, error);
+            }
+        });
+        externalPlayer.setMediaItem(MediaItem.fromUri(url));
+        startMediaSession();
+        externalPlayer.prepare();
+        externalPlayer.play();
+
+        view.requestFocusFromTouch();
+        fullscreenButton = item("Pantalla completa", body, () -> setFullscreen(true));
+        setFullscreen(true);
+    }
+
+    private void handleLaunchIntent(android.content.Intent intent) {
+        if (intent == null)
+            return;
+        String openSection = intent.getStringExtra("open_section");
+        if (openSection != null && !openSection.isEmpty()) {
+            if ("tv".equals(openSection)) {
+                showLiveTvStudio();
+                return;
+            } else if ("movies".equals(openSection)) {
+                activeTab = "movies";
+                home();
+                return;
+            } else if ("series".equals(openSection)) {
+                activeTab = "series";
+                home();
+                return;
+            } else if ("docs".equals(openSection)) {
+                activeTab = "docs";
+                home();
+                return;
+            } else if ("favorites".equals(openSection)) {
+                showFavoritesPage();
+                return;
+            } else if ("watch_later".equals(openSection)) {
+                showWatchLaterPage();
+                return;
+            }
+        }
+        String playUrl = intent.getStringExtra("play_url");
+        String playTitle = intent.getStringExtra("play_title");
+        if (playUrl != null && !playUrl.isEmpty()) {
+            playMovie(playTitle != null ? playTitle : "Video", playUrl, "Direct Play");
+            return;
+        }
+        String searchQuery = intent.getStringExtra("search_query");
+        boolean openSearch = intent.getBooleanExtra("open_search", false);
+        String detailQuery = intent.getStringExtra("open_detail_query");
+        String actorName = intent.getStringExtra("open_actor_name");
+        if (actorName != null && !actorName.isEmpty()) {
+            new Thread(() -> {
+                ZappCatalogEngine.GlobalSearchResult r = ZappCatalogEngine.searchUnified(actorName, true,
+                        activeProvider);
+                if (!r.matchedActors.isEmpty()) {
+                    final ZappCatalogEngine.ActorItem actor = r.matchedActors.get(0);
+                    runOnUiThread(() -> openActorDetailSheet(actor));
+                }
+            }).start();
+        } else if (detailQuery != null && !detailQuery.isEmpty()) {
+            new Thread(() -> {
+                ZappCatalogEngine.GlobalSearchResult r = ZappCatalogEngine.searchUnified(detailQuery, true,
+                        activeProvider);
+                for (java.util.List<CatalogData.Entry> list : r.byProvider.values()) {
+                    if (!list.isEmpty()) {
+                        final CatalogData.Entry first = list.get(0);
+                        runOnUiThread(() -> openEntryDetail(first));
+                        return;
+                    }
+                }
+            }).start();
+        } else if (openSearch || (searchQuery != null && !searchQuery.isEmpty())) {
+            showLunifiedSearch(searchQuery == null ? "" : searchQuery);
+        }
+    }
+
+    private AppUpdater.UpdateInfo pendingUpdate = null;
+
+    private void showSplashScreen() {
+        page = "splash";
+
+        // Pre-cargar Home inmediatamente en segundo plano
+        // para que durante los 8 segundos del video se descarguen catálogos e imágenes de pósters
+        home();
+
+        splashOverlay = new android.widget.FrameLayout(this);
+        splashOverlay.setBackgroundColor(Color.BLACK);
+        splashOverlay.setFocusable(true);
+        splashOverlay.setFocusableInTouchMode(true);
+
+        splashVideoView = new android.widget.VideoView(this);
+        android.widget.FrameLayout.LayoutParams vvLp = new android.widget.FrameLayout.LayoutParams(
+                android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
+                android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
+                Gravity.CENTER);
+        splashOverlay.addView(splashVideoView, vvLp);
+
+        TextView skipBadge = text("Presioná  [OK]  para saltar", 13, Color.argb(210, 240, 240, 240));
+        skipBadge.setPadding(dp(16), dp(8), dp(16), dp(8));
+        GradientDrawable sbBg = new GradientDrawable();
+        sbBg.setColor(Color.argb(160, 16, 22, 34));
+        sbBg.setCornerRadius(dp(12));
+        sbBg.setStroke(dp(1), Color.argb(120, 245, 197, 66));
+        skipBadge.setBackground(sbBg);
+        android.widget.FrameLayout.LayoutParams sblp = new android.widget.FrameLayout.LayoutParams(-2, -2,
+                Gravity.BOTTOM | Gravity.END);
+        sblp.setMargins(0, 0, dp(32), dp(28));
+        splashOverlay.addView(skipBadge, sblp);
+
+        splashOverlay.setOnClickListener(v -> dismissSplash());
+        splashOverlay.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_UP) {
+                dismissSplash();
+                return true;
+            }
+            return false;
+        });
+
+        // Comprobación silenciosa de actualizaciones en GitHub
+        AppUpdater.check(this, new AppUpdater.CheckCallback() {
+            @Override
+            public void onUpdateAvailable(AppUpdater.UpdateInfo info) {
+                pendingUpdate = info;
+            }
+
+            @Override
+            public void onNoUpdate() {}
+
+            @Override
+            public void onError(String msg) {}
+        });
+
+        getWindow().addContentView(splashOverlay,
+                new android.view.ViewGroup.LayoutParams(
+                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                        android.view.ViewGroup.LayoutParams.MATCH_PARENT));
+        splashOverlay.requestFocus();
+
+        try {
+            Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.splash);
+            splashVideoView.setVideoURI(videoUri);
+            splashVideoView.setOnPreparedListener(mp -> {
+                mp.setLooping(false);
+                splashVideoView.start();
+            });
+            splashVideoView.setOnCompletionListener(mp -> dismissSplash());
+            splashVideoView.setOnErrorListener((mp, what, extra) -> {
+                dismissSplash();
+                return true;
+            });
+        } catch (Exception ex) {
+            dismissSplash();
+        }
+
+        // Temporizador de seguridad (8.5 segundos)
+        mainHandler.postDelayed(dismissSplashRunnable, 8500);
+    }
+
+    private void dismissSplash() {
+        runOnUiThread(() -> {
+            mainHandler.removeCallbacks(dismissSplashRunnable);
+            if (splashOverlay == null) return;
+            final android.view.View toDismiss = splashOverlay;
+            splashOverlay = null;
+            if (splashVideoView != null) {
+                try {
+                    splashVideoView.stopPlayback();
+                } catch (Exception ignored) {}
+                splashVideoView = null;
+            }
+            toDismiss.animate().alpha(0f).setDuration(400).withEndAction(() -> {
+                try {
+                    if (toDismiss.getParent() instanceof android.view.ViewGroup) {
+                        ((android.view.ViewGroup) toDismiss.getParent()).removeView(toDismiss);
+                    }
+                } catch (Exception ignored) {}
+                page = "home";
+                handleLaunchIntent(getIntent());
+                if (CatalogUpdater.shouldAutoUpdate(MainActivity.this)) {
+                    CatalogUpdater.runUpdateAsync(MainActivity.this, null);
+                }
+                if (pendingUpdate != null) {
+                    AppUpdater.showUpdateDialog(MainActivity.this, pendingUpdate);
+                }
+            }).start();
+        });
+    }
+
+    private void toggleScreenOrientation() {
+        int current = getResources().getConfiguration().orientation;
+        if (current == android.content.res.Configuration.ORIENTATION_PORTRAIT) {
+            setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+            Toast.makeText(this, "Pantalla en modo horizontal 🔄", Toast.LENGTH_SHORT).show();
+        } else {
+            setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            Toast.makeText(this, "Pantalla en modo vertical 🔄", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(android.content.res.Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if ("home".equals(page)) {
+            home();
+        } else if ("playing".equals(page)) {
+            if (fullscreen) {
+                setFullscreen(true);
+            }
+        }
+    }
+
+    @Override
+    public void onCreate(Bundle state) {
+        super.onCreate(state);
+        try {
+            setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        } catch (Exception ignored) {
+        }
+        LeoDownloadManager.checkPermissions(this);
+        loadChannels();
+        loadCatalog();
+        loadAudit();
+        showSplashScreen();
+    }
+
+    @Override
+    protected void onNewIntent(android.content.Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleLaunchIntent(intent);
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (splashOverlay != null) {
+            if (event.getAction() == KeyEvent.ACTION_UP) {
+                dismissSplash();
+                return true;
+            }
+            return true;
+        }
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                if ("playing".equals(page)) {
+                    if (playbackView != null && playbackView.isControllerFullyVisible()) {
+                        playbackView.hideController();
+                        return true;
+                    }
+                    if (playerOsdBar != null && playerOsdBar.getVisibility() == android.view.View.VISIBLE) {
+                        hidePlayerOsd();
+                        return true;
+                    }
+                }
+                return true;
+            }
+            if (event.getAction() == KeyEvent.ACTION_UP) {
+                onBackPressed();
+                return true;
+            }
+        }
+        if (page.equals("playing") && event.getKeyCode() == KeyEvent.KEYCODE_MENU) {
+            if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
+                if (playbackView != null) {
+                    if (playbackView.isControllerFullyVisible()) {
+                        playbackView.hideController();
+                    } else {
+                        playbackView.showController();
+                        if (playerOsdBar != null) {
+                            playerOsdBar.setVisibility(android.view.View.VISIBLE);
+                            playerOsdBar.animate().alpha(1.0f).setDuration(180).start();
+                            if (playerOsdBar.getChildCount() > 0) {
+                                playerOsdBar.getChildAt(0).requestFocus();
+                            }
+                        }
+                    }
+                }
+                return true;
+            }
+        }
+        if (page.equals("playing") && externalPlayer != null) {
+            int key = event.getKeyCode();
+            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                if (key == KeyEvent.KEYCODE_DPAD_RIGHT || key == KeyEvent.KEYCODE_DPAD_LEFT) {
+                    scheduleOsdHide(4000);
+                    long curPos = externalPlayer.getCurrentPosition();
+                    long step = (event.getRepeatCount() > 4) ? 30000 : 10000;
+                    long newPos = (key == KeyEvent.KEYCODE_DPAD_RIGHT)
+                            ? Math.min(curPos + step, externalPlayer.getDuration())
+                            : Math.max(0, curPos - step);
+                    externalPlayer.seekTo(newPos);
+                    String titlePrefix = (currentPlayingTitle != null && !currentPlayingTitle.isEmpty())
+                            ? currentPlayingTitle + "\n" : "";
+                    if (key == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                        showPlayerHud(titlePrefix + "⏩  +" + (step / 1000) + "s  (" + PlaybackEngine.formatTime(newPos) + " / "
+                                + PlaybackEngine.formatTime(externalPlayer.getDuration()) + ")");
+                    } else {
+                        showPlayerHud(titlePrefix + "⏪  -" + (step / 1000) + "s  (" + PlaybackEngine.formatTime(newPos) + " / "
+                                + PlaybackEngine.formatTime(externalPlayer.getDuration()) + ")");
+                    }
+                    updateMediaState();
+                    return true;
+                }
+                if (event.getRepeatCount() == 0) {
+                    android.view.View curFocus = getCurrentFocus();
+                    boolean isOsdFocused = (playerOsdBar != null && (playerOsdBar.hasFocus() || (curFocus != null && curFocus.getParent() == playerOsdBar)));
+
+                    if (isOsdFocused) {
+                        scheduleOsdHide(5000);
+                        if (key == KeyEvent.KEYCODE_DPAD_CENTER || key == KeyEvent.KEYCODE_ENTER) {
+                            if (curFocus != null) {
+                                curFocus.performClick();
+                                return true;
+                            }
+                        } else if (key == KeyEvent.KEYCODE_DPAD_DOWN) {
+                            if (playbackView != null) {
+                                playbackView.requestFocus();
+                                return true;
+                            }
+                        } else if (key == KeyEvent.KEYCODE_DPAD_LEFT || key == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                            return super.dispatchKeyEvent(event);
+                        }
+                    }
+
+                    if (key == KeyEvent.KEYCODE_DPAD_CENTER || key == KeyEvent.KEYCODE_ENTER
+                            || key == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
+                        scheduleOsdHide(4000);
+                        if (playbackView != null && !playbackView.isControllerFullyVisible()) {
+                            playbackView.showController();
+                            if (playerOsdBar != null) {
+                                playerOsdBar.setVisibility(android.view.View.VISIBLE);
+                                playerOsdBar.animate().alpha(1.0f).setDuration(180).start();
+                            }
+                            return true;
+                        }
+                        String titlePrefix = (currentPlayingTitle != null && !currentPlayingTitle.isEmpty())
+                                ? currentPlayingTitle + "\n" : "";
+                        if (externalPlayer.isPlaying()) {
+                            externalPlayer.pause();
+                            showPlayerHud(titlePrefix + "⏸  Pausado");
+                        } else {
+                            externalPlayer.play();
+                            showPlayerHud(titlePrefix + "▶  Reproduciendo");
+                        }
+                        updateMediaState();
+                        return true;
+                    } else if (key == KeyEvent.KEYCODE_DPAD_UP || key == KeyEvent.KEYCODE_DPAD_DOWN) {
+                        scheduleOsdHide(5000);
+                        if (playbackView != null) {
+                            playbackView.showController();
+                        }
+                        if (playerOsdBar != null) {
+                            playerOsdBar.setVisibility(android.view.View.VISIBLE);
+                            playerOsdBar.animate().alpha(1.0f).setDuration(180).start();
+                            android.view.View row = playerOsdBar.getChildAt(1); // buttonsRow
+                            if (row instanceof android.view.ViewGroup && ((android.view.ViewGroup) row).getChildCount() > 0) {
+                                ((android.view.ViewGroup) row).getChildAt(0).requestFocus();
+                                return true;
+                            } else if (playerOsdBar.getChildCount() > 0) {
+                                playerOsdBar.getChildAt(0).requestFocus();
+                                return true;
+                            }
+                        }
+                    } else if (key == KeyEvent.KEYCODE_MEDIA_PLAY) {
+                        scheduleOsdHide(4000);
+                        externalPlayer.play();
+                        String titlePrefix = (currentPlayingTitle != null && !currentPlayingTitle.isEmpty())
+                                ? currentPlayingTitle + "\n" : "";
+                        showPlayerHud(titlePrefix + "▶  Reproduciendo");
+                        updateMediaState();
+                        return true;
+                    } else if (key == KeyEvent.KEYCODE_MEDIA_PAUSE) {
+                        scheduleOsdHide(4000);
+                        externalPlayer.pause();
+                        String titlePrefix = (currentPlayingTitle != null && !currentPlayingTitle.isEmpty())
+                                ? currentPlayingTitle + "\n" : "";
+                        showPlayerHud(titlePrefix + "⏸  Pausado");
+                        updateMediaState();
+                        return true;
+                    }
+                }
+            }
+        }
+        if (event.getAction() == KeyEvent.ACTION_DOWN && !"playing".equals(page)
+                && !"live_tv_fullscreen".equals(page) && !"live_tv".equals(page)) {
+            int key = event.getKeyCode();
+            android.view.View curFocus = getCurrentFocus();
+            if (key == KeyEvent.KEYCODE_DPAD_LEFT && curFocus != null && !sideNavButtons.contains(curFocus)) {
+                android.view.View next = android.view.FocusFinder.getInstance().findNextFocus(root, curFocus,
+                        android.view.View.FOCUS_LEFT);
+                if (next == null || (!sideNavButtons.contains(next) && next.getLeft() >= curFocus.getLeft())) {
+                    int[] cardLoc = new int[2];
+                    curFocus.getLocationOnScreen(cardLoc);
+                    int cardY = cardLoc[1] + (curFocus.getHeight() / 2);
+                    android.view.View bestSide = null;
+                    int minDiff = Integer.MAX_VALUE;
+                    for (android.view.View sb : sideNavButtons) {
+                        if (sb.isShown()) {
+                            int[] sbLoc = new int[2];
+                            sb.getLocationOnScreen(sbLoc);
+                            int diff = Math.abs((sbLoc[1] + (sb.getHeight() / 2)) - cardY);
+                            if (diff < minDiff) {
+                                minDiff = diff;
+                                bestSide = sb;
+                            }
+                        }
+                    }
+                    if (bestSide != null) {
+                        bestSide.requestFocus();
+                        return true;
+                    } else if (activeSidebarView != null) {
+                        activeSidebarView.requestFocus();
+                        return true;
+                    } else if (!sideNavButtons.isEmpty()) {
+                        sideNavButtons.get(0).requestFocus();
+                        return true;
+                    }
+                }
+            } else if (key == KeyEvent.KEYCODE_DPAD_RIGHT && curFocus != null && sideNavButtons.contains(curFocus)) {
+                int[] sideLoc = new int[2];
+                curFocus.getLocationOnScreen(sideLoc);
+                int sideY = sideLoc[1] + (curFocus.getHeight() / 2);
+
+                android.view.View target = null;
+                android.view.View next = android.view.FocusFinder.getInstance().findNextFocus(root, curFocus,
+                        android.view.View.FOCUS_RIGHT);
+                if (next != null && !sideNavButtons.contains(next) && next.isShown()) {
+                    target = next;
+                }
+
+                if (pageScroll != null && pageScroll.getChildCount() > 0) {
+                    android.view.View contentContainer = pageScroll.getChildAt(0);
+                    java.util.ArrayList<android.view.View> focusables = new java.util.ArrayList<>();
+                    contentContainer.addFocusables(focusables, android.view.View.FOCUS_RIGHT);
+                    int minDiff = Integer.MAX_VALUE;
+                    android.view.View bestTarget = null;
+                    for (android.view.View cand : focusables) {
+                        if (cand.isShown() && !sideNavButtons.contains(cand)) {
+                            int[] cLoc = new int[2];
+                            cand.getLocationOnScreen(cLoc);
+                            if (cLoc[0] > sideLoc[0]) {
+                                int candY = cLoc[1] + (cand.getHeight() / 2);
+                                int diff = Math.abs(candY - sideY);
+                                if (diff < minDiff) {
+                                    minDiff = diff;
+                                    bestTarget = cand;
+                                }
+                            }
+                        }
+                    }
+                    if (bestTarget != null) {
+                        target = bestTarget;
+                    }
+                }
+
+                if (target != null) {
+                    target.requestFocus();
+                    return true;
+                }
+                if (currentFirstRail != null && currentFirstRail.getChildCount() > 0) {
+                    currentFirstRail.getChildAt(0).requestFocus();
+                    return true;
+                }
+            }
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+    @Override
+    protected void onPause() {
+        android.util.Log.i("VideoPropia", "onPause");
+        if (video != null)
+            video.pause();
+        if (externalPlayer != null)
+            externalPlayer.pause();
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        if (video != null)
+            video.pause();
+        if (externalPlayer != null)
+            externalPlayer.pause();
+        if (liveTvPlayer != null)
+            liveTvPlayer.pause();
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (bufferingWatchdogRunnable != null) {
+            mainHandler.removeCallbacks(bufferingWatchdogRunnable);
+            bufferingWatchdogRunnable = null;
+        }
+        if (liveTvBufferingWatchdogRunnable != null) {
+            mainHandler.removeCallbacks(liveTvBufferingWatchdogRunnable);
+            liveTvBufferingWatchdogRunnable = null;
+        }
+        isSwitchingUnstableServer = false;
+        failedProvidersForCurrentTitle.clear();
+        releaseLiveTvPlayer();
+        if (heroSlideHandler != null && heroSlideRunnable != null) {
+            heroSlideHandler.removeCallbacks(heroSlideRunnable);
+        }
+        if (video != null) {
+            video.stopPlayback();
+            video = null;
+        }
+        if (externalPlayer != null) {
+            externalPlayer.release();
+            externalPlayer = null;
+        }
+        releaseMediaSession();
+        if (catalogBrowser != null)
+            catalogBrowser.dispose();
+        videoResolvers.shutdownNow();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if ("playing".equals(page)) {
+            if (bufferingWatchdogRunnable != null) {
+                mainHandler.removeCallbacks(bufferingWatchdogRunnable);
+                bufferingWatchdogRunnable = null;
+            }
+            isSwitchingUnstableServer = false;
+            failedProvidersForCurrentTitle.clear();
+            mainHandler.removeCallbacks(periodicSaveRunnable);
+            getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            if (autoNextCountDownTimer != null) {
+                autoNextCountDownTimer.cancel();
+                autoNextCountDownTimer = null;
+            }
+            if (autoNextDialog != null) {
+                try {
+                    if (autoNextDialog.isShowing()) autoNextDialog.dismiss();
+                } catch (Exception ignored) {}
+                autoNextDialog = null;
+            }
+            hideSourceLoader();
+            if (externalPlayer != null) {
+                final long pos = externalPlayer.getCurrentPosition();
+                final long dur = externalPlayer.getDuration();
+                if (pos > 0 && currentPlayingTitle != null && !currentPlayingTitle.isEmpty()
+                        && !"live_tv".equals(playbackReturnPage)) {
+                    final String sTitle = currentPlayingTitle;
+                    final String sPoster = currentPlayingPoster;
+                    final String sOrigin = currentPlayingOrigin;
+                    final String sKind = currentPlayingKind;
+                    new Thread(() -> {
+                        PlaybackEngine.saveProgress(MainActivity.this, sTitle, sTitle,
+                                sPoster, pos, dur, sOrigin, sKind);
+                    }).start();
+                }
+                externalPlayer.stop();
+                externalPlayer.release();
+                externalPlayer = null;
+            }
+            if (video != null) {
+                video.stopPlayback();
+                video = null;
+            }
+            releaseMediaSession();
+            fullscreen = false;
+
+            if ("live_tv".equals(playbackReturnPage) || "live_tv_fullscreen".equals(playbackReturnPage)
+                    || (playingChannel != null
+                            && (playingChannel.startsWith("TV") || playingChannel.contains("Deportes")
+                                    || playingChannel.contains("Live") || playingChannel.contains("Tele")))) {
+                playbackReturnPage = "home";
+                showLiveTvStudio();
+            } else if ("m3u_list".equals(playbackReturnPage)) {
+                playbackReturnPage = "home";
+                showLiveTvStudio();
+            } else if ("channel".equals(playbackReturnPage) && channel != null && !channel.isEmpty()) {
+                playbackReturnPage = "home";
+                openChannel(channel);
+            } else if ("favorites".equals(playbackReturnPage)) {
+                playbackReturnPage = "home";
+                showFavoritesPage();
+            } else if ("watch_later".equals(playbackReturnPage)) {
+                playbackReturnPage = "home";
+                showWatchLaterPage();
+            } else {
+                home();
+            }
+        } else if (fullscreen) {
+            setFullscreen(false);
+        } else if ("live_tv_fullscreen".equals(page)) {
+            page = "live_tv";
+            showLiveTvStudio();
+        } else if ("live_tv".equals(page)) {
+            home();
+        } else if ("lunified_search".equals(page)) {
+            home();
+        } else if ("m3u_list".equals(page)) {
+            showLiveTvStudio();
+        } else if ("actor_detail".equals(page)) {
+            home();
+        } else if (!page.equals("home")) {
+            home();
+        } else if (!"all".equals(activeTab)) {
+            activeTab = "all";
+            home();
+        } else
+            super.onBackPressed();
+    }
+}
