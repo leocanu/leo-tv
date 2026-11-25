@@ -32,41 +32,65 @@ final class VideoProviders {
             return new VideoLink(address, headers);
         }
     };
-    private static final VideoProvider LAMOVIE=new LaMovieProvider();
-    private static final VideoProvider SERIESMETRO=new HtmlCatalogProvider("SeriesMetro","https://www3.seriesmetro.net",true,"action_select_season");
-    private static final VideoProvider PELISPEDIA=new HtmlCatalogProvider("Pelispedia","https://pelispedia.is",true,"action_select_season");
-    private static final VideoProvider TIOANIME=new HtmlCatalogProvider("TioAnime","https://tioanime.com",true,null,true);
-    private static final VideoProvider LATANIME=new HtmlCatalogProvider("LatAnime","https://latanime.org",true,null,true);
-    private static final VideoProvider CINECALIDAD=new HtmlCatalogProvider("CineCalidad","https://www.cinecalidad.am",true,null);
-    private static final VideoProvider PELISPLUS=new HtmlCatalogProvider("Pelisplus","https://pelisplus.to",true,null);
-    private static final VideoProvider SERIESFLIX=new HtmlCatalogProvider("Seriesflix","https://pelisflix1.guru",true,null);
-    private static final VideoProvider DORAMASFLIX=new DoramasFlixProvider();
-    private static final VideoProvider CANELA=new CanelaTVProvider();
-    private static final VideoProvider SOLOLATINO=new SoloLatinoProvider();
-    private static final VideoProvider JKANIME=new HtmlCatalogProvider("JKAnime","https://jkanime.net",true,null,true);
+    private static final VideoProvider LAMOVIE = new LaMovieProvider();
+    private static final VideoProvider SERIESMETRO = new HtmlCatalogProvider("SeriesMetro",
+            "https://www3.seriesmetro.net", true, "action_select_season");
+    private static final VideoProvider PELISPEDIA = new HtmlCatalogProvider("Pelispedia", "https://pelispedia.is", true,
+            "action_select_season");
+    private static final VideoProvider TIOANIME = new HtmlCatalogProvider("TioAnime", "https://tioanime.com", true,
+            null, true);
+    private static final VideoProvider LATANIME = new HtmlCatalogProvider("LatAnime", "https://latanime.org", true,
+            null, true);
+    private static final VideoProvider CINECALIDAD = new HtmlCatalogProvider("CineCalidad",
+            "https://www.cinecalidad.am", true, null);
+    private static final VideoProvider PELISPLUS = new HtmlCatalogProvider("Pelisplus", "https://pelisplus.to", true,
+            null);
+    private static final VideoProvider SERIESFLIX = new HtmlCatalogProvider("Seriesflix", "https://pelisflix1.guru",
+            true, null);
+    private static final VideoProvider DORAMASFLIX = new DoramasFlixProvider();
+    private static final VideoProvider CANELA = new CanelaTVProvider();
+    private static final VideoProvider SOLOLATINO = new SoloLatinoProvider();
+    private static final VideoProvider JKANIME = new HtmlCatalogProvider("JKAnime", "https://jkanime.net", true, null,
+            true);
 
     // Adaptadores HTML secundarios
-    private static final VideoProvider CUEVANA=new HtmlCatalogProvider("Cuevana","https://wv3.cuevana3.eu",true,null);
-    private static final VideoProvider HENAOJARA=new HtmlCatalogProvider("HenaoJara","https://ww1.henaojara.net",false,null);
-    private static final VideoProvider FLIXLATAM=new HtmlCatalogProvider("FlixLatam","https://flixlatam.com",false,null);
-    private static final VideoProvider VERPELIS=new HtmlCatalogProvider("VerPelisTop","https://www1.verpelis.top",false,null);
-    private static final VideoProvider VERANIME=new HtmlCatalogProvider("VerAni.me","https://verani.me",false,null,true);
-    private static final VideoProvider VERANIMES=new HtmlCatalogProvider("VerAnimes","https://wwv.veranimes.net",false,null,true);
-    private static final VideoProvider ANIMEAV1=new HtmlCatalogProvider("AnimeAV1","https://animeav1.com",false,null,true);
-    private static final VideoProvider BEATZANIME=new HtmlCatalogProvider("BeatZ Anime","https://www.beatz-anime.net",false,null,true);
-    private static final VideoProvider MUNDODONGHUA=new HtmlCatalogProvider("MundoDonghua","https://www.mundodonghua.com",false,null,true);
-    private static final VideoProvider ARESHD=new HtmlCatalogProvider("AresHD","https://areshd.com",true,null);
-    private static final VideoProvider CINEHAXPLUS=new HtmlCatalogProvider("CineHax+","https://cinehaxplus.com",true,null);
-    private static final VideoProvider CINEHDPLUS=new HtmlCatalogProvider("CineHDPlus","https://cinehdplus.org",true,null);
-    private static final VideoProvider DETODO=new HtmlCatalogProvider("DeTodo Peliculas","https://detodopeliculas.nu",true,null);
-    private static final VideoProvider MONOSCHINOS=new HtmlCatalogProvider("MonosChinos","https://vww.monoschinos2.net",false,null,true);
-    private static final VideoProvider CINEPLUS123=new HtmlCatalogProvider("Cineplus123","https://cineplus123.org",true,null);
+    private static final VideoProvider CUEVANA = new HtmlCatalogProvider("Cuevana", "https://wv3.cuevana3.eu", true,
+            null);
+    private static final VideoProvider HENAOJARA = new HtmlCatalogProvider("HenaoJara", "https://ww1.henaojara.net",
+            false, null);
+    private static final VideoProvider FLIXLATAM = new HtmlCatalogProvider("FlixLatam", "https://flixlatam.com", false,
+            null);
+    private static final VideoProvider VERPELIS = new HtmlCatalogProvider("VerPelisTop", "https://www1.verpelis.top",
+            false, null);
+    private static final VideoProvider VERANIME = new HtmlCatalogProvider("VerAni.me", "https://verani.me", false, null,
+            true);
+    private static final VideoProvider VERANIMES = new HtmlCatalogProvider("VerAnimes", "https://wwv.veranimes.net",
+            false, null, true);
+    private static final VideoProvider ANIMEAV1 = new HtmlCatalogProvider("AnimeAV1", "https://animeav1.com", false,
+            null, true);
+    private static final VideoProvider BEATZANIME = new HtmlCatalogProvider("BeatZ Anime",
+            "https://www.beatz-anime.net", false, null, true);
+    private static final VideoProvider MUNDODONGHUA = new HtmlCatalogProvider("MundoDonghua",
+            "https://www.mundodonghua.com", false, null, true);
+    private static final VideoProvider ARESHD = new HtmlCatalogProvider("AresHD", "https://areshd.com", true, null);
+    private static final VideoProvider CINEHAXPLUS = new HtmlCatalogProvider("CineHax+", "https://cinehaxplus.com",
+            true, null);
+    private static final VideoProvider CINEHDPLUS = new HtmlCatalogProvider("CineHDPlus", "https://cinehdplus.org",
+            true, null);
+    private static final VideoProvider DETODO = new HtmlCatalogProvider("DeTodo Peliculas",
+            "https://detodopeliculas.nu", true, null);
+    private static final VideoProvider MONOSCHINOS = new HtmlCatalogProvider("MonosChinos",
+            "https://vww.monoschinos2.net", false, null, true);
+    private static final VideoProvider CINEPLUS123 = new HtmlCatalogProvider("Cineplus123", "https://cineplus123.org",
+            true, null);
+    private static final VideoProvider MOFLIX=new HtmlCatalogProvider("Moflix","https://moflix-stream.xyz",true,null);
+    private static final VideoProvider GOODSTREAM=new HtmlCatalogProvider("GoodStream","https://goodstream.one",true,null);
 
     static boolean isDead(String name) {
         if (name == null)
             return true;
         return name.equals("LaMovie") || name.equals("Canela TV") || name.equals("Canela") || name.equals("canela")
-                || name.equals("DoramasFlix") || name.equals("Pelisplus")
+                || name.equals("DoramasFlix")
                 || name.equals("DeTodo Peliculas") || name.equals("VerAni.me");
     }
 
@@ -76,7 +100,7 @@ final class VideoProviders {
                 name.equals("VerAnimes") || name.equals("AnimeAV1") || name.equals("BeatZ Anime") ||
                 name.equals("MundoDonghua") || name.equals("AresHD") || name.equals("CineHax+") ||
                 name.equals("CineHDPlus") || name.equals("MonosChinos") ||
-                name.equals("Cineplus123");
+                name.equals("Cineplus123") || name.equals("Moflix") || name.equals("GoodStream");
     }
 
     static VideoProvider find(String name) {
@@ -138,6 +162,10 @@ final class VideoProviders {
             return MONOSCHINOS;
         if (name.equals("Cineplus123"))
             return CINEPLUS123;
+        if (name.equalsIgnoreCase("Moflix"))
+            return MOFLIX;
+        if (name.equalsIgnoreCase("GoodStream"))
+            return GOODSTREAM;
         return null;
     }
 }

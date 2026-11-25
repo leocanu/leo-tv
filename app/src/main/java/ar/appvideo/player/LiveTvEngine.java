@@ -262,6 +262,21 @@ public final class LiveTvEngine {
                     "https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8", "",
                     "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Red_Bull_logo.svg/600px-Red_Bull_logo.svg.png",
                     "HD 1080p", "Red Bull Cliff Diving & Motorsport", "Ciclismo Downhill Extremo"));
+
+            list.add(new LiveChannel("dep_fctv1", "Fútbol Libre TV 1 (FCTV HD)", "deportes",
+                    "https://fctv33hd.garden/hls/fctv1.m3u8", "https://api.ppv.cx/api/live/fctv1.m3u8",
+                    "https://i.imgur.com/iyYLNRt.png",
+                    "HD 1080p", "Fútbol Libre TV en Directo", "Partidos Internacionales & Conmebol"));
+
+            list.add(new LiveChannel("dep_fctv2", "Fútbol Libre TV 2 (FCTV Alternativo)", "deportes",
+                    "https://fctv33hd.garden/hls/fctv2.m3u8", "https://api.ppv.st/api/live/fctv2.m3u8",
+                    "https://i.imgur.com/iyYLNRt.png",
+                    "HD 1080p", "Señal Deportiva de Contingencia", "Transmisiones simultáneas"));
+
+            list.add(new LiveChannel("dep_ppv_events", "PPV Deportes Especiales HD", "deportes",
+                    "https://api.ppv.cx/api/live/events.m3u8", "https://api.ppv.st/api/live/events.m3u8",
+                    "https://i.imgur.com/iyYLNRt.png",
+                    "FHD 1080p", "Eventos Especiales y Boxeo/UFC", "Cartelera Estelar"));
         } else if ("noticias".equals(catId)) {
             list.add(new LiveChannel("not_tn", "TN (Todo Noticias 24H)", "noticias",
                     "https://live-01-01-tn.vodgc.net/TN_DAI_Beta/index.m3u8",
@@ -794,6 +809,20 @@ public final class LiveTvEngine {
                 }
             } catch (Exception ex) {
                 android.util.Log.w("LiveTvEngine", "Error resolviendo stream dinámico: " + ex.getMessage());
+            }
+        }
+
+        if (target.contains("flow.com.ar") || target.contains("flow.com.py") || target.contains("cvatt.com")) {
+            if (outHeaders != null) {
+                outHeaders.put("x-flow-origin", "Android");
+                outHeaders.put("Referer", "https://portal.app.flow.com.ar/");
+                outHeaders.put("User-Agent", "Mozilla/5.0 (Linux; Android 10; SM-G981B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.162 Mobile Safari/537.36");
+            }
+        } else if (target.contains("fctv") || target.contains("garden") || target.contains("ppv")) {
+            if (outHeaders != null) {
+                outHeaders.put("Referer", "https://fctv33hd.garden/");
+                outHeaders.put("Origin", "https://fctv33hd.garden");
+                outHeaders.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
             }
         }
         return target;

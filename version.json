@@ -1,7 +1,7 @@
 {
-  "versionCode": 55,
-  "versionName": "0.55.0",
-  "apkUrl": "https://raw.githubusercontent.com/leocanu/Chain-Reaction-Music-Updates/main/leotv/LeoTV-v0.55.0.apk",
-  "changelog": "• Detección inteligente de servidores inestables y auto-fallback dinámico (estilo tvl1):\n  - Watchdog de buffering sostenido (>8s) y captura automática de errores de conexión/HTTP\n  - Búsqueda y cambio transparente a la fuente más rápida sin perder posición ni salir de pantalla\n  - Notificaciones flotantes HUD: '⚠️ Servidor inestable' y '🔄 Cambiando a [Fuente]'\n• Auto-cambio a señal de respaldo en canales de TV en Vivo si la señal se congela\n• Compatibilidad total con Scoped Storage y splash screen animado con precarga instantánea",
+  "versionCode": 56,
+  "versionName": "0.56.0",
+  "apkUrl": "https://raw.githubusercontent.com/leocanu/Chain-Reaction-Music-Updates/main/leotv/LeoTV-v0.56.0.apk",
+  "changelog": "• Algoritmo de personalización y sugerencias on-device (UserTasteEngine):\n  - Re-ranking dinámico de resultados de búsqueda según afinidad y calificaciones\n  - Sugerencias rápidas 'Cero-Query' según gustos previos y búsquedas populares\n  - Carrusel personalizado '🎯 Recomendados para vos' en pantalla principal\n• Nuevos proveedores de video extraídos y reactivados: Pelisplus, Moflix Stream y GoodStream\n• Señales deportivas añadidas a TV en Vivo: Fútbol Libre TV 1 & 2 HD y PPV Especiales\n• Inyección automática de cabeceras seguras para señales Flow Argentina y FCTV/PPV",
   "mandatory": false
 }

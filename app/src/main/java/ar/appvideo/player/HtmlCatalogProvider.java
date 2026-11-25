@@ -61,13 +61,16 @@ public final class HtmlCatalogProvider implements VideoProvider {
     private boolean isProvisionalStructure() {
         return Arrays.asList("pelisplus.to","pelisflix1.link","pelisflix1.guru","cinecalidad.am","pelisplushd.bz",
             "pelisflixhd.love","areshd.com","cinehaxplus.com","cinehdplus.org","detodopeliculas.nu",
-            "jkanime.net","monoschinos2.net","sololatino.net","latanime.org","tioanime.com").contains(rootDomain);
+            "jkanime.net","monoschinos2.net","sololatino.net","latanime.org","tioanime.com",
+            "moflix-stream.xyz","goodstream.one").contains(rootDomain);
     }
     private void discoverListings(Document doc) {
         if(rootDomain.equals("jkanime.net")){searchTarget=base+"/buscar";searchParam="q";}
         else if(rootDomain.equals("latanime.org")){searchTarget=base+"/buscar";searchParam="q";}
         else if(rootDomain.equals("tioanime.com")){searchTarget=base+"/directorio";searchParam="q";}
         else if(rootDomain.equals("pelisplus.to")){searchTarget=base+"/search";searchParam="s";}
+        else if(rootDomain.equals("moflix-stream.xyz")){searchTarget=base+"/search";searchParam="s";}
+        else if(rootDomain.equals("goodstream.one")){searchTarget=base+"/";searchParam="s";}
         else if(rootDomain.equals("cinecalidad.am")){searchTarget=base+"/";searchParam="s";}
         else if(rootDomain.equals("pelisflix1.link")||rootDomain.equals("pelisflix1.guru")){searchTarget=base+"/";searchParam="s";}
 
