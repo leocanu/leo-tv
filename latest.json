@@ -1,7 +1,7 @@
 {
-  "versionCode": 54,
-  "versionName": "0.54.0",
-  "apkUrl": "https://raw.githubusercontent.com/leocanu/Chain-Reaction-Music-Updates/main/leotv/LeoTV-v0.54.0.apk",
-  "changelog": "• Corrección de descargas de películas y series en Android TV (solución al error EPERM / Operation not permitted)\n• Soporte nativo para Scoped Storage y almacenamiento seguro de streams HLS y MP4\n• Splash screen de 8 segundos con precarga instantánea de Inicio y Loader interactivo al conectar servidores",
+  "versionCode": 55,
+  "versionName": "0.55.0",
+  "apkUrl": "https://raw.githubusercontent.com/leocanu/Chain-Reaction-Music-Updates/main/leotv/LeoTV-v0.55.0.apk",
+  "changelog": "• Detección inteligente de servidores inestables y auto-fallback dinámico (estilo tvl1):\n  - Watchdog de buffering sostenido (>8s) y captura automática de errores de conexión/HTTP\n  - Búsqueda y cambio transparente a la fuente más rápida sin perder posición ni salir de pantalla\n  - Notificaciones flotantes HUD: '⚠️ Servidor inestable' y '🔄 Cambiando a [Fuente]'\n• Auto-cambio a señal de respaldo en canales de TV en Vivo si la señal se congela\n• Compatibilidad total con Scoped Storage y splash screen animado con precarga instantánea",
   "mandatory": false
 }

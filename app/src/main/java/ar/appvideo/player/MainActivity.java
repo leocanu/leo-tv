@@ -90,6 +90,12 @@ public class MainActivity extends Activity {
     private final Runnable dismissSplashRunnable = () -> dismissSplash();
     private int currentResizeMode = androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT;
 
+    // Watchdog y Auto-fallback ante servidores inestables (mecanismo inspirado en tvl1)
+    private final java.util.Set<String> failedProvidersForCurrentTitle = new java.util.HashSet<>();
+    private boolean isSwitchingUnstableServer = false;
+    private Runnable bufferingWatchdogRunnable = null;
+    private Runnable liveTvBufferingWatchdogRunnable = null;
+
     private final Runnable hideHudRunnable = () -> {
         if (playerHudView != null)
             playerHudView.setVisibility(android.view.View.GONE);
@@ -564,6 +570,106 @@ public class MainActivity extends Activity {
         });
     }
 
+    private void autoFallbackUnstableServer(String reason) {
+        if (isSwitchingUnstableServer) return;
+        if (currentPlayingEntry == null) return;
+
+        isSwitchingUnstableServer = true;
+        if (currentPlayingOrigin != null && !currentPlayingOrigin.trim().isEmpty()) {
+            failedProvidersForCurrentTitle.add(currentPlayingOrigin.toLowerCase(java.util.Locale.ROOT).trim());
+        }
+
+        final long resumePos = externalPlayer != null ? Math.max(0, externalPlayer.getCurrentPosition()) : 0;
+        final CatalogData.Entry entry = currentPlayingEntry;
+        final int season = currentPlayingSeason;
+        final int episode = currentPlayingEpisode;
+        final String title = currentPlayingTitle;
+
+        showPlayerHud("⚠️ Servidor inestable. Buscando la fuente estable más rápida…");
+        showStatus("⚠️ Servidor inestable (" + reason + "). Buscando la fuente estable más rápida…");
+
+        videoResolvers.submit(() -> {
+            boolean isAnime = entry.title != null && (
+                entry.title.toLowerCase().contains("dragon ball") ||
+                entry.title.toLowerCase().contains("naruto") ||
+                entry.title.toLowerCase().contains("one piece") ||
+                entry.title.toLowerCase().contains("bleach") ||
+                entry.title.toLowerCase().contains("anime") ||
+                "anime".equalsIgnoreCase(entry.kind)
+            );
+            String[] candidateProviders = isAnime
+                    ? new String[] { "LatAnime", "TioAnime", "JKAnime", "CineHax", "SoloLatino", "Seriesflix", "Cuevana" }
+                    : new String[] { "CineHax", "SoloLatino", "CineCalidad", "Seriesflix", "Cuevana", "LatAnime", "TioAnime", "Pelispedia", "FlixLatam", "HenaoJara" };
+
+            String cleanTitle = entry.title == null ? "" : entry.title.replaceAll("\\s*\\(.*?\\)\\s*", "").trim();
+            String altTitle = entry.originalTitle == null ? "" : entry.originalTitle.trim();
+            String[] queries = altTitle.isEmpty() ? new String[] { cleanTitle } : new String[] { cleanTitle, altTitle };
+
+            VideoProvider.VideoLink resolvedLink = null;
+            String resolvedProviderName = null;
+
+            for (String pName : candidateProviders) {
+                if (failedProvidersForCurrentTitle.contains(pName.toLowerCase(java.util.Locale.ROOT).trim())) {
+                    continue; // Saltar proveedores que ya fallaron o están inestables
+                }
+                VideoProvider vp = VideoProviders.find(pName);
+                if (vp == null) continue;
+
+                try {
+                    resolvedLink = vp.resolve(entry, season, episode);
+                    if (resolvedLink != null && resolvedLink.url != null && !resolvedLink.url.isEmpty()
+                            && !resolvedLink.url.equals(currentPlayingUrl)) {
+                        resolvedProviderName = vp.name();
+                        break;
+                    }
+                } catch (Exception ignored) {}
+
+                // Si no resolvió directo, buscar en catálogo del proveedor por nombre
+                for (String q : queries) {
+                    if (q.isEmpty()) continue;
+                    try {
+                        CatalogData.CatalogPage cp = vp.catalog(entry.isMovie() ? "movie" : "serie", q, 1);
+                        if (cp != null && cp.entries != null) {
+                            for (CatalogData.Entry cand : cp.entries) {
+                                if (!isTitleMatch(cleanTitle, cand.title, entry.originalTitle)) {
+                                    continue;
+                                }
+                                try {
+                                    resolvedLink = vp.resolve(cand, season, episode);
+                                    if (resolvedLink != null && resolvedLink.url != null && !resolvedLink.url.isEmpty()
+                                            && !resolvedLink.url.equals(currentPlayingUrl)) {
+                                        resolvedProviderName = vp.name();
+                                        break;
+                                    }
+                                } catch (Exception ignored) {}
+                            }
+                        }
+                    } catch (Exception ignored) {}
+                    if (resolvedLink != null) break;
+                }
+                if (resolvedLink != null) break;
+            }
+
+            final VideoProvider.VideoLink finalLink = resolvedLink;
+            final String finalProvider = resolvedProviderName;
+
+            runOnUiThread(() -> {
+                if (finalLink != null && finalLink.url != null && !finalLink.url.isEmpty()) {
+                    showPlayerHud("🔄 Servidor inestable. Cambiando a " + finalProvider + "…");
+                    showStatus("Servidor inestable. Cambiando a " + finalProvider + "…");
+                    playMovie(title, finalLink.url, finalProvider, finalLink.headers);
+                    if (externalPlayer != null && resumePos > 1000) {
+                        externalPlayer.seekTo(resumePos);
+                    }
+                } else {
+                    showPlayerHud("❌ No hay otra fuente estable disponible.");
+                    showStatus("No hay otra fuente estable disponible. Presioná Atrás para volver.");
+                }
+                isSwitchingUnstableServer = false;
+            });
+        });
+    }
+
     private void resolveAndLaunchExternal(VideoProvider provider, CatalogData.Entry entry, int season, int episode,
             String title) {
         if (providerLoading)
@@ -932,6 +1038,10 @@ public class MainActivity extends Activity {
     private LinearLayout currentFirstRail = null;
 
     private void releaseLiveTvPlayer() {
+        if (liveTvBufferingWatchdogRunnable != null) {
+            mainHandler.removeCallbacks(liveTvBufferingWatchdogRunnable);
+            liveTvBufferingWatchdogRunnable = null;
+        }
         if (liveTvPlayer != null) {
             try {
                 liveTvPlayer.stop();
@@ -1587,6 +1697,10 @@ public class MainActivity extends Activity {
                 @Override
                 public void onPlaybackStateChanged(int state) {
                     if (state == Player.STATE_READY) {
+                        if (liveTvBufferingWatchdogRunnable != null) {
+                            mainHandler.removeCallbacks(liveTvBufferingWatchdogRunnable);
+                            liveTvBufferingWatchdogRunnable = null;
+                        }
                         if (liveTvStatus != null)
                             liveTvStatus.setVisibility(android.view.View.GONE);
                     } else if (state == Player.STATE_BUFFERING) {
@@ -1594,11 +1708,31 @@ public class MainActivity extends Activity {
                             liveTvStatus.setVisibility(android.view.View.VISIBLE);
                             liveTvStatus.setText("Cargando buffer de señal...");
                         }
+                        if (liveTvBufferingWatchdogRunnable != null) {
+                            mainHandler.removeCallbacks(liveTvBufferingWatchdogRunnable);
+                        }
+                        liveTvBufferingWatchdogRunnable = () -> {
+                            if (liveTvPlayer != null && liveTvPlayer.getPlaybackState() == Player.STATE_BUFFERING
+                                    && !triedBackup && ch.backupUrl != null && !ch.backupUrl.isEmpty()
+                                    && !ch.backupUrl.equals(urlToPlay)) {
+                                triedBackup = true;
+                                if (liveTvStatus != null) {
+                                    liveTvStatus.setVisibility(android.view.View.VISIBLE);
+                                    liveTvStatus.setText("⚠️ Señal inestable. Cambiando a señal de respaldo...");
+                                }
+                                startLivePlayerInternal(ch, ch.backupUrl);
+                            }
+                        };
+                        mainHandler.postDelayed(liveTvBufferingWatchdogRunnable, 8000);
                     }
                 }
 
                 @Override
                 public void onPlayerError(PlaybackException error) {
+                    if (liveTvBufferingWatchdogRunnable != null) {
+                        mainHandler.removeCallbacks(liveTvBufferingWatchdogRunnable);
+                        liveTvBufferingWatchdogRunnable = null;
+                    }
                     if (!triedBackup && ch.backupUrl != null && !ch.backupUrl.isEmpty()
                             && !ch.backupUrl.equals(urlToPlay)) {
                         triedBackup = true;
@@ -9343,6 +9477,9 @@ public class MainActivity extends Activity {
         currentPlayingOrigin = origin;
         currentPlayingUrl = url;
         currentPlayingHeaders = headers;
+        if (!isSwitchingUnstableServer) {
+            failedProvidersForCurrentTitle.clear();
+        }
 
         LinearLayout body = newPage(origin, title,
                 "Reproducción directa · Usá OK para mostrar controles.");
@@ -9762,6 +9899,11 @@ public class MainActivity extends Activity {
             @Override
             public void onPlaybackStateChanged(int state) {
                 if (state == Player.STATE_READY) {
+                    if (bufferingWatchdogRunnable != null) {
+                        mainHandler.removeCallbacks(bufferingWatchdogRunnable);
+                        bufferingWatchdogRunnable = null;
+                    }
+                    isSwitchingUnstableServer = false;
                     showStatus(externalPlayer != null && externalPlayer.getPlayWhenReady()
                             ? "Video preparado."
                             : "Pausado.");
@@ -9769,6 +9911,10 @@ public class MainActivity extends Activity {
                         status.setVisibility(android.view.View.GONE);
                     scheduleOsdHide(3500);
                 } else if (state == Player.STATE_ENDED) {
+                    if (bufferingWatchdogRunnable != null) {
+                        mainHandler.removeCallbacks(bufferingWatchdogRunnable);
+                        bufferingWatchdogRunnable = null;
+                    }
                     showStatus("Video finalizado.");
                     if (status != null)
                         status.setVisibility(android.view.View.VISIBLE);
@@ -9875,6 +10021,18 @@ public class MainActivity extends Activity {
                     showStatus("Cargando video...");
                     if (status != null)
                         status.setVisibility(android.view.View.VISIBLE);
+
+                    if (bufferingWatchdogRunnable != null) {
+                        mainHandler.removeCallbacks(bufferingWatchdogRunnable);
+                    }
+                    bufferingWatchdogRunnable = () -> {
+                        if (externalPlayer != null && externalPlayer.getPlaybackState() == Player.STATE_BUFFERING
+                                && externalPlayer.getPlayWhenReady() && !isSwitchingUnstableServer) {
+                            android.util.Log.w("LeoTVPlayer", "Watchdog de buffering sostenido disparado (>8s)");
+                            autoFallbackUnstableServer("Buffering sostenido");
+                        }
+                    };
+                    mainHandler.postDelayed(bufferingWatchdogRunnable, 8000);
                 }
                 updateMediaState();
             }
@@ -9887,6 +10045,10 @@ public class MainActivity extends Activity {
 
             @Override
             public void onPlayWhenReadyChanged(boolean ready, int reason) {
+                if (!ready && bufferingWatchdogRunnable != null) {
+                    mainHandler.removeCallbacks(bufferingWatchdogRunnable);
+                    bufferingWatchdogRunnable = null;
+                }
                 updateMediaState();
                 showStatus(ready ? (externalPlayer.getPlaybackState() == Player.STATE_READY
                         ? "Video preparado. Reproduciendo."
@@ -9910,6 +10072,15 @@ public class MainActivity extends Activity {
 
             @Override
             public void onPlayerError(PlaybackException error) {
+                if (bufferingWatchdogRunnable != null) {
+                    mainHandler.removeCallbacks(bufferingWatchdogRunnable);
+                    bufferingWatchdogRunnable = null;
+                }
+                if (currentPlayingEntry != null && !isSwitchingUnstableServer) {
+                    android.util.Log.w("LeoTVPlayer", "Player error -> auto-fallback activado: " + error.getMessage());
+                    autoFallbackUnstableServer("Error de conexión");
+                    return;
+                }
                 Throwable cause = error;
                 int httpCode = 0;
                 while (cause != null) {
@@ -10424,6 +10595,16 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        if (bufferingWatchdogRunnable != null) {
+            mainHandler.removeCallbacks(bufferingWatchdogRunnable);
+            bufferingWatchdogRunnable = null;
+        }
+        if (liveTvBufferingWatchdogRunnable != null) {
+            mainHandler.removeCallbacks(liveTvBufferingWatchdogRunnable);
+            liveTvBufferingWatchdogRunnable = null;
+        }
+        isSwitchingUnstableServer = false;
+        failedProvidersForCurrentTitle.clear();
         releaseLiveTvPlayer();
         if (heroSlideHandler != null && heroSlideRunnable != null) {
             heroSlideHandler.removeCallbacks(heroSlideRunnable);
@@ -10446,6 +10627,12 @@ public class MainActivity extends Activity {
     @Override
     public void onBackPressed() {
         if ("playing".equals(page)) {
+            if (bufferingWatchdogRunnable != null) {
+                mainHandler.removeCallbacks(bufferingWatchdogRunnable);
+                bufferingWatchdogRunnable = null;
+            }
+            isSwitchingUnstableServer = false;
+            failedProvidersForCurrentTitle.clear();
             mainHandler.removeCallbacks(periodicSaveRunnable);
             getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             if (autoNextCountDownTimer != null) {
