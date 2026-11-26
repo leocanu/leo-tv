@@ -107,7 +107,32 @@ public final class HtmlCatalogProvider implements VideoProvider {
         String url;
         if(page>1){
             synchronized(paths){url=paths.get(key);}
-            if(url==null)throw new IOException("No hay un enlace verificado para esa pagina.");
+            if(url==null){
+                if(rootDomain.equals("latanime.org")){
+                    url=!query.trim().isEmpty()?(base+"/buscar?q="+URLEncoder.encode(query.trim(),"UTF-8")+"&page="+page)
+                        :(base+"/animes?page="+page);
+                }else if(rootDomain.equals("tioanime.com")){
+                    url=!query.trim().isEmpty()?(base+"/directorio?q="+URLEncoder.encode(query.trim(),"UTF-8")+"&p="+page)
+                        :(base+"/directorio?p="+page);
+                }else if(rootDomain.equals("jkanime.net")){
+                    url=!query.trim().isEmpty()?(base+"/buscar/"+URLEncoder.encode(query.trim(),"UTF-8")+"/"+page+"/")
+                        :(base+"/directorio/"+page+"/");
+                }else if(rootDomain.equals("cinehaxplus.com")||rootDomain.equals("cinehdplus.org")){
+                    url=base+"/page/"+page+"/";
+                }else if(rootDomain.equals("pelisplus.to")){
+                    url=!query.trim().isEmpty()?(base+"/search?s="+URLEncoder.encode(query.trim(),"UTF-8")+"&page="+page)
+                        :(base+"/peliculas?page="+page);
+                }else if(rootDomain.equals("sololatino.net")){
+                    url=base+"/peliculas/page/"+page+"/";
+                }else if(rootDomain.equals("cinecalidad.am")){
+                    url=base+"/page/"+page+"/";
+                }else{
+                    String bU=!query.trim().isEmpty()?(searchTarget+(searchTarget.contains("?")?"&":"?")+URLEncoder.encode(searchParam,"UTF-8")+"="+URLEncoder.encode(query.trim(),"UTF-8"))
+                        :(kind.equals("movie")?movieListing:seriesListing);
+                    if(bU==null)bU=base+"/";
+                    url=bU+(bU.contains("?")?"&":"?")+"page="+page;
+                }
+            }
         }else if(!query.trim().isEmpty())url=searchTarget+(searchTarget.contains("?")?"&":"?")+URLEncoder.encode(searchParam,"UTF-8")+"="+URLEncoder.encode(query.trim(),"UTF-8");
         else url=kind.equals("movie")?movieListing:seriesListing;
         if(url==null)url=base+"/";
@@ -169,14 +194,17 @@ public final class HtmlCatalogProvider implements VideoProvider {
             unique.add(detail);
             items.put(new JSONObject().put("page_url",detail).put("title",title).put("year",year)
                 .put("poster_path",poster).put("kind",anime?(directEpisode?"episode":"anime"):(show?"serie":"movie")));
-            if(items.length()>=24)break;
+            if(items.length()>=36)break;
         }
         if(items.length()==0)throw new IOException("No se reconocieron titulos disponibles en la pagina.");
         String next=null;
-        for(Element a:doc.select("a[rel=next],a.next,a.next.page-numbers,a.page-numbers,.pagination a[href],.navigation a[href]")){
+        for(Element a:doc.select("a[rel=next],a.next,a.next.page-numbers,a.page-numbers,.pagination a[href],.navigation a[href],.paginador a[href]")){
             String candidate=a.absUrl("href");
             if(!own(candidate)||candidate.equals(url))continue;
             if(a.attr("rel").equals("next")||a.hasClass("next")||a.text().trim().equals(String.valueOf(page+1))){next=candidate;break;}
+        }
+        if(next==null&&items.length()>=10){
+            next=url;
         }
         JSONObject pagination=new JSONObject().put("page",page).put("has_next",next!=null);
         CatalogData.CatalogPage result=new CatalogData.CatalogPage(new JSONObject().put("items",items).put("pagination",pagination),page);

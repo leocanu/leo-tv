@@ -60,8 +60,8 @@ public final class CatalogBrowser {
 
     private static final ExecutorService NETWORK = Executors.newFixedThreadPool(4);
     private static final ExecutorService IMAGES = Executors.newFixedThreadPool(4);
-    private static final LruCache<String, Bitmap> CACHE = new LruCache<String, Bitmap>(14 * 1024 * 1024) {
-        @Override protected int sizeOf(String key, Bitmap value) { return value.getByteCount(); }
+    private static final LruCache<String, Bitmap> CACHE = new LruCache<String, Bitmap>(24 * 1024 * 1024) {
+        @Override protected int sizeOf(String key, Bitmap value) { return value.getAllocationByteCount(); }
     };
 
     private final Activity activity;
@@ -410,23 +410,83 @@ public final class CatalogBrowser {
         target.setTag(address);
         IMAGES.submit(() -> {
             HttpURLConnection conn = null;
+            InputStream in = null;
             try {
-                conn = (HttpURLConnection) new URL(address).openConnection();
-                conn.setRequestProperty("User-Agent", HttpSupport.USER_AGENT);
-                conn.setConnectTimeout(6000);
-                conn.setReadTimeout(8000);
-                if (conn.getResponseCode() != 200) return;
-                Bitmap bitmap;
-                try (InputStream in = conn.getInputStream()) {
-                    bitmap = BitmapFactory.decodeStream(in);
+                String currentUrl = address;
+                int redirects = 0;
+                while (redirects < 4) {
+                    conn = (HttpURLConnection) new URL(currentUrl).openConnection();
+                    conn.setRequestProperty("User-Agent", HttpSupport.USER_AGENT);
+                    conn.setRequestProperty("Accept", "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8");
+                    conn.setRequestProperty("Referer", currentUrl);
+                    conn.setConnectTimeout(8000);
+                    conn.setReadTimeout(10000);
+                    conn.setInstanceFollowRedirects(true);
+                    int code = conn.getResponseCode();
+                    if (code == HttpURLConnection.HTTP_MOVED_PERM || code == HttpURLConnection.HTTP_MOVED_TEMP
+                            || code == 307 || code == 308) {
+                        String loc = conn.getHeaderField("Location");
+                        if (loc != null && !loc.isEmpty()) {
+                            if (!loc.startsWith("http")) {
+                                loc = new URL(new URL(currentUrl), loc).toString();
+                            }
+                            currentUrl = loc;
+                            conn.disconnect();
+                            redirects++;
+                            continue;
+                        }
+                    }
+                    if (code != 200) return;
+                    break;
                 }
+                in = conn.getInputStream();
+                java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
+                byte[] temp = new byte[8192];
+                int read;
+                while ((read = in.read(temp, 0, temp.length)) != -1) {
+                    buffer.write(temp, 0, read);
+                    if (buffer.size() > 8 * 1024 * 1024) break;
+                }
+                byte[] data = buffer.toByteArray();
+                if (data.length == 0) return;
+
+                BitmapFactory.Options boundsOpts = new BitmapFactory.Options();
+                boundsOpts.inJustDecodeBounds = true;
+                BitmapFactory.decodeByteArray(data, 0, data.length, boundsOpts);
+
+                int targetW = 320;
+                int targetH = 480;
+                int inSampleSize = 1;
+                if (boundsOpts.outHeight > targetH || boundsOpts.outWidth > targetW) {
+                    int halfH = boundsOpts.outHeight / 2;
+                    int halfW = boundsOpts.outWidth / 2;
+                    while ((halfH / inSampleSize) >= targetH && (halfW / inSampleSize) >= targetW) {
+                        inSampleSize *= 2;
+                    }
+                }
+
+                BitmapFactory.Options decodeOpts = new BitmapFactory.Options();
+                decodeOpts.inSampleSize = Math.max(1, inSampleSize);
+                decodeOpts.inPreferredConfig = Bitmap.Config.RGB_565;
+                decodeOpts.inDither = true;
+
+                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, decodeOpts);
                 if (bitmap == null) return;
+
                 CACHE.put(address, bitmap);
                 act.runOnUiThread(() -> {
-                    if (!act.isDestroyed() && address.equals(target.getTag())) target.setImageBitmap(bitmap);
+                    if (!act.isDestroyed() && address.equals(target.getTag())) {
+                        target.setImageBitmap(bitmap);
+                    }
                 });
+            } catch (OutOfMemoryError oom) {
+                try {
+                    CACHE.evictAll();
+                    System.gc();
+                } catch (Throwable ignored) {}
             } catch (Exception ignored) {
             } finally {
+                try { if (in != null) in.close(); } catch (Exception ignored) {}
                 if (conn != null) conn.disconnect();
             }
         });

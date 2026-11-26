@@ -1,7 +1,7 @@
 {
-  "versionCode": 56,
-  "versionName": "0.56.0",
-  "apkUrl": "https://raw.githubusercontent.com/leocanu/Chain-Reaction-Music-Updates/main/leotv/LeoTV-v0.56.0.apk",
-  "changelog": "• Algoritmo de personalización y sugerencias on-device (UserTasteEngine):\n  - Re-ranking dinámico de resultados de búsqueda según afinidad y calificaciones\n  - Sugerencias rápidas 'Cero-Query' según gustos previos y búsquedas populares\n  - Carrusel personalizado '🎯 Recomendados para vos' en pantalla principal\n• Nuevos proveedores de video extraídos y reactivados: Pelisplus, Moflix Stream y GoodStream\n• Señales deportivas añadidas a TV en Vivo: Fútbol Libre TV 1 & 2 HD y PPV Especiales\n• Inyección automática de cabeceras seguras para señales Flow Argentina y FCTV/PPV",
+  "versionCode": 57,
+  "versionName": "0.56.1",
+  "apkUrl": "https://raw.githubusercontent.com/leocanu/Chain-Reaction-Music-Updates/main/leotv/LeoTV-v0.56.1.apk",
+  "changelog": "• Corrección crítica de memoria RAM y prevención de reinicio de Smart TV:\n  - Decodificación optimizada de pósters en RGB_565 con downsampling automático (reducción del 95% de uso de heap).\n  - Pool limitado de carga para carruseles de inicio (evita saturación de CPU y reinicios en Android TV).\n• Corrección de carruseles de Anime (Shōnen, Emisión y Películas):\n  - Corregido filtro que descartaba series de anime en carruseles en vivo.\n  - Paginación continua en 'Mostrar más' (superando el límite de 25 títulos iniciales).\n• Soporte de redirecciones y Referer en descarga de tapas de catálogos.",
   "mandatory": false
 }

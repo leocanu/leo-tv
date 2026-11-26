@@ -4447,13 +4447,21 @@ public class MainActivity extends Activity {
                 || t.contains("mision imposible") || t.contains("mission impossible");
     }
 
+    private static final java.util.concurrent.ExecutorService ROW_LOADER_EXECUTOR =
+            java.util.concurrent.Executors.newFixedThreadPool(3, r -> {
+                Thread t = new Thread(r, "leotv-row-loader");
+                t.setDaemon(true);
+                t.setPriority(Thread.NORM_PRIORITY - 1);
+                return t;
+            });
+
     private void populateLiveRow(LinearLayout rail, String providerName, String kind, String query, int pageNum,
             int offset, boolean isPrimaryRow,
             String categoryTitle, String carouselId) {
         VideoProvider prov = VideoProviders.find(providerName);
         if (prov == null)
             return;
-        new Thread(() -> {
+        ROW_LOADER_EXECUTOR.execute(() -> {
             try {
                 CatalogData.CatalogPage res = prov.catalog(kind, query, pageNum);
                 if (res == null || res.entries.isEmpty())
@@ -4461,11 +4469,17 @@ public class MainActivity extends Activity {
                 java.util.List<PosterItem> live = new java.util.ArrayList<>();
                 for (int i = offset; i < res.entries.size() && live.size() < 14; i++) {
                     CatalogData.Entry e = res.entries.get(i);
-                    if ("movie".equals(kind) && !e.isMovie()) {
-                        continue;
-                    }
-                    if ("serie".equals(kind) && e.isMovie()) {
-                        continue;
+                    boolean isAnimeRow = "LatAnime".equals(providerName) || "TioAnime".equals(providerName)
+                            || "JKAnime".equals(providerName) || "anime".equals(kind)
+                            || "shonen".equals(carouselId) || "anime_airing".equals(carouselId)
+                            || "anime_movies".equals(carouselId);
+                    if (!isAnimeRow) {
+                        if ("movie".equals(kind) && !e.isMovie()) {
+                            continue;
+                        }
+                        if ("serie".equals(kind) && e.isMovie()) {
+                            continue;
+                        }
                     }
                     boolean is2026Rail = "movies2026".equals(carouselId) || "series2026".equals(carouselId)
                             || (categoryTitle != null && (categoryTitle.contains("2026") || categoryTitle.contains("Estrenos")));
@@ -4517,7 +4531,7 @@ public class MainActivity extends Activity {
                 });
             } catch (Exception ignored) {
             }
-        }, "live-row-" + providerName + "-" + kind + "-" + pageNum).start();
+        });
     }
 
     private java.util.List<PosterItem> defaultCrime2026(String prov) {
@@ -8129,13 +8143,13 @@ public class MainActivity extends Activity {
                                 "🏯  Doramas Románticos y Fantasía Asiática", "asian_fantasy");
                     } else if ("anime_airing".equals(cId)) {
                         LinearLayout rAnAir = addPosterRow(body, "⚡  Anime en Emisión y Tendencias",
-                                defaultAnimeAiring(), "LatAnime", "movie", "airing", "anime_airing");
-                        populateLiveRow(rAnAir, "LatAnime", "movie", "airing", 1, 0, false,
+                                defaultAnimeAiring(), "LatAnime", "anime", "airing", "anime_airing");
+                        populateLiveRow(rAnAir, "LatAnime", "anime", "airing", 1, 0, false,
                                 "⚡  Anime en Emisión y Tendencias", "anime_airing");
                     } else if ("shonen".equals(cId)) {
                         LinearLayout rSho = addPosterRow(body, "⚔️  Anime Shonen y Grandes Batallas",
-                                defaultAnimeShonen(), "LatAnime", "movie", "", "shonen");
-                        populateLiveRow(rSho, "LatAnime", "movie", "", 1, 0, false,
+                                defaultAnimeShonen(), "LatAnime", "anime", "shonen", "shonen");
+                        populateLiveRow(rSho, "LatAnime", "anime", "shonen", 1, 0, false,
                                 "⚔️  Anime Shonen y Grandes Batallas", "shonen");
                     } else if ("anime_movies".equals(cId)) {
                         LinearLayout rAnMov = addPosterRow(body, "🎌  Películas de Anime",
@@ -8306,8 +8320,8 @@ public class MainActivity extends Activity {
                         "latin");
 
                 LinearLayout rSho = addPosterRow(body, "⚔️  Anime Shonen y Batallas Épicas", defaultAnimeShonen(),
-                        "LatAnime", "movie", "", "shonen");
-                populateLiveRow(rSho, "LatAnime", "movie", "", 1, 0, false, "⚔️  Anime Shonen", "shonen");
+                        "LatAnime", "anime", "shonen", "shonen");
+                populateLiveRow(rSho, "LatAnime", "anime", "shonen", 1, 0, false, "⚔️  Anime Shonen", "shonen");
 
                 LinearLayout rAsi = addPosterRow(body, "🏯  Doramas Románticos y Fantasía Asiática",
                         defaultAsianFantasy(prov),
