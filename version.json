@@ -1,7 +1,7 @@
 {
-  "versionCode": 57,
-  "versionName": "0.56.1",
-  "apkUrl": "https://raw.githubusercontent.com/leocanu/Chain-Reaction-Music-Updates/main/leotv/LeoTV-v0.56.1.apk",
-  "changelog": "• Corrección crítica de memoria RAM y prevención de reinicio de Smart TV:\n  - Decodificación optimizada de pósters en RGB_565 con downsampling automático (reducción del 95% de uso de heap).\n  - Pool limitado de carga para carruseles de inicio (evita saturación de CPU y reinicios en Android TV).\n• Corrección de carruseles de Anime (Shōnen, Emisión y Películas):\n  - Corregido filtro que descartaba series de anime en carruseles en vivo.\n  - Paginación continua en 'Mostrar más' (superando el límite de 25 títulos iniciales).\n• Soporte de redirecciones y Referer en descarga de tapas de catálogos.",
+  "versionCode": 58,
+  "versionName": "0.57.0",
+  "apkUrl": "https://raw.githubusercontent.com/leocanu/Chain-Reaction-Music-Updates/main/leotv/LeoTV-v0.57.0.apk",
+  "changelog": "• Corrección total de tapas y pósters que no cargaban en Anime y Cine Clásico (URLs activas MetaHub 200 OK).\n• Corrección de navegación y carruseles en vivo para Anime en Emisión y Shonen en LatAnime (/emision y /animes).\n• SubtitleEngine: Integración de subtítulos automáticos en español vía OpenSubtitles v3.\n• HttpSupport: Resolución DNS-over-HTTPS (DoH Cloudflare y Google) anti-bloqueo de operadores de internet.",
   "mandatory": false
 }

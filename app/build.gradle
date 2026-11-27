@@ -2,7 +2,7 @@ plugins { id 'com.android.application' }
 android {
     namespace 'ar.appvideo.player'
     compileSdk 35
-    defaultConfig { applicationId 'ar.appvideo.player'; minSdk 23; targetSdk 28; versionCode 57; versionName '0.56.1' }
+    defaultConfig { applicationId 'ar.appvideo.player'; minSdk 23; targetSdk 28; versionCode 58; versionName '0.57.0' }
     lint {
         abortOnError false
         checkReleaseBuilds false

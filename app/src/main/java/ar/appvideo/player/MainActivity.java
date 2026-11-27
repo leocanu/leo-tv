@@ -4731,31 +4731,31 @@ public class MainActivity extends Activity {
                         "https://image.tmdb.org/t/p/w342/xUfRZu2mi8jH6SzQEJGP6tjBuYj.jpg", "LatAnime", "Demon Slayer",
                         null),
                 new PosterItem("Jujutsu Kaisen", 2023, true,
-                        "https://image.tmdb.org/t/p/w342/hFWP5HkbVEe40hrXgtCeKpRFHG2.jpg", "LatAnime", "Jujutsu Kaisen",
+                        "https://images.metahub.space/poster/medium/tt12343534/img", "LatAnime", "Jujutsu Kaisen",
                         null),
                 new PosterItem("Attack on Titan (Shingeki no Kyojin)", 2023, true,
                         "https://image.tmdb.org/t/p/w342/hTP1DtLGFamjfu8WqjnuQdP1n4i.jpg", "LatAnime", "Shingeki",
                         null),
-                new PosterItem("One Piece", 2024, true, "https://image.tmdb.org/t/p/w342/dum1NmioVvXjH4x1q2q3q4r5.jpg",
+                new PosterItem("One Piece", 2024, true, "https://images.metahub.space/poster/medium/tt0388629/img",
                         "LatAnime", "One Piece", null),
                 new PosterItem("Solo Leveling", 2024, true,
-                        "https://image.tmdb.org/t/p/w342/geCRueV3ElhRTr0Q2xBuMiXLzAc.jpg", "LatAnime", "Solo Leveling",
+                        "https://images.metahub.space/poster/medium/tt21209876/img", "LatAnime", "Solo Leveling",
                         null));
     }
 
     private java.util.List<PosterItem> defaultClassicMovies() {
         return java.util.Arrays.asList(
                 new PosterItem("La Noche de los Muertos Vivos", 1968, false,
-                        "https://archive.org/services/img/night_of_the_living_dead", "Internet Archive",
+                        "https://images.metahub.space/poster/medium/tt0063350/img", "Internet Archive",
                         "Night of the living dead", null),
-                new PosterItem("Metrópolis", 1927, false, "https://archive.org/services/img/Metropolis_1927",
+                new PosterItem("Metrópolis", 1927, false, "https://images.metahub.space/poster/medium/tt0017136/img",
                         "Internet Archive", "Metropolis", null),
-                new PosterItem("Charada", 1963, false, "https://archive.org/services/img/Charade_1963",
+                new PosterItem("Charada", 1963, false, "https://images.metahub.space/poster/medium/tt0056923/img",
                         "Internet Archive", "Charade", null),
-                new PosterItem("Superman (1941)", 1941, false, "https://archive.org/services/img/superman_1941",
+                new PosterItem("Superman (1941)", 1941, false, "https://images.metahub.space/poster/medium/tt0034247/img",
                         "Internet Archive", "Superman", null),
                 new PosterItem("El Maquinista de la General", 1926, false,
-                        "https://archive.org/services/img/TheGeneralBusterKeaton", "Internet Archive", "The General",
+                        "https://images.metahub.space/poster/medium/tt0017925/img", "Internet Archive", "The General",
                         null));
     }
 
@@ -4860,15 +4860,15 @@ public class MainActivity extends Activity {
     private java.util.List<PosterItem> defaultAnimeAiring() {
         return java.util.Arrays.asList(
                 new PosterItem("Solo Leveling", 2024, true,
-                        "https://image.tmdb.org/t/p/w342/geCRueV3ElhRTr0xtJuPxJ8BGdM.jpg", "LatAnime", "Solo Leveling",
+                        "https://images.metahub.space/poster/medium/tt21209876/img", "LatAnime", "Solo Leveling",
                         null),
                 new PosterItem("Jujutsu Kaisen", 2023, true,
-                        "https://image.tmdb.org/t/p/w342/hFWP5HkbVEe40hrXgtCeNpRe4Qf.jpg", "LatAnime", "Jujutsu Kaisen",
+                        "https://images.metahub.space/poster/medium/tt12343534/img", "LatAnime", "Jujutsu Kaisen",
                         null),
                 new PosterItem("Frieren: Más allá del final del viaje", 2024, true,
-                        "https://image.tmdb.org/t/p/w342/dqZenchTd7lp5zht7BdlqM7RBhD.jpg", "LatAnime", "Frieren", null),
+                        "https://images.metahub.space/poster/medium/tt22248376/img", "LatAnime", "Frieren", null),
                 new PosterItem("Chainsaw Man", 2023, true,
-                        "https://image.tmdb.org/t/p/w342/npdB6eFz4qt9CdFOEgVuinxyzYZ.jpg", "LatAnime", "Chainsaw Man",
+                        "https://images.metahub.space/poster/medium/tt13616990/img", "LatAnime", "Chainsaw Man",
                         null),
                 new PosterItem("Demon Slayer: Kimetsu no Yaiba", 2024, true,
                         "https://image.tmdb.org/t/p/w342/xUfRZu2mi8jH6SzQEJGP6tjBuYj.jpg", "LatAnime", "Demon Slayer",

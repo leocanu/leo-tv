@@ -33,17 +33,28 @@ import java.util.concurrent.Future;
 
 /**
  * Navegador de catálogo y ficha enriquecida estilo Zapp TV:
- * - Cabecera con portada grande, título original/alternativo, calificación, año, duración, sinopsis y Favoritos.
- * - Carrusel de Actores / Reparto con fotos y personajes -> clic abre Ficha Individual del Actor (PersonActivity) con filmografía.
- * - Selector de Temporadas, rangos de capítulos (1-25, 26-50...) y Episodios con miniatura 16:9, duración, fecha y sinopsis.
+ * - Cabecera con portada grande, título original/alternativo, calificación,
+ * año, duración, sinopsis y Favoritos.
+ * - Carrusel de Actores / Reparto con fotos y personajes -> clic abre Ficha
+ * Individual del Actor (PersonActivity) con filmografía.
+ * - Selector de Temporadas, rangos de capítulos (1-25, 26-50...) y Episodios
+ * con miniatura 16:9, duración, fecha y sinopsis.
  */
 public final class CatalogBrowser {
     public interface Host {
         boolean active();
+
         void play(CatalogData.Entry entry, int season, int episode, String title);
-        default void download(CatalogData.Entry entry, int season, int episode, String title) {}
-        default void playWithProvider(CatalogData.Entry entry, int season, int episode, String title, String providerName) {}
-        default void playExternal(CatalogData.Entry entry, int season, int episode, String title) {}
+
+        default void download(CatalogData.Entry entry, int season, int episode, String title) {
+        }
+
+        default void playWithProvider(CatalogData.Entry entry, int season, int episode, String title,
+                String providerName) {
+        }
+
+        default void playExternal(CatalogData.Entry entry, int season, int episode, String title) {
+        }
     }
 
     private int dp(int dps) {
@@ -61,7 +72,10 @@ public final class CatalogBrowser {
     private static final ExecutorService NETWORK = Executors.newFixedThreadPool(4);
     private static final ExecutorService IMAGES = Executors.newFixedThreadPool(4);
     private static final LruCache<String, Bitmap> CACHE = new LruCache<String, Bitmap>(24 * 1024 * 1024) {
-        @Override protected int sizeOf(String key, Bitmap value) { return value.getAllocationByteCount(); }
+        @Override
+        protected int sizeOf(String key, Bitmap value) {
+            return value.getAllocationByteCount();
+        }
     };
 
     private final Activity activity;
@@ -143,8 +157,10 @@ public final class CatalogBrowser {
             button(filterBarContainer, "🎬 Películas", () -> category("movie"), -2);
         } else {
             button(filterBarContainer, provider.primaryCategoryLabel(), () -> category("movie"), -2);
-            if (provider.supportsSeries()) button(filterBarContainer, "Series", () -> category("serie"), -2);
-            if (provider.supportsNovels()) button(filterBarContainer, "Novelas Turcas", () -> category("novel"), -2);
+            if (provider.supportsSeries())
+                button(filterBarContainer, "Series", () -> category("serie"), -2);
+            if (provider.supportsNovels())
+                button(filterBarContainer, "Novelas Turcas", () -> category("novel"), -2);
             button(filterBarContainer, "💥 Acción", () -> category("genre:accion"), -2);
             button(filterBarContainer, "👻 Terror", () -> category("genre:terror"), -2);
             button(filterBarContainer, "😂 Comedia", () -> category("genre:comedia"), -2);
@@ -168,8 +184,10 @@ public final class CatalogBrowser {
 
     private void setHeaderControlsVisible(boolean visible) {
         int vis = visible ? View.VISIBLE : View.GONE;
-        if (searchBarContainer != null) searchBarContainer.setVisibility(vis);
-        if (filterBarContainer != null) filterBarContainer.setVisibility(vis);
+        if (searchBarContainer != null)
+            searchBarContainer.setVisibility(vis);
+        if (filterBarContainer != null)
+            filterBarContainer.setVisibility(vis);
     }
 
     private LinearLayout row() {
@@ -199,7 +217,8 @@ public final class CatalogBrowser {
         GradientDrawable d = new GradientDrawable();
         d.setColor(fill);
         d.setCornerRadius(radius);
-        if (stroke != 0) d.setStroke(2, stroke);
+        if (stroke != 0)
+            d.setStroke(2, stroke);
         return d;
     }
 
@@ -230,7 +249,7 @@ public final class CatalogBrowser {
             return;
         }
         ((android.view.inputmethod.InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE))
-            .hideSoftInputFromWindow(search.getWindowToken(), 0);
+                .hideSoftInputFromWindow(search.getWindowToken(), 0);
         state.query = query;
         state.page = 1;
         state.selected = null;
@@ -256,19 +275,26 @@ public final class CatalogBrowser {
         return !disposed && host.active() && generation == token;
     }
 
-    private interface Work { Object run() throws Exception; }
-    private interface Render { void run(Object result) throws Exception; }
+    private interface Work {
+        Object run() throws Exception;
+    }
+
+    private interface Render {
+        void run(Object result) throws Exception;
+    }
 
     private void load(String loading, Work work, Render render) {
         final int token = ++generation;
-        if (pending != null) pending.cancel(true);
+        if (pending != null)
+            pending.cancel(true);
         results.removeAllViews();
         message.setText(loading);
         pending = NETWORK.submit(() -> {
             try {
                 Object data = work.run();
                 activity.runOnUiThread(() -> {
-                    if (!current(token)) return;
+                    if (!current(token))
+                        return;
                     try {
                         render.run(data);
                     } catch (Exception error) {
@@ -277,7 +303,8 @@ public final class CatalogBrowser {
                 });
             } catch (Exception error) {
                 activity.runOnUiThread(() -> {
-                    if (current(token)) message.setText("No se pudo cargar. Reintentá con Buscar o cambiá de categoría.");
+                    if (current(token))
+                        message.setText("No se pudo cargar. Reintentá con Buscar o cambiá de categoría.");
                 });
             }
         });
@@ -292,8 +319,9 @@ public final class CatalogBrowser {
         load("Cargando catálogo de " + provider.name() + "...", () -> provider.catalog(kind, query, page), data -> {
             CatalogData.CatalogPage response = (CatalogData.CatalogPage) data;
             message.setText((query.isEmpty() ? "Catálogo" : "Resultados de \"" + query + "\"")
-                + " · Página " + response.page + " · "
-                + (response.totalKnown ? response.total + " títulos informados por la fuente" : response.entries.size() + " títulos en esta página"));
+                    + " · Página " + response.page + " · "
+                    + (response.totalKnown ? response.total + " títulos informados por la fuente"
+                            : response.entries.size() + " títulos en esta página"));
             if (response.entries.isEmpty()) {
                 results.addView(label("No se encontraron títulos.", 18));
                 return;
@@ -304,10 +332,19 @@ public final class CatalogBrowser {
             GridLayout grid = new GridLayout(activity);
             grid.setColumnCount(columns);
             results.addView(grid);
-            for (CatalogData.Entry entry : response.entries) card(grid, entry, size);
+            for (CatalogData.Entry entry : response.entries)
+                card(grid, entry, size);
             LinearLayout pages = row();
-            if (page > 1) button(pages, "Página anterior", () -> { state.page = page - 1; catalog(); }, 280);
-            if (response.next) button(pages, "Cargar más · Página " + (page + 1), () -> { state.page = page + 1; catalog(); }, 360);
+            if (page > 1)
+                button(pages, "Página anterior", () -> {
+                    state.page = page - 1;
+                    catalog();
+                }, 280);
+            if (response.next)
+                button(pages, "Cargar más · Página " + (page + 1), () -> {
+                    state.page = page + 1;
+                    catalog();
+                }, 360);
             results.addView(pages);
         });
     }
@@ -390,7 +427,8 @@ public final class CatalogBrowser {
             GradientDrawable focusBg = new GradientDrawable();
             focusBg.setColor(focused ? Color.rgb(24, 30, 44) : Color.TRANSPARENT);
             focusBg.setCornerRadius(14);
-            if (focused) focusBg.setStroke(3, Color.WHITE);
+            if (focused)
+                focusBg.setStroke(3, Color.WHITE);
             card.setBackground(focusBg);
             card.animate().scaleX(focused ? 1.04f : 1f).scaleY(focused ? 1.04f : 1f).setDuration(130).start();
         });
@@ -417,7 +455,8 @@ public final class CatalogBrowser {
                 while (redirects < 4) {
                     conn = (HttpURLConnection) new URL(currentUrl).openConnection();
                     conn.setRequestProperty("User-Agent", HttpSupport.USER_AGENT);
-                    conn.setRequestProperty("Accept", "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8");
+                    conn.setRequestProperty("Accept",
+                            "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8");
                     conn.setRequestProperty("Referer", currentUrl);
                     conn.setConnectTimeout(8000);
                     conn.setReadTimeout(10000);
@@ -436,7 +475,8 @@ public final class CatalogBrowser {
                             continue;
                         }
                     }
-                    if (code != 200) return;
+                    if (code != 200)
+                        return;
                     break;
                 }
                 in = conn.getInputStream();
@@ -445,10 +485,12 @@ public final class CatalogBrowser {
                 int read;
                 while ((read = in.read(temp, 0, temp.length)) != -1) {
                     buffer.write(temp, 0, read);
-                    if (buffer.size() > 8 * 1024 * 1024) break;
+                    if (buffer.size() > 8 * 1024 * 1024)
+                        break;
                 }
                 byte[] data = buffer.toByteArray();
-                if (data.length == 0) return;
+                if (data.length == 0)
+                    return;
 
                 BitmapFactory.Options boundsOpts = new BitmapFactory.Options();
                 boundsOpts.inJustDecodeBounds = true;
@@ -471,7 +513,8 @@ public final class CatalogBrowser {
                 decodeOpts.inDither = true;
 
                 Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, decodeOpts);
-                if (bitmap == null) return;
+                if (bitmap == null)
+                    return;
 
                 CACHE.put(address, bitmap);
                 act.runOnUiThread(() -> {
@@ -483,17 +526,24 @@ public final class CatalogBrowser {
                 try {
                     CACHE.evictAll();
                     System.gc();
-                } catch (Throwable ignored) {}
+                } catch (Throwable ignored) {
+                }
             } catch (Exception ignored) {
             } finally {
-                try { if (in != null) in.close(); } catch (Exception ignored) {}
-                if (conn != null) conn.disconnect();
+                try {
+                    if (in != null)
+                        in.close();
+                } catch (Exception ignored) {
+                }
+                if (conn != null)
+                    conn.disconnect();
             }
         });
     }
 
     /**
-     * Ficha enriquecida estilo Zapp TV (DetailInfoTemplate + RowPersonLiteInfoTemplate + EpisodeSelectTemplate).
+     * Ficha enriquecida estilo Zapp TV (DetailInfoTemplate +
+     * RowPersonLiteInfoTemplate + EpisodeSelectTemplate).
      */
     public void detail(CatalogData.Entry entry) {
         setHeaderControlsVisible(false);
@@ -501,7 +551,8 @@ public final class CatalogBrowser {
         state.selectedActor = null;
         state.season = 0;
         final int token = ++generation;
-        if (pending != null) pending.cancel(true);
+        if (pending != null)
+            pending.cancel(true);
         results.removeAllViews();
         message.setText("");
 
@@ -512,11 +563,16 @@ public final class CatalogBrowser {
         LinearLayout topNav = row();
         topNav.setGravity(Gravity.CENTER_VERTICAL);
         Button backBtn = button(topNav, "←  Volver", () -> {
-            if (!state.backStack.isEmpty()) state.backStack.pop().run();
-            else { state.selected = null; catalog(); }
+            if (!state.backStack.isEmpty())
+                state.backStack.pop().run();
+            else {
+                state.selected = null;
+                catalog();
+            }
         }, 190);
         TextView provBadge = new TextView(activity);
-        String pName = (entry.providerName != null && !entry.providerName.isEmpty()) ? entry.providerName : provider.name();
+        String pName = (entry.providerName != null && !entry.providerName.isEmpty()) ? entry.providerName
+                : provider.name();
         provBadge.setText("FUENTE: " + pName.toUpperCase());
         provBadge.setTextSize(12);
         provBadge.setTextColor(Color.rgb(160, 178, 210));
@@ -525,7 +581,8 @@ public final class CatalogBrowser {
         topNav.addView(provBadge);
         results.addView(topNav);
 
-        // Contenedor principal 2 columnas (Póster a la izquierda + Metadatos y Acciones a la derecha)
+        // Contenedor principal 2 columnas (Póster a la izquierda + Metadatos y Acciones
+        // a la derecha)
         LinearLayout heroCard = new LinearLayout(activity);
         heroCard.setOrientation(LinearLayout.HORIZONTAL);
         heroCard.setPadding(22, 20, 22, 22);
@@ -549,12 +606,14 @@ public final class CatalogBrowser {
         posterImg.setScaleType(ImageView.ScaleType.CENTER_CROP);
         posterFrame.addView(posterImg, new FrameLayout.LayoutParams(-1, -1));
         loadPoster(activity, posterImg, entry.poster);
-        boolean isPortraitDetail = activity.getResources().getConfiguration().orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT;
+        boolean isPortraitDetail = activity.getResources()
+                .getConfiguration().orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT;
         int posterW = isPortraitDetail ? dp(115) : dp(180);
         int posterH = isPortraitDetail ? dp(165) : dp(260);
         heroCard.addView(posterFrame, new LinearLayout.LayoutParams(posterW, posterH));
 
-        // Columna derecha: Título, Título original/AKA, Badges, Sinopsis, Botones de acción
+        // Columna derecha: Título, Título original/AKA, Badges, Sinopsis, Botones de
+        // acción
         LinearLayout infoCol = new LinearLayout(activity);
         infoCol.setOrientation(LinearLayout.VERTICAL);
         infoCol.setPadding(isPortraitDetail ? dp(12) : 26, 2, 8, 2);
@@ -567,7 +626,8 @@ public final class CatalogBrowser {
         titleView.setTypeface(null, Typeface.BOLD);
         infoCol.addView(titleView);
 
-        if (entry.originalTitle != null && !entry.originalTitle.isEmpty() && !entry.originalTitle.equalsIgnoreCase(entry.title)) {
+        if (entry.originalTitle != null && !entry.originalTitle.isEmpty()
+                && !entry.originalTitle.equalsIgnoreCase(entry.title)) {
             TextView origView = new TextView(activity);
             origView.setText("Título original / AKA: " + entry.originalTitle);
             origView.setTextSize(14);
@@ -592,19 +652,22 @@ public final class CatalogBrowser {
             ratingBadge.setTextColor(Color.rgb(180, 190, 205));
             ratingBadge.setBackground(pillBg(Color.rgb(38, 44, 58), 0, 8));
         }
-        if (entry.year > 0) addBadge(badgesRow, String.valueOf(entry.year), Color.rgb(34, 42, 62), Color.WHITE);
+        if (entry.year > 0)
+            addBadge(badgesRow, String.valueOf(entry.year), Color.rgb(34, 42, 62), Color.WHITE);
         addBadge(badgesRow, entry.isMovie() ? "PELÍCULA" : "SERIE TV", Color.rgb(36, 52, 84), Color.rgb(150, 205, 255));
-        if (entry.runtime > 0) addBadge(badgesRow, entry.runtime + " min", Color.rgb(34, 42, 62), Color.LTGRAY);
+        if (entry.runtime > 0)
+            addBadge(badgesRow, entry.runtime + " min", Color.rgb(34, 42, 62), Color.LTGRAY);
         addBadge(badgesRow, "ESPAÑOL / LATINO", Color.rgb(20, 68, 48), Color.rgb(110, 240, 165));
-        String provBadgeText = (entry.providerName != null && !entry.providerName.isEmpty()) ? entry.providerName : "CineHax HD";
+        String provBadgeText = (entry.providerName != null && !entry.providerName.isEmpty()) ? entry.providerName
+                : "CineHax HD";
         addBadge(badgesRow, "🌐 " + provBadgeText, Color.rgb(45, 36, 68), Color.rgb(215, 175, 255));
 
         final TextView synopsisView = new TextView(activity);
         String initialOverview = (entry.overview != null && entry.overview.trim().length() >= 15)
-            ? entry.overview
-            : (detailRating.overview != null && detailRating.overview.trim().length() >= 15)
-                ? detailRating.overview
-                : "Cargando sinopsis y detalles verificados en español...";
+                ? entry.overview
+                : (detailRating.overview != null && detailRating.overview.trim().length() >= 15)
+                        ? detailRating.overview
+                        : "Cargando sinopsis y detalles verificados en español...";
         synopsisView.setText(initialOverview);
         synopsisView.setTextSize(15);
         synopsisView.setTextColor(Color.rgb(220, 228, 240));
@@ -614,7 +677,8 @@ public final class CatalogBrowser {
         infoCol.addView(synopsisView, new LinearLayout.LayoutParams(-1, -2));
 
         TextView tipView = new TextView(activity);
-        tipView.setText("💡 Si el video se ve pixelado o anda lento, tocá '🌐 Elegir servidor' para probar otras fuentes o '📺 Reproductor externo' para abrir con VLC / JustPlayer.");
+        tipView.setText(
+                "💡 Si el video se ve pixelado o anda lento, tocá '🌐 Elegir servidor' para probar otras fuentes o '📺 Reproductor externo' para abrir con VLC / JustPlayer.");
         tipView.setTextSize(12);
         tipView.setTextColor(Color.rgb(160, 180, 215));
         tipView.setPadding(0, 8, 0, 4);
@@ -635,13 +699,15 @@ public final class CatalogBrowser {
                         entry.setOverview(r.overview);
                         synopsisView.setText(r.overview);
                     } else if (entry.overview == null || entry.overview.trim().isEmpty()) {
-                        synopsisView.setText("Ficha disponible en el catálogo de Leo TV. Seleccioná Reproducir o elegí un capítulo para iniciar la reproducción.");
+                        synopsisView.setText(
+                                "Ficha disponible en el catálogo de Leo TV. Seleccioná Reproducir o elegí un capítulo para iniciar la reproducción.");
                     }
                 }
             });
         }
 
-        // Botones de acción principales (Reproducir + Descargar + Favoritos) con scroll horizontal para celulares y TV
+        // Botones de acción principales (Reproducir + Descargar + Favoritos) con scroll
+        // horizontal para celulares y TV
         android.widget.HorizontalScrollView actionsScroll = new android.widget.HorizontalScrollView(activity);
         actionsScroll.setHorizontalScrollBarEnabled(false);
         LinearLayout actionsRow = row();
@@ -658,11 +724,14 @@ public final class CatalogBrowser {
             button(actionsRow, "📺  Reproductor externo", () -> host.playExternal(entry, 0, 0, entry.title), -2);
             button(actionsRow, "⬇   Descargar película", () -> host.download(entry, 0, 0, entry.title), -2);
         } else {
-            Button playFirstBtn = button(actionsRow, "▶   Reproducir T1 · Cap. 1", () -> host.play(entry, 1, 1, entry.title + " · T1 E1"), -2);
+            Button playFirstBtn = button(actionsRow, "▶   Reproducir T1 · Cap. 1",
+                    () -> host.play(entry, 1, 1, entry.title + " · T1 E1"), -2);
             playFirstBtn.requestFocus();
             button(actionsRow, "🌐  Elegir servidor", () -> showSourceSelectionDialog(entry, 1, 1), -2);
-            button(actionsRow, "📺  Reproductor externo", () -> host.playExternal(entry, 1, 1, entry.title + " · T1 E1"), -2);
-            button(actionsRow, "⬇   Descargar T1 · Cap. 1", () -> host.download(entry, 1, 1, entry.title + " · T1 E1"), -2);
+            button(actionsRow, "📺  Reproductor externo",
+                    () -> host.playExternal(entry, 1, 1, entry.title + " · T1 E1"), -2);
+            button(actionsRow, "⬇   Descargar T1 · Cap. 1", () -> host.download(entry, 1, 1, entry.title + " · T1 E1"),
+                    -2);
         }
 
         boolean favInitial = ZappCatalogEngine.isFavorite(activity, entry);
@@ -674,9 +743,11 @@ public final class CatalogBrowser {
         favBtn.setOnClickListener(v -> {
             boolean nowFav = ZappCatalogEngine.toggleFavorite(activity, entry);
             updateFavButtonStyle(favBtn, nowFav);
-            Toast.makeText(activity, nowFav ? "Agregado a Favoritos ❤️" : "Quitado de Favoritos", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, nowFav ? "Agregado a Favoritos ❤️" : "Quitado de Favoritos", Toast.LENGTH_SHORT)
+                    .show();
         });
-        favBtn.setOnFocusChangeListener((v, focused) -> updateFavButtonStyle(favBtn, ZappCatalogEngine.isFavorite(activity, entry), focused));
+        favBtn.setOnFocusChangeListener(
+                (v, focused) -> updateFavButtonStyle(favBtn, ZappCatalogEngine.isFavorite(activity, entry), focused));
 
         boolean wlInitial = ZappCatalogEngine.isWatchLater(activity, entry);
         final Button wlBtn = new Button(activity);
@@ -687,9 +758,11 @@ public final class CatalogBrowser {
         wlBtn.setOnClickListener(v -> {
             boolean nowWl = ZappCatalogEngine.toggleWatchLater(activity, entry);
             updateWatchLaterButtonStyle(wlBtn, nowWl);
-            Toast.makeText(activity, nowWl ? "Guardado en Ver más tarde 🔖" : "Quitado de Ver más tarde", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, nowWl ? "Guardado en Ver más tarde 🔖" : "Quitado de Ver más tarde",
+                    Toast.LENGTH_SHORT).show();
         });
-        wlBtn.setOnFocusChangeListener((v, focused) -> updateWatchLaterButtonStyle(wlBtn, ZappCatalogEngine.isWatchLater(activity, entry), focused));
+        wlBtn.setOnFocusChangeListener((v, focused) -> updateWatchLaterButtonStyle(wlBtn,
+                ZappCatalogEngine.isWatchLater(activity, entry), focused));
 
         Button trailerBtn = button(actionsRow, "🎬  Ver Tráiler (YouTube+)", () -> {
             Toast.makeText(activity, "Buscando tráiler oficial en YouTube+...", Toast.LENGTH_SHORT).show();
@@ -697,7 +770,8 @@ public final class CatalogBrowser {
             YouTubeEngine.searchAsync(tQuery, ytResults -> {
                 if (ytResults != null && !ytResults.isEmpty()) {
                     CatalogData.Entry yt = ytResults.get(0);
-                    YouTubePlayerActivity.start(activity, yt.pageUrl, entry.title + " (Tráiler Oficial)", yt.originalTitle);
+                    YouTubePlayerActivity.start(activity, yt.pageUrl, entry.title + " (Tráiler Oficial)",
+                            yt.originalTitle);
                 } else {
                     Toast.makeText(activity, "No se encontró tráiler en YouTube+", Toast.LENGTH_SHORT).show();
                 }
@@ -708,7 +782,8 @@ public final class CatalogBrowser {
             tLp.setMargins(4, 6, 10, 6);
         }
 
-        // SECCIÓN 1: REPARTO Y ACTORES CON FICHAS INDIVIDUALES (Estilo Zapp TV RowPersonLiteInfoTemplate)
+        // SECCIÓN 1: REPARTO Y ACTORES CON FICHAS INDIVIDUALES (Estilo Zapp TV
+        // RowPersonLiteInfoTemplate)
         LinearLayout castSection = new LinearLayout(activity);
         castSection.setOrientation(LinearLayout.VERTICAL);
         LinearLayout.LayoutParams castSecLp = new LinearLayout.LayoutParams(-1, -2);
@@ -736,7 +811,8 @@ public final class CatalogBrowser {
         NETWORK.submit(() -> {
             final List<ZappCatalogEngine.ActorItem> castList = ZappCatalogEngine.fetchCast(entry);
             activity.runOnUiThread(() -> {
-                if (!current(token)) return;
+                if (!current(token))
+                    return;
                 if (castList.isEmpty()) {
                     castStatus.setText("Reparto principal no informado para este título.");
                     return;
@@ -748,7 +824,8 @@ public final class CatalogBrowser {
             });
         });
 
-        // SECCIÓN 2: TEMPORADAS Y CAPÍTULOS CON MINIATURA 16:9 (Estilo Zapp TV EpisodeSelectTemplate)
+        // SECCIÓN 2: TEMPORADAS Y CAPÍTULOS CON MINIATURA 16:9 (Estilo Zapp TV
+        // EpisodeSelectTemplate)
         if (!entry.directPlayback()) {
             LinearLayout epSection = new LinearLayout(activity);
             epSection.setOrientation(LinearLayout.VERTICAL);
@@ -786,7 +863,8 @@ public final class CatalogBrowser {
             NETWORK.submit(() -> {
                 final JSONArray seasons = ZappCatalogEngine.fetchSeasonsWithFallback(entry, provider);
                 activity.runOnUiThread(() -> {
-                    if (!current(token)) return;
+                    if (!current(token))
+                        return;
                     if (seasons == null || seasons.length() == 0) {
                         epLoading.setText("No se encontraron temporadas disponibles.");
                         return;
@@ -794,14 +872,17 @@ public final class CatalogBrowser {
                     int firstSeason = 1;
                     for (int i = 0; i < seasons.length(); i++) {
                         JSONObject sObj = seasons.optJSONObject(i);
-                        if (sObj == null) continue;
+                        if (sObj == null)
+                            continue;
                         final int sNum = sObj.optInt("season", i + 1);
-                        if (i == 0) firstSeason = sNum;
+                        if (i == 0)
+                            firstSeason = sNum;
                         String sLabel = sObj.optString("name", "Temporada " + sNum);
                         if (sObj.has("count") && sObj.optInt("count") > 0) {
                             sLabel += " (" + sObj.optInt("count") + " caps.)";
                         }
-                        button(seasonBar, sLabel, () -> loadSeasonEpisodesVisual(entry, sNum, rangeBar, epLoading, epListContainer, token), -2);
+                        button(seasonBar, sLabel, () -> loadSeasonEpisodesVisual(entry, sNum, rangeBar, epLoading,
+                                epListContainer, token), -2);
                     }
                     loadSeasonEpisodesVisual(entry, firstSeason, rangeBar, epLoading, epListContainer, token);
                 });
@@ -814,19 +895,28 @@ public final class CatalogBrowser {
     private void showSourceSelectionDialog(CatalogData.Entry entry, int season, int episode) {
         final String[] providers = entry.isMovie()
                 ? new String[] { "CineHax", "SoloLatino", "Cuevana", "CineCalidad", "Pelispedia" }
-                : new String[] { "CineHax", "SoloLatino", "Cuevana", "Seriesflix", "Pelispedia", "LatAnime", "TioAnime" };
+                : new String[] { "CineHax", "SoloLatino", "Cuevana", "Seriesflix", "Pelispedia", "LatAnime",
+                        "TioAnime" };
 
         String[] display = new String[providers.length + 1];
         for (int i = 0; i < providers.length; i++) {
             String p = providers[i];
-            if ("CineHax".equals(p)) display[i] = "🌟 CineHax (Vimeos Full HD 1080p)";
-            else if ("SoloLatino".equals(p)) display[i] = "🌐 SoloLatino (Multi-calidad / Audio Latino)";
-            else if ("Cuevana".equals(p)) display[i] = "🌐 Cuevana (Servidores rápidos)";
-            else if ("CineCalidad".equals(p)) display[i] = "🌐 CineCalidad (Estrenos en HD)";
-            else if ("Pelispedia".equals(p)) display[i] = "🌐 Pelispedia";
-            else if ("Seriesflix".equals(p)) display[i] = "🌐 Seriesflix";
-            else if ("LatAnime".equals(p) || "TioAnime".equals(p)) display[i] = "⛩️ " + p + " (Anime HD)";
-            else display[i] = "🌐 " + p;
+            if ("CineHax".equals(p))
+                display[i] = "🌟 CineHax (Vimeos Full HD 1080p)";
+            else if ("SoloLatino".equals(p))
+                display[i] = "🌐 SoloLatino (Multi-calidad / Audio Latino)";
+            else if ("Cuevana".equals(p))
+                display[i] = "🌐 Cuevana (Servidores rápidos)";
+            else if ("CineCalidad".equals(p))
+                display[i] = "🌐 CineCalidad (Estrenos en HD)";
+            else if ("Pelispedia".equals(p))
+                display[i] = "🌐 Pelispedia";
+            else if ("Seriesflix".equals(p))
+                display[i] = "🌐 Seriesflix";
+            else if ("LatAnime".equals(p) || "TioAnime".equals(p))
+                display[i] = "⛩️ " + p + " (Anime HD)";
+            else
+                display[i] = "🌐 " + p;
         }
         display[providers.length] = "📺 Abrir con Reproductor Externo (VLC / JustPlayer)";
 
@@ -847,7 +937,7 @@ public final class CatalogBrowser {
     }
 
     private void loadSeasonEpisodesVisual(CatalogData.Entry entry, int seasonNum, LinearLayout rangeBar,
-                                          TextView epStatus, LinearLayout epListContainer, int token) {
+            TextView epStatus, LinearLayout epListContainer, int token) {
         state.season = seasonNum;
         rangeBar.removeAllViews();
         epListContainer.removeAllViews();
@@ -855,9 +945,11 @@ public final class CatalogBrowser {
         epStatus.setText("Cargando capítulos con vista previa de la Temporada " + seasonNum + "...");
 
         NETWORK.submit(() -> {
-            final List<ZappCatalogEngine.EpisodeCard> episodes = ZappCatalogEngine.fetchRichEpisodes(entry, provider, seasonNum, 1);
+            final List<ZappCatalogEngine.EpisodeCard> episodes = ZappCatalogEngine.fetchRichEpisodes(entry, provider,
+                    seasonNum, 1);
             activity.runOnUiThread(() -> {
-                if (!current(token)) return;
+                if (!current(token))
+                    return;
                 if (episodes.isEmpty()) {
                     epStatus.setText("No hay capítulos disponibles en la Temporada " + seasonNum + ".");
                     return;
@@ -873,7 +965,9 @@ public final class CatalogBrowser {
                         int firstEpNum = episodes.get(startIdx).episode;
                         int lastEpNum = episodes.get(endIdx - 1).episode;
                         button(rangeBar, "Cap. " + firstEpNum + " – " + lastEpNum,
-                            () -> renderEpisodeSlice(entry, seasonNum, episodes.subList(startIdx, endIdx), epListContainer), -2);
+                                () -> renderEpisodeSlice(entry, seasonNum, episodes.subList(startIdx, endIdx),
+                                        epListContainer),
+                                -2);
                     }
                     renderEpisodeSlice(entry, seasonNum, episodes.subList(0, pageSize), epListContainer);
                 } else {
@@ -884,7 +978,7 @@ public final class CatalogBrowser {
     }
 
     private void renderEpisodeSlice(CatalogData.Entry entry, int seasonNum,
-                                    List<ZappCatalogEngine.EpisodeCard> slice, LinearLayout container) {
+            List<ZappCatalogEngine.EpisodeCard> slice, LinearLayout container) {
         container.removeAllViews();
         for (ZappCatalogEngine.EpisodeCard ep : slice) {
             container.addView(createEpisodeCardView(entry, seasonNum, ep));
@@ -954,9 +1048,9 @@ public final class CatalogBrowser {
         textCol.addView(epTitle);
 
         String subMeta = (isEpWatched ? "✓ VISTO  ·  " : "")
-            + (ep.runtime > 0 ? ep.runtime + " min" : "45 min")
-            + (ep.airDate != null && !ep.airDate.isEmpty() ? "  ·  Emisión: " + ep.airDate : "")
-            + "  ·  Audio Latino / Sub";
+                + (ep.runtime > 0 ? ep.runtime + " min" : "45 min")
+                + (ep.airDate != null && !ep.airDate.isEmpty() ? "  ·  Emisión: " + ep.airDate : "")
+                + "  ·  Audio Latino / Sub";
         TextView epMeta = new TextView(activity);
         epMeta.setText(subMeta);
         epMeta.setTextSize(12);
@@ -965,8 +1059,8 @@ public final class CatalogBrowser {
         textCol.addView(epMeta);
 
         String syn = (ep.overview != null && !ep.overview.isEmpty() && !"null".equalsIgnoreCase(ep.overview.trim()))
-            ? ep.overview.trim()
-            : ("Capítulo " + ep.episode + " de la temporada " + seasonNum + " de " + entry.title + ".");
+                ? ep.overview.trim()
+                : ("Capítulo " + ep.episode + " de la temporada " + seasonNum + " de " + entry.title + ".");
         TextView epSyn = new TextView(activity);
         epSyn.setText(syn);
         epSyn.setTextSize(13);
@@ -1001,10 +1095,9 @@ public final class CatalogBrowser {
         rowCard.addView(epDlBtn, edLp);
         rowCard.setOnFocusChangeListener((v, focused) -> {
             rowCard.setBackground(pillBg(
-                focused ? Color.rgb(38, 48, 76) : cardDark,
-                focused ? Color.WHITE : Color.rgb(48, 58, 82),
-                14
-            ));
+                    focused ? Color.rgb(38, 48, 76) : cardDark,
+                    focused ? Color.WHITE : Color.rgb(48, 58, 82),
+                    14));
             rowCard.animate().scaleX(focused ? 1.02f : 1f).scaleY(focused ? 1.02f : 1f).setDuration(120).start();
         });
         return rowCard;
@@ -1064,17 +1157,17 @@ public final class CatalogBrowser {
         card.setOnClickListener(v -> showActorSheet(actor, fromEntry));
         card.setOnFocusChangeListener((v, focused) -> {
             card.setBackground(pillBg(
-                focused ? Color.rgb(44, 54, 86) : cardDark,
-                focused ? Color.rgb(245, 197, 66) : Color.rgb(52, 62, 88),
-                14
-            ));
+                    focused ? Color.rgb(44, 54, 86) : cardDark,
+                    focused ? Color.rgb(245, 197, 66) : Color.rgb(52, 62, 88),
+                    14));
             card.animate().scaleX(focused ? 1.06f : 1f).scaleY(focused ? 1.06f : 1f).setDuration(130).start();
         });
         return card;
     }
 
     /**
-     * Ficha Individual de Actor (estilo Zapp TV PersonActivity / PersonInfoTemplate + Lunified PeopleTvFragment).
+     * Ficha Individual de Actor (estilo Zapp TV PersonActivity / PersonInfoTemplate
+     * + Lunified PeopleTvFragment).
      */
     public void showActorSheet(ZappCatalogEngine.ActorItem actor, CatalogData.Entry returnToEntry) {
         setHeaderControlsVisible(false);
@@ -1083,16 +1176,20 @@ public final class CatalogBrowser {
         }
         state.selectedActor = actor;
         final int token = ++generation;
-        if (pending != null) pending.cancel(true);
+        if (pending != null)
+            pending.cancel(true);
         results.removeAllViews();
         message.setText("");
 
         LinearLayout topNav = row();
         topNav.setGravity(Gravity.CENTER_VERTICAL);
         Button backBtn = button(topNav, "←  Volver", () -> {
-            if (!state.backStack.isEmpty()) state.backStack.pop().run();
-            else if (state.selected != null) detail(state.selected);
-            else catalog();
+            if (!state.backStack.isEmpty())
+                state.backStack.pop().run();
+            else if (state.selected != null)
+                detail(state.selected);
+            else
+                catalog();
         }, 190);
         TextView sectionTag = new TextView(activity);
         sectionTag.setText("FICHA INDIVIDUAL DE ACTOR / ACTRIZ  ·  ZAPP TV");
@@ -1166,7 +1263,8 @@ public final class CatalogBrowser {
         NETWORK.submit(() -> {
             final ZappCatalogEngine.ActorProfile profile = ZappCatalogEngine.fetchActorProfile(actor);
             activity.runOnUiThread(() -> {
-                if (!current(token)) return;
+                if (!current(token))
+                    return;
                 StringBuilder sb = new StringBuilder();
                 if (profile.actor.country != null && !profile.actor.country.isEmpty()) {
                     sb.append("País: ").append(profile.actor.country).append("   ·   ");
@@ -1218,7 +1316,8 @@ public final class CatalogBrowser {
         btn.setTextSize(15);
         btn.setAllCaps(false);
         int fill = isFav ? Color.rgb(175, 28, 62) : panel;
-        if (focused) fill = isFav ? Color.rgb(210, 38, 78) : violet;
+        if (focused)
+            fill = isFav ? Color.rgb(210, 38, 78) : violet;
         btn.setBackground(pillBg(fill, focused ? Color.WHITE : Color.rgb(90, 102, 138), 14));
     }
 
@@ -1232,7 +1331,8 @@ public final class CatalogBrowser {
         btn.setTextSize(15);
         btn.setAllCaps(false);
         int fill = isWl ? Color.rgb(38, 110, 175) : panel;
-        if (focused) fill = isWl ? Color.rgb(48, 140, 220) : violet;
+        if (focused)
+            fill = isWl ? Color.rgb(48, 140, 220) : violet;
         btn.setBackground(pillBg(fill, focused ? Color.WHITE : Color.rgb(90, 102, 138), 14));
     }
 
@@ -1243,8 +1343,10 @@ public final class CatalogBrowser {
         }
         if (state.selectedActor != null) {
             state.selectedActor = null;
-            if (state.selected != null) detail(state.selected);
-            else catalog();
+            if (state.selected != null)
+                detail(state.selected);
+            else
+                catalog();
             return true;
         }
         if (state.selected != null) {
@@ -1258,6 +1360,7 @@ public final class CatalogBrowser {
     public void dispose() {
         disposed = true;
         ++generation;
-        if (pending != null) pending.cancel(true);
+        if (pending != null)
+            pending.cancel(true);
     }
 }

@@ -109,7 +109,9 @@ public final class HtmlCatalogProvider implements VideoProvider {
             synchronized(paths){url=paths.get(key);}
             if(url==null){
                 if(rootDomain.equals("latanime.org")){
-                    url=!query.trim().isEmpty()?(base+"/buscar?q="+URLEncoder.encode(query.trim(),"UTF-8")+"&page="+page)
+                    if("airing".equalsIgnoreCase(query.trim())||"emision".equalsIgnoreCase(query.trim()))url=base+"/emision?page="+page;
+                    else if("shonen".equalsIgnoreCase(query.trim())||"shounen".equalsIgnoreCase(query.trim()))url=base+"/animes?page="+page;
+                    else url=!query.trim().isEmpty()?(base+"/buscar?q="+URLEncoder.encode(query.trim(),"UTF-8")+"&page="+page)
                         :(base+"/animes?page="+page);
                 }else if(rootDomain.equals("tioanime.com")){
                     url=!query.trim().isEmpty()?(base+"/directorio?q="+URLEncoder.encode(query.trim(),"UTF-8")+"&p="+page)
@@ -133,8 +135,15 @@ public final class HtmlCatalogProvider implements VideoProvider {
                     url=bU+(bU.contains("?")?"&":"?")+"page="+page;
                 }
             }
-        }else if(!query.trim().isEmpty())url=searchTarget+(searchTarget.contains("?")?"&":"?")+URLEncoder.encode(searchParam,"UTF-8")+"="+URLEncoder.encode(query.trim(),"UTF-8");
-        else url=kind.equals("movie")?movieListing:seriesListing;
+        }else if(!query.trim().isEmpty()){
+            if(rootDomain.equals("latanime.org")){
+                if("airing".equalsIgnoreCase(query.trim())||"emision".equalsIgnoreCase(query.trim()))url=base+"/emision";
+                else if("shonen".equalsIgnoreCase(query.trim())||"shounen".equalsIgnoreCase(query.trim()))url=base+"/animes";
+                else url=searchTarget+(searchTarget.contains("?")?"&":"?")+URLEncoder.encode(searchParam,"UTF-8")+"="+URLEncoder.encode(query.trim(),"UTF-8");
+            }else{
+                url=searchTarget+(searchTarget.contains("?")?"&":"?")+URLEncoder.encode(searchParam,"UTF-8")+"="+URLEncoder.encode(query.trim(),"UTF-8");
+            }
+        }else url=kind.equals("movie")?movieListing:seriesListing;
         if(url==null)url=base+"/";
         Document doc=document(url);
         discoverListings(doc);
