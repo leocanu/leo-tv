@@ -3707,6 +3707,8 @@ public class MainActivity extends Activity {
         posterWrap.addView(img, new android.widget.FrameLayout.LayoutParams(-1, -1));
         if (item.posterUrl != null && !item.posterUrl.isEmpty()) {
             CatalogBrowser.loadPoster(this, img, item.posterUrl);
+        } else {
+            resolvePosterByTitleAsync(item.title, item.isSeries, img);
         }
 
         card.addView(posterWrap, new LinearLayout.LayoutParams(-1, posterHeight));
@@ -3818,6 +3820,8 @@ public class MainActivity extends Activity {
         posterWrap.addView(img, new android.widget.FrameLayout.LayoutParams(-1, -1));
         if (item.posterUrl != null && !item.posterUrl.isEmpty()) {
             CatalogBrowser.loadPoster(this, img, item.posterUrl);
+        } else {
+            resolvePosterByTitleAsync(item.title, item.isSeries, img);
         }
         card.addView(posterWrap, new LinearLayout.LayoutParams(168, 242));
 
@@ -4318,6 +4322,8 @@ public class MainActivity extends Activity {
         posterWrap.addView(img, new android.widget.FrameLayout.LayoutParams(-1, -1));
         if (item.posterUrl != null && !item.posterUrl.isEmpty()) {
             CatalogBrowser.loadPoster(this, img, item.posterUrl);
+        } else {
+            resolvePosterByTitleAsync(item.title, item.isSeries, img);
         }
 
         int posterH = (int) (cardWidth * 1.45f);
@@ -4426,6 +4432,70 @@ public class MainActivity extends Activity {
         scroller.addView(rail);
         body.addView(scroller);
         return rail;
+    }
+
+    private static final java.util.Map<String, String> RESOLVED_POSTERS_CACHE = new java.util.concurrent.ConcurrentHashMap<>();
+
+    private void resolvePosterByTitleAsync(String rawTitle, boolean isSeries, ImageView img) {
+        if (rawTitle == null || rawTitle.trim().isEmpty())
+            return;
+        final String clean = rawTitle.replaceAll("\\s*\\(\\d+%.*?\\)", "")
+                .replaceAll("\\s*(?:[·|\\-|–—]\\s*)?(?i)(?:Temporada|Capítulo|Cap\\.?|Ep\\.?|Season|T\\d+).*", "")
+                .trim();
+        String cached = RESOLVED_POSTERS_CACHE.get(clean.toLowerCase(java.util.Locale.ROOT));
+        if (cached != null) {
+            CatalogBrowser.loadPoster(this, img, cached);
+            return;
+        }
+        ROW_LOADER_EXECUTOR.execute(() -> {
+            try {
+                String q = java.net.URLEncoder.encode(clean, "UTF-8");
+                String[] kinds = isSeries ? new String[] { "series", "movie" } : new String[] { "movie", "series" };
+                String foundPoster = null;
+                for (String k : kinds) {
+                    String url = "https://v3-cinemeta.strem.io/catalog/" + k + "/top/search=" + q + ".json";
+                    HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+                    conn.setRequestProperty("User-Agent", HttpSupport.USER_AGENT);
+                    conn.setConnectTimeout(5000);
+                    conn.setReadTimeout(5000);
+                    if (conn.getResponseCode() == 200) {
+                        java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
+                        InputStream in = conn.getInputStream();
+                        byte[] buf = new byte[4096];
+                        int n;
+                        while ((n = in.read(buf)) != -1) {
+                            out.write(buf, 0, n);
+                        }
+                        in.close();
+                        JSONObject json = new JSONObject(out.toString("UTF-8"));
+                        JSONArray metas = json.optJSONArray("metas");
+                        if (metas != null && metas.length() > 0) {
+                            JSONObject first = metas.getJSONObject(0);
+                            String p = first.optString("poster", "");
+                            if (!p.isEmpty()) {
+                                if (p.contains("/poster/small/")) {
+                                    p = p.replace("/poster/small/", "/poster/medium/");
+                                }
+                                foundPoster = p;
+                                break;
+                            }
+                        }
+                    }
+                    conn.disconnect();
+                }
+                if (foundPoster != null && !foundPoster.isEmpty()) {
+                    final String finalP = foundPoster;
+                    RESOLVED_POSTERS_CACHE.put(clean.toLowerCase(java.util.Locale.ROOT), finalP);
+                    PlaybackEngine.updatePoster(MainActivity.this, rawTitle, finalP);
+                    runOnUiThread(() -> {
+                        if (!isDestroyed()) {
+                            CatalogBrowser.loadPoster(MainActivity.this, img, finalP);
+                        }
+                    });
+                }
+            } catch (Throwable ignored) {
+            }
+        });
     }
 
     private void populateLiveRow(LinearLayout rail, String providerName, String kind, String query, int pageNum,
@@ -4809,8 +4879,8 @@ public class MainActivity extends Activity {
             return "🏯  Doramas Románticos y Fantasía Asiática";
         if ("anime_airing".equals(id))
             return "⚡  Anime en Emisión y Tendencias";
-        if ("shonen".equals(id))
-            return "⚔️  Anime Shonen y Grandes Batallas";
+        if ("shonen".equals(id) || "anime".equals(id))
+            return "⚡  Anime";
         if ("anime_movies".equals(id))
             return "🎌  Películas de Anime";
         if ("action".equals(id))
@@ -8147,10 +8217,10 @@ public class MainActivity extends Activity {
                         populateLiveRow(rAnAir, "LatAnime", "anime", "airing", 1, 0, false,
                                 "⚡  Anime en Emisión y Tendencias", "anime_airing");
                     } else if ("shonen".equals(cId)) {
-                        LinearLayout rSho = addPosterRow(body, "⚔️  Anime Shonen y Grandes Batallas",
+                        LinearLayout rSho = addPosterRow(body, "⚡  Anime",
                                 defaultAnimeShonen(), "LatAnime", "anime", "shonen", "shonen");
                         populateLiveRow(rSho, "LatAnime", "anime", "shonen", 1, 0, false,
-                                "⚔️  Anime Shonen y Grandes Batallas", "shonen");
+                                "⚡  Anime", "shonen");
                     } else if ("anime_movies".equals(cId)) {
                         LinearLayout rAnMov = addPosterRow(body, "🎌  Películas de Anime",
                                 defaultAnimeMovies(), "LatAnime", "movie", "peliculas", "anime_movies");
@@ -8292,7 +8362,7 @@ public class MainActivity extends Activity {
                 buildSectionFilterBar(body,
                         new String[] { "⭐ Todas", "📺 Nuevas 2026", "🇹🇷 Novelas Turcas", "🇰🇷 K-Dramas",
                                 "🇲🇽 🇨🇴 Series Latinas",
-                                "⚔️ Anime Shōnen", "🏯 Fantasía Asiática", "👑 Históricas", "🕵️ Crimen y Policial" },
+                                "⚡ Anime", "🏯 Fantasía Asiática", "👑 Históricas", "🕵️ Crimen y Policial" },
                         new String[] { "top", "series2026", "turkish", "kdramas", "latin", "shonen", "asian_fantasy",
                                 "historical", "crime" },
                         pageScroll);
@@ -8319,9 +8389,9 @@ public class MainActivity extends Activity {
                 populateLiveRow(rLat, "CineHax", "country:mx", "", 1, 0, false, "🇲🇽 🇨🇴 🇦🇷  Series Latinas",
                         "latin");
 
-                LinearLayout rSho = addPosterRow(body, "⚔️  Anime Shonen y Batallas Épicas", defaultAnimeShonen(),
+                LinearLayout rSho = addPosterRow(body, "⚡  Anime", defaultAnimeShonen(),
                         "LatAnime", "anime", "shonen", "shonen");
-                populateLiveRow(rSho, "LatAnime", "anime", "shonen", 1, 0, false, "⚔️  Anime Shonen", "shonen");
+                populateLiveRow(rSho, "LatAnime", "anime", "shonen", 1, 0, false, "⚡  Anime", "shonen");
 
                 LinearLayout rAsi = addPosterRow(body, "🏯  Doramas Románticos y Fantasía Asiática",
                         defaultAsianFantasy(prov),
@@ -9221,6 +9291,9 @@ public class MainActivity extends Activity {
         currentPlayingEntry = entry;
         currentPlayingSeason = season;
         currentPlayingEpisode = episode;
+        if (entry != null && entry.poster != null && !entry.poster.isEmpty()) {
+            currentPlayingPoster = entry.poster;
+        }
         showStatus("Buscando servidor de video para " + title + "...");
         showSourceLoader(title, () -> {
             providerLoading = false;
@@ -9592,6 +9665,9 @@ public class MainActivity extends Activity {
         currentPlayingOrigin = origin;
         currentPlayingUrl = url;
         currentPlayingHeaders = headers;
+        if (currentPlayingEntry != null && currentPlayingEntry.poster != null && !currentPlayingEntry.poster.isEmpty()) {
+            currentPlayingPoster = currentPlayingEntry.poster;
+        }
         if (!isSwitchingUnstableServer) {
             failedProvidersForCurrentTitle.clear();
         }

@@ -1,7 +1,7 @@
 {
-  "versionCode": 58,
-  "versionName": "0.57.0",
-  "apkUrl": "https://raw.githubusercontent.com/leocanu/Chain-Reaction-Music-Updates/main/leotv/LeoTV-v0.57.0.apk",
-  "changelog": "• Corrección total de tapas y pósters que no cargaban en Anime y Cine Clásico (URLs activas MetaHub 200 OK).\n• Corrección de navegación y carruseles en vivo para Anime en Emisión y Shonen en LatAnime (/emision y /animes).\n• SubtitleEngine: Integración de subtítulos automáticos en español vía OpenSubtitles v3.\n• HttpSupport: Resolución DNS-over-HTTPS (DoH Cloudflare y Google) anti-bloqueo de operadores de internet.",
+  "versionCode": 59,
+  "versionName": "0.57.1",
+  "apkUrl": "https://raw.githubusercontent.com/leocanu/Chain-Reaction-Music-Updates/main/leotv/LeoTV-v0.57.1.apk",
+  "changelog": "• Corrección total del carrusel 'Continuar viendo': resolución automática de pósters y tapas de películas y series en progreso.\n• Categoría de Anime simplificada a '⚡ Anime' a secas en Inicio y Series (reemplazando 'Anime Shonen').\n• Persistencia de pósters en PlaybackEngine para evitar tarjetas vacías tras reiniciar la app.",
   "mandatory": false
 }

@@ -131,6 +131,30 @@ public final class PlaybackEngine {
         } catch (Exception ignored) {}
     }
 
+    /** Actualiza la portada de un contenido existente si estaba vacía */
+    public static void updatePoster(Context ctx, String title, String poster) {
+        if (ctx == null || title == null || poster == null || poster.isEmpty()) return;
+        try {
+            SharedPreferences sp = ctx.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+            JSONArray arr = new JSONArray(sp.getString(KEY_ITEMS, "[]"));
+            boolean changed = false;
+            String cleanT = title.replaceAll("\\s*\\(\\d+%.*?\\)", "").trim();
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject o = arr.optJSONObject(i);
+                if (o == null) continue;
+                String t = o.optString("title", "");
+                String p = o.optString("poster", "");
+                if (p.isEmpty() && (t.equalsIgnoreCase(title) || t.equalsIgnoreCase(cleanT) || title.toLowerCase(java.util.Locale.ROOT).contains(t.toLowerCase(java.util.Locale.ROOT)))) {
+                    o.put("poster", poster);
+                    changed = true;
+                }
+            }
+            if (changed) {
+                sp.edit().putString(KEY_ITEMS, arr.toString()).apply();
+            }
+        } catch (Throwable ignored) {}
+    }
+
     /** Obtiene la posición guardada previa en ms */
     public static long getSavedPosition(Context ctx, String id) {
         if (ctx == null || id == null || id.trim().isEmpty()) return 0;
